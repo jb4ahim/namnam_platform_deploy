@@ -19,31 +19,31 @@
         "tsConfigPath": "libs/common/tsconfig.lib.json"
       }
     },
-    "customer_api": {
+    "customer-api": {
       "type": "application",
-      "root": "apps/customer_api",
+      "root": "apps/customer-api",
       "entryFile": "main",
-      "sourceRoot": "apps/customer_api/src",
+      "sourceRoot": "apps/customer-api/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/customer_api/tsconfig.app.json"
+        "tsConfigPath": "apps/customer-api/tsconfig.app.json"
       }
     },
-    "management_api": {
+    "management-api": {
       "type": "application",
-      "root": "apps/management_api",
+      "root": "apps/management-api",
       "entryFile": "main",
-      "sourceRoot": "apps/management_api/src",
+      "sourceRoot": "apps/management-api/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/management_api/tsconfig.app.json"
+        "tsConfigPath": "apps/management-api/tsconfig.app.json"
       }
     },
-    "restaurant_api": {
+    "restaurant-api": {
       "type": "application",
-      "root": "apps/restaurant_api",
+      "root": "apps/restaurant-api",
       "entryFile": "main",
-      "sourceRoot": "apps/restaurant_api/src",
+      "sourceRoot": "apps/restaurant-api/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/restaurant_api/tsconfig.app.json"
+        "tsConfigPath": "apps/restaurant-api/tsconfig.app.json"
       }
     }
   }
