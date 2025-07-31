@@ -1,10 +1,20 @@
 import { Module } from '@nestjs/common';
-import { NamnamCustomerApiController } from './namnam_customer_api.controller';
-import { NamnamCustomerApiService } from './namnam_customer_api.service';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { ResponseEnvelopeInterceptor } from '@namnam/common/interceptors/response-envelope.interceptor';
+import { GlobalExceptionFilter } from '@namnam/common/filters/global-exception.filter';
+import { DatabaseModule } from '@namnam/database';
 
 @Module({
-  imports: [],
-  controllers: [NamnamCustomerApiController],
-  providers: [NamnamCustomerApiService],
+  imports: [DatabaseModule],
+  providers: [
+    {
+        provide: APP_FILTER,
+        useClass: GlobalExceptionFilter
+    },
+    {
+        provide: APP_INTERCEPTOR,
+        useClass: ResponseEnvelopeInterceptor
+    },
+  ],
 })
 export class NamnamCustomerApiModule {}

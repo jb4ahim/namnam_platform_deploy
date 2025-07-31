@@ -4,6 +4,9 @@
     "declaration": false,
     "outDir": "../../dist/apps/customer-api"
   },
+  "paths": {
+    "@namnam/database": ["libs/database/src"]
+  },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
 }

@@ -27,7 +27,8 @@
       ],
       "@namnam/common/*": [
         "libs/common/src/*"
-      ]
+      ],
+      "@namnam/database": ["libs/database/src"]
     }
   },
   "exclude": [

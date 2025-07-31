@@ -16,11 +16,11 @@ export const CurrentUser = createParamDecorator(
         throw new Error(`Property "${String(data)}" does not exist on user.`);
       }
       // Return the property value directly, preserving its type
-      return value as IUser[keyof IUser];
+      return value;
     }
 
     return user;
-);
+  }
 
 // Alternative decorator for optional user (when route might be public but we want user if available)
 export const OptionalUser = createParamDecorator(
