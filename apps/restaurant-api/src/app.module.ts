@@ -2,9 +2,10 @@ import { Module } from '@nestjs/common';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core/constants';
 import { GlobalExceptionFilter } from '@namnam/common/filters/global-exception.filter';
 import { ResponseEnvelopeInterceptor } from '@namnam/common/interceptors/response-envelope.interceptor';
+import { LoggerModule } from '@namnam/common/logger';
 
 @Module({
-  imports: [],
+  imports: [LoggerModule],
   providers: [
     {
       provide: APP_FILTER,

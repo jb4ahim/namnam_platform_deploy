@@ -10,6 +10,6 @@ async function bootstrap() {
     NamnamCustomerApiModule,
     new FastifyAdapter()
   );
-  await app.listen(3000, '0.0.0.0'); // for external connections
+  await app.listen(3000, '0.0.0.0'); 
 }
 bootstrap();

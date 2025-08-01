@@ -16,22 +16,19 @@ export class AuthService {
   ) {}
 
   async sendOtp(phone: string) {
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
 
-    
-    const result = await this.twilioService.sendOTPViaSMS(phone);
-    
-    return { success: true };
+    // const result = await this.twilioService.sendOTPViaSMS(phone);
+    // console.log(result);
   }
+
 
   async verifyOtp(phone: string, code: string) {
     // const expectedCode = await this.cache.get(`otp:${phone}`);
     // For demo, just accept any code (replace this with cache logic above)
     // if (code !== expectedCode)
-    if (!code || code !== '123456') { // Replace with real OTP check above
+    if (!code || code !== '123456') { 
       throw new UnauthorizedException('Invalid or expired code');
     }
-    // Optionally, remove code after first use
 
     // Find or create the user
     let user = await this.usersService.findByPhone(phone);

@@ -4,11 +4,14 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthController } from './auth.controller';
 import { JwtStrategyWithConfig } from '@namnam/auth/jwt.strategy';
-import { TwilioSmsService } from '@namnam/common/twillio';
+import { TwilioModule, TwilioSmsService } from '@namnam/common/twillio';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
-    ConfigModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => ({
@@ -17,7 +20,8 @@ import { TwilioSmsService } from '@namnam/common/twillio';
       }),
       inject: [ConfigService]
     }),
-    TwilioSmsService
+    TwilioModule,
+    UsersModule
   ],
   providers: [
     AuthService,

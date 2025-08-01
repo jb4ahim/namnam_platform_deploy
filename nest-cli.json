@@ -4,7 +4,7 @@
   "sourceRoot": "apps/restaurant-api/src",
   "compilerOptions": {
     "deleteOutDir": true,
-    "webpack": true,
+    "webpack": false,
     "tsConfigPath": "apps/restaurant-api/tsconfig.app.json"
   },
   "monorepo": true,

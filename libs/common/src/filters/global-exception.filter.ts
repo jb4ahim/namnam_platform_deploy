@@ -31,7 +31,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       exception instanceof Error ? exception.stack : '',
     );
 
-    response.status(status).json({
+    // Changed from .json() to .send() for Fastify compatibility
+    response.status(status).send({
       success: false,
       statusCode: status,
       message: typeof message === 'string' ? message : (message as any).message,
