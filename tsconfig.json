@@ -28,6 +28,9 @@
       "@namnam/common/*": [
         "libs/common/src/*"
       ],
+      "@namnam/auth/*": [
+        "libs/auth/src/*"
+      ],
       "@namnam/database": ["libs/database/src"]
     }
   },

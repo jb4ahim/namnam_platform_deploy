@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { UsersService } from '../users/users.service';
-import { JwtStrategy, LocalStrategy } from '@namnam/auth'; // from shared lib
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthController } from './auth.controller';
+import { JwtStrategyWithConfig } from '@namnam/auth/jwt.strategy';
+import { TwilioSmsService } from '@namnam/common/twillio';
 
 @Module({
   imports: [
@@ -13,17 +13,15 @@ import { AuthController } from './auth.controller';
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => ({
         secret: config.get('JWT_SECRET'),
-        signOptions: { expiresIn: '1d' },
+        signOptions: { expiresIn: '1d' }
       }),
-      inject: [ConfigService],
+      inject: [ConfigService]
     }),
-    // UsersModule could be imported if you've modularized user logic
+    TwilioSmsService
   ],
   providers: [
     AuthService,
-    UsersService,         // Injected into AuthService
-    JwtStrategy,          // Injected via Passport system
-    LocalStrategy,
+    JwtStrategyWithConfig
   ],
   controllers: [AuthController],
   exports: [AuthService],

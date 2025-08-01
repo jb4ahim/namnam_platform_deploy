@@ -1,40 +1,45 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, Inject, forwardRef } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
+import { UsersService } from '../users/users.service';
+import { TwilioSmsService } from '@namnam/common/twillio/twilio-sms.service';
+// If using a cache (e.g., Redis), inject it or use your own storage solution
 
 @Injectable()
 export class AuthService {
+
   constructor(
-    private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    @Inject(forwardRef(() => UsersService))
+    private readonly usersService: UsersService,
+    private readonly twilioService: TwilioSmsService
+    // private readonly cache: CacheService, // Optional cache for OTP
   ) {}
 
-  // Used by local strategy
-  async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.usersService.findByUsername(username);
-    if (user && await bcrypt.compare(pass, user.password)) {
-      const { password, ...result } = user;
-      return result;
-    }
-    throw new UnauthorizedException('Invalid credentials');
+  async sendOtp(phone: string) {
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+
+    
+    const result = await this.twilioService.sendOTPViaSMS(phone);
+    
+    return { success: true };
   }
 
-  async login(user: any) {
-    const payload = { sub: user.id, email: user.email, roles: user.roles };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
-  }
-
-  async register(data: { username: string; email: string; password: string }) {
-    if (await this.usersService.findByUsername(data.username)) {
-      throw new ConflictException('Username already taken');
+  async verifyOtp(phone: string, code: string) {
+    // const expectedCode = await this.cache.get(`otp:${phone}`);
+    // For demo, just accept any code (replace this with cache logic above)
+    // if (code !== expectedCode)
+    if (!code || code !== '123456') { // Replace with real OTP check above
+      throw new UnauthorizedException('Invalid or expired code');
     }
-    const hashedPass = await bcrypt.hash(data.password, 10);
-    const user = await this.usersService.create({
-      ...data,
-      password: hashedPass,
-    });
-    return this.login(user);
+    // Optionally, remove code after first use
+
+    // Find or create the user
+    let user = await this.usersService.findByPhone(phone);
+    if (!user) {
+      user = await this.usersService.createWithPhone(phone);
+    }
+    // JWT
+    const payload = { sub: user.id, phone: user.phone };
+    return { access_token: this.jwtService.sign(payload) };
   }
 }

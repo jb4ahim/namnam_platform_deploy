@@ -1,20 +1,17 @@
-import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  // Login — uses local strategy (username/password)
-  @UseGuards()
-  @Post('login')
-  async login(@Request() req) {
-    return this.authService.login(req.user);
+  @Post('send-otp')
+  async sendOtp(@Body('phone') phone: string) {
+    return this.authService.sendOtp(phone);
   }
 
-  // Register — creates a user, returns JWT
-  @Post('register')
-  async register(@Body() body: { username: string; email: string; password: string }) {
-    return this.authService.register(body);
+  @Post('verify-otp')
+  async verifyOtp(@Body('phone') phone: string, @Body('code') code: string) {
+    return this.authService.verifyOtp(phone, code);
   }
 }
