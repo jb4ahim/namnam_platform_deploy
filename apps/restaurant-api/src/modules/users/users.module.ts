@@ -7,6 +7,6 @@ import { DatabaseModule } from '@namnam/database'; // DI for DB access
   imports: [DatabaseModule], // Import DB module if using DI pattern
   controllers: [UsersController],
   providers: [UsersService],
-  exports: [UsersService], // Allows AuthService to inject UsersService
+  exports: [UsersService] // Allows AuthService to inject UsersService
 })
 export class UsersModule {}

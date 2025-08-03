@@ -18,7 +18,7 @@ export class UsersRepository {
     return rows[0] || null;
   }
 
-  async getCustomerInfos(userId: number) {
+  async getUserInfos(userId: number) {
     const rows = await this.pg.query('Call select_user_infos($1, $2, $3, $4, $5)', [userId]);
     console.log('saveOtp', rows);
     return rows[0] || null;

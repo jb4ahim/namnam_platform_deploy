@@ -11,7 +11,6 @@ export class UsersService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly usersRepository: UsersRepository
-    // private readonly cache: CacheService, // Optional cache for OTP
   ) {}
 
   async findUserByPhone(countryCode?: string, phoneNumber?: string, email?: string) {
@@ -19,13 +18,14 @@ export class UsersService {
     if (!user) throw new UnauthorizedException('User not found');
     return user;
   }
+  
   async createUserWithPhone(registerUserDto: RegisterUserDto): Promise<number> {
     const userId = await this.usersRepository.createUserWithPhone(registerUserDto.countryCode, registerUserDto.phoneNumber, registerUserDto.firstName, registerUserDto.lastName, registerUserDto.email);
     return userId;
   }
   
   async getCustomerInfos(userId: number) {
-    const user = await this.usersRepository.getCustomerInfos(userId);
+    const user = await this.usersRepository.getUserInfos(userId);
     if (!user) throw new UnauthorizedException('User not found');
     return user;
   }
