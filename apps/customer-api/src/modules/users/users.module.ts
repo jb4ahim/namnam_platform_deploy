@@ -4,9 +4,9 @@ import { UsersService } from './users.service';
 import { DatabaseModule } from '@namnam/database'; // DI for DB access
 
 @Module({
-  imports: [DatabaseModule], // Import DB module if using DI pattern
+  imports: [DatabaseModule], 
   controllers: [UsersController],
   providers: [UsersService],
-  exports: [UsersService], // Allows AuthService to inject UsersService
+  exports: [UsersService]
 })
 export class UsersModule {}

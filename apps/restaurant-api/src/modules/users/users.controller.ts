@@ -5,12 +5,11 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-//   @Get(':phone')
-//   async getUserByPhone(@Param('phone') phone: string) {
-//     const user = await this.usersService.findByPhone(phone);
-//     if (!user) throw new NotFoundException('User not found');
-//     return user;
-//   }
+  // @Get(':phone')
+  // async findUserByPhone(@Param('phone') phone: string) {
+  //   const user = await this.usersService.findUserByPhone(countrphone);
+  //   if (!user) throw new NotFoundException('User not found');
+  // }
 
   // Add more endpoints (profile, update, etc.) as needed
 }

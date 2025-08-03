@@ -1,29 +1,34 @@
-import { Injectable } from '@nestjs/common';
-
-// Replace with your UserEntity or Type
-interface User {
-  id: string;
-  phone: string;
-  [key: string]: any;
-}
+import { Injectable, UnauthorizedException, Inject, forwardRef } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { TwilioSmsService } from '@namnam/common/twillio/twilio-sms.service';
+import { UsersRepository } from './users.repository';
+import { RegisterUserDto } from '../auth/dto/register-user.dto';
+// If using a cache (e.g., Redis), inject it or use your own storage solution
 
 @Injectable()
 export class UsersService {
-  private users: User[] = []; // Replace with real DB logic
 
-  async findByPhone(phone: string): Promise<User | undefined> {
-    // Replace with real DB call, e.g.:
-    // return this.userRepository.findOne({ where: { phone } });
-    return this.users.find(u => u.phone === phone);
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly usersRepository: UsersRepository
+    // private readonly cache: CacheService, // Optional cache for OTP
+  ) {}
+
+  async findUserByPhone(countryCode?: string, phoneNumber?: string, email?: string) {
+    const user = await this.usersRepository.findUserByPhone(countryCode, phoneNumber, email);
+    if (!user) throw new UnauthorizedException('User not found');
+    return user;
+  }
+  async createUserWithPhone(registerUserDto: RegisterUserDto): Promise<number> {
+    const userId = await this.usersRepository.createUserWithPhone(registerUserDto.countryCode, registerUserDto.phoneNumber, registerUserDto.firstName, registerUserDto.lastName, registerUserDto.email);
+    return userId;
+  }
+  
+  async getCustomerInfos(userId: number) {
+    const user = await this.usersRepository.getCustomerInfos(userId);
+    if (!user) throw new UnauthorizedException('User not found');
+    return user;
   }
 
-  async createWithPhone(phone: string): Promise<User> {
-    // Replace with real DB logic
-    const newUser: User = {
-      id: Math.random().toString(36).substring(2), // Replace with UUID or DB PK
-      phone,
-    };
-    this.users.push(newUser);
-    return newUser;
-  }
+
 }

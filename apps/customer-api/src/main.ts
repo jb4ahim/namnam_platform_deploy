@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import {
   FastifyAdapter,
-  NestFastifyApplication,
+  NestFastifyApplication
 } from '@nestjs/platform-fastify';
 import { NamnamCustomerApiModule } from './namnam_customer_api.module';
 
@@ -10,6 +10,7 @@ async function bootstrap() {
     NamnamCustomerApiModule,
     new FastifyAdapter()
   );
-  await app.listen(3000, '0.0.0.0'); 
+  
+  await app.listen(3000, '0.0.0.0');
 }
 bootstrap();
