@@ -9,22 +9,19 @@ class LocationDto {
   longitude!: number;
 
   @IsNumber()
-  city_id!: number;
+  cityId!: number;
 
   @IsNumber()
-  country_id!: number;
+  countryId!: number;
 
   @IsString()
   street!: string;
 
   @IsString()
-  address_description!: string;
+  addressDescription!: string;
 }
 
 export class CreateMerchantInfoDto {
-  @IsString()
-  merchant_id!: string;
-
   @IsString()
   name!: string;
 
@@ -33,12 +30,6 @@ export class CreateMerchantInfoDto {
 
   @IsString()
   hotline!: string;
-
-  @IsString()
-  logo_url!: string;
-
-  @IsString()
-  cover_url!: string;
 
   @IsObject()
   @ValidateNested()
@@ -56,5 +47,5 @@ export class CreateMerchantInfoDto {
   @IsOptional()
   @IsArray()
   @IsNumber({}, { each: true })
-  shop_type_ids?: number[];
+  shopTypeIds?: number[];
 }
