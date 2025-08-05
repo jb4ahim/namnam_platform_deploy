@@ -8,14 +8,14 @@ export class AuthRepository {
 
   async saveOtpPhone(countryCode: string, phoneNumber: string, otp: string) {
     // Calls a stored function, not a direct table query
-    const rows = await this.pg.query('CALL insert_user_otp($1, $2, $3, $4, $5)', [null, countryCode + phoneNumber, 'phone', otp, null]);
+    const rows = await this.pg.query('CALL insert_user_otp($1, $2, $3, $4, $5)', [null, countryCode + phoneNumber, 'phone', otp, 15]);
     console.log('saveOtp', rows);
     return rows[0] || null;
   }
 
   async saveOtpEmail(email: string, otp: string) {
     // FIXED: Corrected to use proper stored procedure call with correct parameters
-    const rows = await this.pg.query('CALL insert_user_otp($1, $2, $3, $4, $5)', [null, email, 'email', otp, null]);
+    const rows = await this.pg.query('CALL insert_user_otp($1, $2, $3, $4, $5)', [null, email, 'email', otp, 15]);
     console.log('saveOtp', rows);
     return rows[0] || null;
   }

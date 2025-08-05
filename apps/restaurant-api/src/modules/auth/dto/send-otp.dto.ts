@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsEmail, IsEnum, Length, Matches, ValidateIf } from 'class-validator';
+import { IsString, IsNotEmpty, IsEmail, IsEnum, Length, Matches, ValidateIf, IsOptional } from 'class-validator';
 
 export enum OtpType {
   EMAIL = 'email',
@@ -29,4 +29,9 @@ export class SendOtpDto {
   @IsNotEmpty({ message: 'Phone number is required when type is phone' })
   @Matches(/^\d{6,15}$/, { message: 'Phone number must contain 6-15 digits only' })
   phoneNumber?: string;
+
+  // NEW: Optional sessionId to add phone to existing email session
+  @IsOptional()
+  @IsString()
+  sessionId?: string;
 }
