@@ -10,16 +10,17 @@ export class AuthController {
 
   @Post('send-otp')
   async sendOtp(@Body() sendOtpDto: SendOtpDto) {
-    await this.authService.sendOtp(sendOtpDto);
+    return await this.authService.sendOtp(sendOtpDto);
   }
 
- @Post('verify-otp')
+  @Post('verify-otp')
   async verifyOtp(@Body() verifyOtpDto: VerifyOtpDto) {
     return this.authService.verifyOtp(verifyOtpDto);
   }
 
+  // UPDATED: Registration token now included in request body
   @Post('register')
-  async registerUser(@Body() verifyOtpDto: RegisterUserDto) {
-    return this.authService.register(verifyOtpDto);
+  async registerUser(@Body() registerUserDto: RegisterUserDto) {
+    return this.authService.register(registerUserDto);
   }
 }

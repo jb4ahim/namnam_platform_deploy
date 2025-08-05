@@ -3,9 +3,10 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core/constants';
 import { GlobalExceptionFilter } from '@namnam/common/filters/global-exception.filter';
 import { ResponseEnvelopeInterceptor } from '@namnam/common/interceptors/response-envelope.interceptor';
 import { LoggerModule } from '@namnam/common/logger';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
-  imports: [LoggerModule],
+  imports: [LoggerModule, AuthModule],
   providers: [
     {
       provide: APP_FILTER,

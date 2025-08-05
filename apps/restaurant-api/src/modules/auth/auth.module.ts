@@ -4,8 +4,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthController } from './auth.controller';
 import { JwtStrategyWithConfig } from '@namnam/auth/jwt.strategy';
-import { TwilioModule, TwilioSmsService } from '@namnam/common/twillio';
-import { UsersModule } from '../users/users.module';
+import { TwilioModule } from '@namnam/common/twillio';
+import { AuthRepository } from './auth.repository'; // NEW: Added import
+import { DatabaseModule } from '@namnam/database';
 
 @Module({
   imports: [
@@ -21,13 +22,14 @@ import { UsersModule } from '../users/users.module';
       inject: [ConfigService]
     }),
     TwilioModule,
-    UsersModule
+    DatabaseModule
   ],
   providers: [
     AuthService,
+    AuthRepository, 
     JwtStrategyWithConfig
   ],
   controllers: [AuthController],
-  exports: [AuthService],
+  exports: [AuthService]
 })
 export class AuthModule {}

@@ -28,6 +28,6 @@ import { UsersModule } from '../users/users.module';
     JwtStrategyWithConfig
   ],
   controllers: [AuthController],
-  exports: [AuthService],
+  exports: [AuthService]
 })
 export class AuthModule {}

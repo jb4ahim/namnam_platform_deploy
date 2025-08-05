@@ -13,18 +13,22 @@ export class RegisterUserDto {
 
   @IsString()
   @IsNotEmpty()
-  @Length(6)
-  code!: string;
-
-  @IsString()
-  @IsNotEmpty()
   firstName!: string;
 
   @IsString()
   @IsNotEmpty()
   lastName!: string;
 
+  @IsString()
+  @IsNotEmpty()
+  role!: string;
+
   @IsOptional()
   @IsEmail()
   email?: string;
+
+  // NEW: Registration token field added to DTO
+  @IsString()
+  @IsNotEmpty({ message: 'Registration token is required' })
+  registrationToken!: string;
 }
