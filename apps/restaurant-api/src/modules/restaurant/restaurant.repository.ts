@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PostgresService } from '@namnam/database';
 
 @Injectable()
-export class UsersRepository {
+export class RestaurantRepository {
   constructor(private readonly pg: PostgresService) {}
 
   async saveOtp(phone: string, otp:string) {
@@ -18,7 +18,7 @@ export class UsersRepository {
     return rows[0] || null;
   }
 
-  async getUserInfos(userId: number) {
+  async getRestaurantInfos(userId: number) {
     const rows = await this.pg.query('Call select_user_infos($1, $2, $3, $4, $5)', [userId]);
     console.log('saveOtp', rows);
     return rows[0] || null;

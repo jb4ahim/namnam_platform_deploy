@@ -20,6 +20,6 @@ export class AuthController {
 
   @Post('register')
   async registerUser(@Body() verifyOtpDto: RegisterUserDto) {
-    return this.authService.registerWithPhone(verifyOtpDto);
+    return this.authService.register(verifyOtpDto);
   }
 }

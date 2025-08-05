@@ -11,10 +11,6 @@ export class RegisterUserDto {
   @Matches(/^\d{6,15}$/, { message: 'Phone number must contain 6-15 digits only' })
   phoneNumber!: string; // e.g., "1234567890"
 
-  @IsString()
-  @IsNotEmpty()
-  @Length(6)
-  code!: string;
 
   @IsString()
   @IsNotEmpty()

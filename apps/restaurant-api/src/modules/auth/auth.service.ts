@@ -21,6 +21,16 @@ export class AuthService {
   ) {}
 
   async sendOtp(sendOtpDto: SendOtpDto) {
+
+    if(sendOtpDto.email != null){
+      await this.authRepository.saveOtpEmail(sendOtpDto.email,  '123456');
+      return { step: 1 }
+    }
+
+    if(sendOtpDto.phoneNumber != null && sendOtpDto.countryCode != null){
+      await this.authRepository.saveOtpPhone(sendOtpDto.countryCode, sendOtpDto.phoneNumber, '123456');
+      return { step: 2 }
+    }
      //
     //  const phoneNumber = `${sendOtpDto.countryCode}${sendOtpDto.phoneNumber}`
     //  const result = await this.twilioService.sendOTPViaSMS(phoneNumber);
@@ -36,32 +46,24 @@ export class AuthService {
     if (!verifyOtpDto.code || verifyOtpDto.code !== '123456') {
       throw new UnauthorizedException('Invalid or expired code');
     }
-
-    // Find or create the user
-    let userId = await this.usersService.findUserByPhone(verifyOtpDto.countryCode, verifyOtpDto.phoneNumber);
-
-    if (userId) {
-       // JWT
+    if(verifyOtpDto.email != null) {
+      return{ step: 1}
+    }
+    if(verifyOtpDto.phoneNumber != null){
+      let userId = await this.usersService.findUserByPhone(verifyOtpDto.countryCode, verifyOtpDto.phoneNumber);
+      // JWT
       const payload = { userId: userId};
-    
-      return { isRegistered: true, access_token: this.jwtService.sign(payload) };
-    }else{
-      return { isRegistered: false}
+      return { isVerified: true, access_token: this.jwtService.sign(payload) }
     }
   }
 
 
-  async registerWithPhone(registerUserDto: RegisterUserDto) {
+  async register(registerUserDto: RegisterUserDto) {
     // Save OTP
     // await this.authRepository.saveOtp(verifyOtpDto.phone, verifyOtpDto.code);
 
     // Create user if not exists
-    const userId = await this.usersService.createUserWithPhone(registerUserDto);
-    if (!userId) {
-      throw new UnauthorizedException('User creation failed');
-    }
-    // Return JWT token
-    const payload = { userId: userId };
-    return { access_token: this.jwtService.sign(payload) };
+    const userId = await this.usersService.createUser(registerUserDto);
+
   }
 }
