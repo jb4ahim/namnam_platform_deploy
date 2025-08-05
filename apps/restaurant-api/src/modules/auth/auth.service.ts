@@ -37,6 +37,7 @@ export class AuthService {
 
   constructor(
     private readonly jwtService: JwtService,
+
     private readonly authRepository: AuthRepository,
     private readonly twilioService: TwilioSmsService
   ) {
@@ -156,7 +157,7 @@ export class AuthService {
     };
   }
 
-  // UPDATED: Extract registration token from DTO and return JWT
+  // UPDATED: Get email/phone from session, only collect new user info
   async register(registerUserDto: RegisterUserDto) {
     // NEW: Validate registration token
     const tokenData = this.registrationTokens.get(registerUserDto.registrationToken);
@@ -169,16 +170,18 @@ export class AuthService {
       throw new UnauthorizedException('Registration token has expired');
     }
 
-    // NEW: Ensure the registration data matches the verified email/phone
-    if (registerUserDto.email !== tokenData.email ||
-        registerUserDto.countryCode !== tokenData.countryCode ||
-        registerUserDto.phoneNumber !== tokenData.phoneNumber) {
-      throw new BadRequestException('Registration data does not match verified credentials');
-    }
+      // NEW: Combine session data (verified email/phone) with user input
+      const completeUserData = {
+        email: tokenData.email,
+        countryCode: tokenData.countryCode,
+        phoneNumber: tokenData.phoneNumber,
+        firstName: registerUserDto.firstName,
+        lastName: registerUserDto.lastName,
+        role: registerUserDto.role
+      };
 
-    try {
-      // Create user
-      const userId = await this.authRepository.registerUser(registerUserDto);
+      // Create user with complete data
+      const userId = await this.authRepository.registerUser(completeUserData.email,completeUserData.countryCode, completeUserData.phoneNumber,completeUserData.firstName, completeUserData.lastName, completeUserData.role);
       
       // NEW: Generate JWT token with userId
       const payload = { userId };
@@ -190,11 +193,17 @@ export class AuthService {
       return { 
         userId, 
         access_token,
-        message: 'User registered successfully' 
+        message: 'User registered successfully',
+        // NEW: Return the verified email/phone for confirmation
+        userData: {
+          email: tokenData.email,
+          phone: `${tokenData.countryCode}${tokenData.phoneNumber}`,
+          firstName: registerUserDto.firstName,
+          lastName: registerUserDto.lastName,
+          role: registerUserDto.role
+        }
       };
-    } catch (error) {
-      throw new BadRequestException('Failed to create user');
-    }
+
   }
 
   // NEW: Updated helper method for better session management

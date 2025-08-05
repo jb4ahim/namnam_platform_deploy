@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { PostgresService } from '@namnam/database';
-import { RegisterUserDto } from './dto/register-user.dto';
 
 @Injectable()
 export class AuthRepository {
@@ -26,9 +25,49 @@ export class AuthRepository {
     return rows[0]?.is_valid || false;
   }
 
-  async registerUser(user: RegisterUserDto) {
+  // UPDATED: Register user using PROCEDURE with correct parameter order
+  async registerUser(
+    email: string,
+    countryCode: string,
+    phoneNumber: string,
+    firstName: string,
+    lastName: string,
+    role: string
+  ) {
+    // Calls the create_merchant stored procedure - only pass IN parameters
+    // OUT parameters are handled automatically by PostgreSQL
+   const rows = await this.pg.query(
+      `CALL create_merchant(
+        $1::varchar, 
+        $2::varchar, 
+        $3::varchar, 
+        $4::varchar, 
+        $5::varchar, 
+        $6::varchar,
+        $7::varchar
+      )`, 
+      [
+        email,
+        countryCode,
+        phoneNumber,
+        firstName,
+        lastName,
+        role,
+        'USD' // Explicit currency parameter
+      ]
+    );
+    
+    const result = rows[0];
+    if (!result.o_success) {
+      throw new Error(result.o_message);
+    }
+    
+    return result.o_user_id;
+  }
+
+  async createWithPhone(phone: string) {
     // Calls a stored procedure or function
-    const rows = await this.pg.query('SELECT create_user_with_phone($1)', [user]);
+    const rows = await this.pg.query('SELECT create_user_with_phone($1)', [phone]);
     return rows[0];
   }
 }
