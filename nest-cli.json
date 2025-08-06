@@ -23,7 +23,7 @@
       "type": "application",
       "root": "apps/customer-api",
       "entryFile": "main",
-      "sourceRoot": "apps/customer-api/src",
+      "sourceRoot": "src",
       "compilerOptions": {
         "tsConfigPath": "apps/customer-api/tsconfig.app.json"
       }
@@ -32,7 +32,7 @@
       "type": "application",
       "root": "apps/management-api",
       "entryFile": "main",
-      "sourceRoot": "apps/management-api/src",
+      "sourceRoot": "src",
       "compilerOptions": {
         "tsConfigPath": "apps/management-api/tsconfig.app.json"
       }
@@ -41,7 +41,7 @@
       "type": "application",
       "root": "apps/restaurant-api",
       "entryFile": "main",
-      "sourceRoot": "apps/restaurant-api/src",
+      "sourceRoot": "src",
       "compilerOptions": {
         "tsConfigPath": "apps/restaurant-api/tsconfig.app.json"
       }
