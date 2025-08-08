@@ -4,13 +4,15 @@ import { GlobalExceptionFilter } from '@namnam/common/filters/global-exception.f
 import { ResponseEnvelopeInterceptor } from '@namnam/common/interceptors/response-envelope.interceptor';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from '@namnam/common/logger';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
         isGlobal: true,
     }),
-    LoggerModule
+    LoggerModule,
+    AuthModule
   ],
   providers: [ {
         provide: APP_FILTER,
