@@ -59,13 +59,9 @@ export class AuthRepository {
     // If it's a procedure returning OUT params: CALL get_management_user_by_email($1)
     // If it's a function returning a row: SELECT * FROM get_management_user_by_email($1)
     // We prefer CALL first; if no rows, fallback to SELECT.
-    try {
-      const rows = await this.pg.query('CALL get_management_user_by_email($1)', [email]);
+      const rows = await this.pg.query('CALL get_management_user_by_email_json($1)', [email]);
       return rows?.[0] ?? null;
-    } catch (_) {
-      const rows = await this.pg.query('SELECT * FROM get_management_user_by_email($1)', [email]);
-      return rows?.[0] ?? null;
-    }
+
   }
 }
 
