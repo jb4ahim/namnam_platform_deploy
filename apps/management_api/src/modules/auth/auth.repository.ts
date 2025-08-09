@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PostgresService } from '@app/database';
+import { DatabaseUtils, PostgresService } from '@app/database';
 
 type InsertManagementUserParams = {
   name: string;
@@ -9,7 +9,17 @@ type InsertManagementUserParams = {
   countryCode?: string | null;
   passwordHash: string;
 };
-
+type ManagementUser = {
+  management_user_id: string;
+  user_id: string;
+  email: string;
+  password_hash: string;
+  status?: string;
+  name?: string;
+  phone_number?: string;
+  default_currency?: string;
+  country_code?: string;
+};
 @Injectable()
 export class AuthRepository {
   constructor(private readonly pg: PostgresService) {}
@@ -43,26 +53,33 @@ export class AuthRepository {
   };
 }
 
-  // Fetch login data via stored procedure/function for management user
-  async getManagementUserByEmail(email: string): Promise<{
-    management_user_id: string;
-    user_id: string;
-    email: string;
-    password_hash: string;
-    status?: string;
-    name?: string;
-    phone_number?: string;
-    default_currency?: string;
-    country_code?: string;
-  } | null> {
-    // Assuming a stored function/procedure exists to fetch user by email.
-    // If it's a procedure returning OUT params: CALL get_management_user_by_email($1)
-    // If it's a function returning a row: SELECT * FROM get_management_user_by_email($1)
-    // We prefer CALL first; if no rows, fallback to SELECT.
-      const rows = await this.pg.query('Select get_management_user_by_email_json($1)', [email]);
-      console.log(rows);
-      return rows?.[0] ?? null;
+  /**
+   * Get management user by email using database function
+   */
+  async getManagementUserByEmail(email: string): Promise<ManagementUser | null> {
+    const result = await DatabaseUtils.callFunction<ManagementUser>(
+      this.pg,
+      'get_management_user_by_email_json',
+      [email]
+    );
 
+    if (!result) {
+      return null;
+    }
+
+    // Ensure proper type conversion and handle possible array result
+    const user = Array.isArray(result) ? result[0] : result;
+    return {
+      management_user_id: user?.management_user_id?.toString(),
+      user_id: user?.user_id?.toString(),
+      email: user?.email,
+      password_hash: user?.password_hash,
+      status: user?.status,
+      name: user?.name,
+      phone_number: user?.phone_number,
+      default_currency: user?.default_currency,
+      country_code: user?.country_code
   }
 }
 
+}
