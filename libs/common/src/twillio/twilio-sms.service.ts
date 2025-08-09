@@ -1,7 +1,7 @@
 // src/common/twilio/twilio-sms.service.ts
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import twilio from 'twilio';
+import * as twilio from 'twilio';
 import { LoggerService } from '../logger';
 
 @Injectable()

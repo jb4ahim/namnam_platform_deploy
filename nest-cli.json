@@ -1,13 +1,24 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "apps",
+  "sourceRoot": "apps/customer_api/src",
   "compilerOptions": {
     "deleteOutDir": true,
-    "webpack": false
+    "webpack": true,
+    "tsConfigPath": "apps/customer_api/tsconfig.app.json"
   },
   "monorepo": true,
+  "root": "apps/customer_api",
   "projects": {
+    "auth": {
+      "type": "library",
+      "root": "libs/auth",
+      "entryFile": "index",
+      "sourceRoot": "libs/auth/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/auth/tsconfig.lib.json"
+      }
+    },
     "common": {
       "type": "library",
       "root": "libs/common",
@@ -17,31 +28,40 @@
         "tsConfigPath": "libs/common/tsconfig.lib.json"
       }
     },
-    "customer-api": {
+    "customer_api": {
       "type": "application",
-      "root": "apps/customer-api",
+      "root": "apps/customer_api",
       "entryFile": "main",
-      "sourceRoot": "src",
+      "sourceRoot": "apps/customer_api/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/customer-api/tsconfig.app.json"
+        "tsConfigPath": "apps/customer_api/tsconfig.app.json"
       }
     },
-    "management-api": {
-      "type": "application",
-      "root": "apps/management-api",
-      "entryFile": "main",
-      "sourceRoot": "src",
+    "database": {
+      "type": "library",
+      "root": "libs/database",
+      "entryFile": "index",
+      "sourceRoot": "libs/database/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/management-api/tsconfig.app.json"
+        "tsConfigPath": "libs/database/tsconfig.lib.json"
       }
     },
-    "restaurant-api": {
+    "management_api": {
       "type": "application",
-      "root": "apps/restaurant-api",
+      "root": "apps/management_api",
       "entryFile": "main",
-      "sourceRoot": "src",
+      "sourceRoot": "apps/management_api/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/restaurant-api/tsconfig.app.json"
+        "tsConfigPath": "apps/management_api/tsconfig.app.json"
+      }
+    },
+    "merchant_api": {
+      "type": "application",
+      "root": "apps/merchant_api",
+      "entryFile": "main",
+      "sourceRoot": "apps/merchant_api/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/merchant_api/tsconfig.app.json"
       }
     }
   }
