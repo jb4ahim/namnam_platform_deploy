@@ -36,6 +36,7 @@ export class AuthService {
 
   async login(dto: LoginManagementUserDto) {
     const user = await this.authRepository.getManagementUserByEmail(dto.email);
+    console.log("user", user);
     if (!user || !user.password_hash) {
       throw new Error('Invalid credentials');
     }

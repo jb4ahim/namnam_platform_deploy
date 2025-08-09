@@ -16,32 +16,32 @@ export class AuthRepository {
 
   // Calls stored procedure insert_management_user; no ad-hoc SQL tables access
   async insertManagementUser(params: InsertManagementUserParams): Promise<{
-    management_user_id: string;
-    user_id: string;
-    status?: string;
-  }> {
-    // Assuming the procedure signature maps to IN params in this order and returns OUT columns
-    // name, email, phone_number, default_currency, country_code, password_hash
-    const rows = await this.pg.query(
-      'CALL insert_management_user($1, $2, $3, $4, $5, $6)',
-      [
-        params.name,
-        params.email,
-        params.phoneNumber ?? null,
-        params.defaultCurrency ?? null,
-        params.countryCode ?? null,
-        params.passwordHash
-      ]
-    );
+  management_user_id: string;
+  user_id: string;
+  status?: string;
+}> {
+  // Use CALL for procedures, not SELECT
+  // The procedure has OUT parameters, so we need to handle them properly
+  const rows = await this.pg.query(
+    'CALL insert_management_user($1, $2, $3, $4, $5, $6, NULL, NULL, NULL)',
+    [
+      params.name,
+      params.email,
+      params.phoneNumber ?? null,
+      params.defaultCurrency ?? null,
+      params.countryCode ?? null,
+      params.passwordHash
+    ]
+  );
 
-    const row: any = rows?.[0] ?? {};
+  const row: any = rows?.[0] ?? {};
 
-    return {
-      management_user_id: row.management_user_id ?? row.o_management_user_id ?? row.mgmt_user_id,
-      user_id: row.user_id ?? row.o_user_id,
-      status: row.status ?? row.o_status
-    };
-  }
+  return {
+    management_user_id: (row.management_user_id ?? row.o_management_user_id ?? row.mgmt_user_id)?.toString(),
+    user_id: (row.user_id ?? row.o_user_id)?.toString(),
+    status: row.status ?? row.o_status
+  };
+}
 
   // Fetch login data via stored procedure/function for management user
   async getManagementUserByEmail(email: string): Promise<{
@@ -59,7 +59,8 @@ export class AuthRepository {
     // If it's a procedure returning OUT params: CALL get_management_user_by_email($1)
     // If it's a function returning a row: SELECT * FROM get_management_user_by_email($1)
     // We prefer CALL first; if no rows, fallback to SELECT.
-      const rows = await this.pg.query('CALL get_management_user_by_email_json($1)', [email]);
+      const rows = await this.pg.query('Select get_management_user_by_email_json($1)', [email]);
+      console.log(rows);
       return rows?.[0] ?? null;
 
   }

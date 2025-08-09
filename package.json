@@ -22,8 +22,11 @@
     "build:merchant": "nest build merchant_api",
     "build:management": "nest build management_api",
     "start:customer": "nest start customer_api",
+    "start:dev:customer": "nest start customer_api --watch",
     "start:merchant": "nest start merchant_api",
-    "start:management": "nest start management_api"
+    "start:dev:merchant": "nest start merchant_api --watch",
+    "start:management": "nest start management_api",
+    "start:dev:management": "nest start management_api --watch"
   },
   "dependencies": {
    "@blazity/nest-file-fastify": "^1.0.0",
