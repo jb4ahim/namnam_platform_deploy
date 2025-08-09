@@ -18,12 +18,12 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./apps/namnam_platform/test/jest-e2e.json",
-    "build:customer": "nest build customer-api",
-    "build:merchant": "nest build merchant-api",
-    "build:management": "nest build management-api",
-    "start:customer": "nest start customer-api",
-    "start:merchant": "nest start merchant-api",
-    "start:management": "nest start management-api"
+    "build:customer": "nest build customer_api",
+    "build:merchant": "nest build merchant_api",
+    "build:management": "nest build management_api",
+    "start:customer": "nest start customer_api",
+    "start:merchant": "nest start merchant_api",
+    "start:management": "nest start management_api"
   },
   "dependencies": {
    "@blazity/nest-file-fastify": "^1.0.0",
