@@ -16,7 +16,15 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
       transform: true
     }));
-  await app.listen({ port: 3003, host: '0.0.0.0' });
-  console.log('URL:', await app.getUrl());
+    // Use Render's PORT environment variable
+    const port = process.env.PORT || "3003";
+  
+    await app.listen({ 
+      port: parseInt(port), 
+      host: '0.0.0.0' 
+    });
+    
+    console.log(`Application is running on port ${port}`);
+    console.log('URL:', await app.getUrl());
 }
 bootstrap();
