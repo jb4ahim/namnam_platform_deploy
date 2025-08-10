@@ -19,7 +19,7 @@ async function bootstrap() {
     // Use Render's PORT environment variable
     const port = process.env.PORT || "3003";
   
-    await app.listen({ 
+    await app.listen({
       port: parseInt(port), 
       host: '0.0.0.0' 
     });
