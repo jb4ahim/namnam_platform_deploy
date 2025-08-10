@@ -1,4 +1,4 @@
-import { PostgresService } from '@app/database';
+import { DatabaseUtils, PostgresService } from '@app/database';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -12,23 +12,55 @@ export class UsersRepository {
     return rows[0] || null;
   }
 
+  // async findUserByPhone(countryCode: string,phoneNumber: string) {
+  //   const rows = await this.pg.query('Select fetch_user_by_phone($1, $2)', [countryCode, phoneNumber]);
+  //   console.log('saveOtp', rows);
+  //   return rows[0] || null;
+  // }
   async findUserByPhone(countryCode: string,phoneNumber: string) {
-    const rows = await this.pg.query('Call select_user_by_phone($1, $2, $3, $4, $5)', [countryCode, phoneNumber]);
-    console.log('saveOtp', rows);
-    return rows[0] || null;
+    const result = await DatabaseUtils.callFunction(
+      this.pg,
+      'fetch_user_by_phone',
+      [countryCode, phoneNumber],
+      false
+    );
+    return (result) ?? [];
   }
-
   async getCustomerInfos(userId: number) {
     const rows = await this.pg.query('Call select_user_infos($1, $2, $3, $4, $5)', [userId]);
     console.log('saveOtp', rows);
     return rows[0] || null;
   }
 
-  async createUserWithPhone(countryCode: string, phoneNumber: string, firstName: string, lastName: string, email?: string): Promise<number> {
-    const query = ` CALL insert_customer_simple($1, $2, $3, $4, $5, new_user_id);`;
+  async createUserWithPhone(
+    countryCode: string, 
+    phoneNumber: string, 
+    firstName: string, 
+    lastName: string, 
+    email?: string,
+    gender?: string,
+    birthday?: Date,
+    defaultCurrency?: string,
+    status?: string
+  ): Promise<number> {
+    const result = await DatabaseUtils.callProcedure(
+      this.pg,
+      'insert_customer_infos',
+      [
+        countryCode,
+        phoneNumber, 
+        firstName,
+        lastName,
+        email || null,
+        gender || null,
+        birthday || null,
+        defaultCurrency || null,
+        status || 'active',
+        null // user_id INOUT parameter
+      ]
+    );
     
-    const rows = await this.pg.query(query, [countryCode, phoneNumber, firstName, lastName, email || null]);
-    console.log('createUserWithPhone', rows);
-    return rows[0].new_user_id || null;
-    }
+    console.log('createUserWithPhone', result);
+    return result?.user_id || null;
+  }
 }

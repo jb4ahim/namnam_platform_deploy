@@ -22,6 +22,7 @@ export class AuthService {
 
   async sendOtp(sendOtpDto: SendOtpDto) {
      //
+      await this.authRepository.saveOtpPhone(sendOtpDto.countryCode, sendOtpDto.phoneNumber, '123456');
     //  const phoneNumber = `${sendOtpDto.countryCode}${sendOtpDto.phoneNumber}`
     //  const result = await this.twilioService.sendOTPViaSMS(phoneNumber);
     // await this.authRepository.saveOtp(sendOtpDto.countryCode, sendOtpDto.phoneNumber, result);
@@ -30,16 +31,19 @@ export class AuthService {
 
 
   async verifyOtp(verifyOtpDto: VerifyOtpDto) {
-    // const expectedCode = await this.cache.get(`otp:${phone}`);
-    // For demo, just accept any code (replace this with cache logic above)
+    
     // if (code !== expectedCode)
     if (!verifyOtpDto.code || verifyOtpDto.code !== '123456') {
       throw new UnauthorizedException('Invalid or expired code');
     }
 
     // Find or create the user
-    let userId = await this.usersService.findUserByPhone(verifyOtpDto.countryCode, verifyOtpDto.phoneNumber);
+    const phoneKey = verifyOtpDto.countryCode + verifyOtpDto.phoneNumber;
 
+    await this.authRepository.verifyOtp(phoneKey, verifyOtpDto.code);
+    
+    let userId = await this.usersService.findUserByPhone(verifyOtpDto.countryCode, verifyOtpDto.phoneNumber);
+    console.log('user', userId);
     if (userId) {
        // JWT
       const payload = { userId: userId};

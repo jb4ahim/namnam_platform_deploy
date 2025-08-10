@@ -17,7 +17,17 @@ export class UsersService {
     return user;
   }
   async createUserWithPhone(registerUserDto: RegisterUserDto): Promise<number> {
-    const userId = await this.usersRepository.createUserWithPhone(registerUserDto.countryCode, registerUserDto.phoneNumber, registerUserDto.firstName, registerUserDto.lastName, registerUserDto.email);
+    const userId = await this.usersRepository.createUserWithPhone(
+      registerUserDto.countryCode, 
+      registerUserDto.phoneNumber, 
+      registerUserDto.firstName, 
+      registerUserDto.lastName, 
+      registerUserDto.email,
+      registerUserDto.gender,
+      registerUserDto.birthday ? new Date(registerUserDto.birthday) : undefined,
+      registerUserDto.defaultCurrency,
+      registerUserDto.status
+    );
     return userId;
   }
   
