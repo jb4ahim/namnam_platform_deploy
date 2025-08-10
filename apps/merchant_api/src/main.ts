@@ -17,6 +17,14 @@ async function bootstrap() {
     forbidNonWhitelisted: true,
     transform: true
   }));
-  await app.listen(3001, '0.0.0.0');
+  const port = process.env.PORT || "3001";
+  
+    await app.listen({ 
+      port: parseInt(port), 
+      host: '0.0.0.0' 
+    });
+    
+    console.log(`Application is running on port ${port}`);
+    console.log('URL:', await app.getUrl());
 }
 bootstrap();
