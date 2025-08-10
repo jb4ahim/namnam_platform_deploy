@@ -6,6 +6,7 @@ import { DatabaseModule } from '@app/database';
 import { GlobalExceptionFilter } from 'nest generate library auth/common/filters/global-exception.filter';
 import { LoggerModule } from 'nest generate library auth/common/logger';
 import { ResponseEnvelopeInterceptor } from 'nest generate library auth/common/interceptors/response-envelope.interceptor';
+import { UploadsModule } from './modules/uploads/uploads.module';
 
 @Module({
   imports: [
@@ -14,7 +15,8 @@ import { ResponseEnvelopeInterceptor } from 'nest generate library auth/common/i
     }),
     DatabaseModule, 
     AuthModule, 
-    LoggerModule
+    LoggerModule,
+    UploadsModule
   ],
   providers: [
     {

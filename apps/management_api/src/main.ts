@@ -1,31 +1,38 @@
 import { NestFactory } from '@nestjs/core';
-import {
-  FastifyAdapter,
-  NestFastifyApplication
-} from '@nestjs/platform-fastify';
-import { NamnamManagementApiModule } from './namnam_management_api.module';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+import multipart from '@fastify/multipart';
 import { ValidationPipe } from '@nestjs/common';
+import { NamnamManagementApiModule } from './namnam_management_api.module';
 
 async function bootstrap() {
+  const adapter = new FastifyAdapter();
+
+  await adapter.register(multipart, {
+    attachFieldsToBody: false,
+    limits: {
+      fileSize: 2 * 1024 * 1024, // 2MB
+      files: 1
+    }
+  });
+
   const app = await NestFactory.create<NestFastifyApplication>(
     NamnamManagementApiModule,
-    new FastifyAdapter()
+    adapter
   );
+
   app.enableCors({ origin: true });
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
     forbidNonWhitelisted: true,
     transform: true
-    }));
-    // Use Render's PORT environment variable
-    const port = process.env.PORT || "3003";
-  
-    await app.listen({
-      port: parseInt(port), 
-      host: '0.0.0.0' 
-    });
-    
-    console.log(`Application is running on port ${port}`);
-    console.log('URL:', await app.getUrl());
+  }));
+
+  const port = process.env.PORT || '4003';
+  await app.listen({ port: parseInt(port), host: '0.0.0.0' });
+  // eslint-disable-next-line no-console
+  console.log(`Management API running on port ${port}`);
 }
+
 bootstrap();
+
+ 
