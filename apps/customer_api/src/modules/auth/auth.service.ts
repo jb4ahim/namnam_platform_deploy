@@ -61,6 +61,7 @@ export class AuthService {
 
     // Create user if not exists
     const userId = await this.usersService.createUserWithPhone(registerUserDto);
+    console.log('userId', userId);
     if (!userId) {
       throw new UnauthorizedException('User creation failed');
     }

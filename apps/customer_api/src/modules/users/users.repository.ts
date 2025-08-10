@@ -24,7 +24,8 @@ export class UsersRepository {
       [countryCode, phoneNumber],
       false
     );
-    return (result) ?? [];
+    console.log('findUserByPhone', result); 
+    return (result) ?? null;
   }
   async getCustomerInfos(userId: number) {
     const rows = await this.pg.query('Call select_user_infos($1, $2, $3, $4, $5)', [userId]);
@@ -51,16 +52,19 @@ export class UsersRepository {
         phoneNumber, 
         firstName,
         lastName,
+        null,
+        // OUT parameter is handled automatically by the procedure
         email || null,
         gender || null,
         birthday || null,
         defaultCurrency || null,
-        status || 'active',
-        null // user_id INOUT parameter
+        status || 'active'
+        // No need for user_id parameter - it's OUT
       ]
     );
     
     console.log('createUserWithPhone', result);
-    return result?.user_id || null;
+    return result?.user_id || result?.p_user_id;
   }
+  
 }

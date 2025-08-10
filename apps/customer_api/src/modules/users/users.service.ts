@@ -13,7 +13,7 @@ export class UsersService {
 
   async findUserByPhone(countryCode: string, phoneNumber: string) {
     const user = await this.usersRepository.findUserByPhone(countryCode, phoneNumber);
-    if (!user) throw new UnauthorizedException('User not found');
+    // if (!user) throw new UnauthorizedException('User not found');
     return user;
   }
   async createUserWithPhone(registerUserDto: RegisterUserDto): Promise<number> {

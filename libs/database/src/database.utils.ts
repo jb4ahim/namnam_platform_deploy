@@ -17,9 +17,13 @@ export class DatabaseUtils {
     }
 
     const row = rows[0];
-    
+    console.log('row', row);
+    console.log('functionName', functionName);
+    console.log('rows', rows);
+    console.log('rows[0]', rows[0]);
+    console.log('row[functionName]', row[functionName]);
     // Check if data is nested in function name property
-    if (row && typeof row === 'object' && row[functionName]) {
+    if (row && typeof row === 'object') {
       return row[functionName];
     }
     
