@@ -21,11 +21,11 @@
     "build:customer": "nest build customer_api",
     "build:merchant": "nest build merchant_api",
     "build:management": "nest build management_api",
-    "start:customer": "nest start customer_api",
+    "start:customer": "node dist/apps/customer_api/main.js",
     "start:dev:customer": "nest start customer_api --watch",
-    "start:merchant": "nest start merchant_api",
+    "start:merchant": "node dist/apps/merchant_api/main.js",
     "start:dev:merchant": "nest start merchant_api --watch",
-    "start:management": "nest start management_api",
+    "start:management": "node dist/apps/management_api/main.js",
     "start:dev:management": "nest start management_api --watch"
   },
   "dependencies": {
