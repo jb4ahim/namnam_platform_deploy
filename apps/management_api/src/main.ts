@@ -5,16 +5,18 @@ import {
 } from '@nestjs/platform-fastify';
 import { NamnamManagementApiModule } from './namnam_management_api.module';
 import { ValidationPipe } from '@nestjs/common';
+import { CorsOptions } from 'libs/common/src/cors';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     NamnamManagementApiModule,
     new FastifyAdapter()
   );
-   app.useGlobalPipes(new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true
+  app.enableCors({ origin: true });
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    transform: true
     }));
     // Use Render's PORT environment variable
     const port = process.env.PORT || "3003";

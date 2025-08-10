@@ -11,7 +11,7 @@ async function bootstrap() {
     NamnamCustomerApiModule,
     new FastifyAdapter()
   );
-  
+  app.enableCors({ origin: true });
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
     forbidNonWhitelisted: true,
