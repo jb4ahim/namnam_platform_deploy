@@ -17,11 +17,11 @@ app.enableCors({ origin: true });
     forbidNonWhitelisted: true,
     transform: true
   }));
-  const port = process.env.PORT || "5634";
+  const port = process.env.PORT || "3001";
   
     await app.listen({ 
-      port: parseInt(port), 
-      host: '0.0.0.0' 
+      port: parseInt(port),
+      host: '0.0.0.0'
     });
     
     console.log(`Application is running on port ${port}`);
