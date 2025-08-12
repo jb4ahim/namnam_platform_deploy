@@ -1,23 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseUtils, PostgresService } from '@app/database';
+import { Console } from 'console';
 
 export type Category = {
   id: string;
   name: string;
   description?: string | null;
   is_active?: boolean;
+  parent_id?: string | null;
 };
 
 @Injectable()
 export class CategoriesRepository {
   constructor(private readonly pg: PostgresService) {}
 
-  async getAllCategories(): Promise<Category[]> {
+  async getAllCategories(parentId?: number): Promise<Category[]> {
+    console.log(parentId);
     const result = await DatabaseUtils.callFunction<Category[] | Category>(
       this.pg,
-      'management_get_categories_json',
-      [],
-      true
+      'select_categories',
+      [parentId ?? null],
+      false
     );
     return (result as Category[]) ?? [];
   }

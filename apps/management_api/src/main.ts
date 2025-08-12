@@ -10,7 +10,7 @@ async function bootstrap() {
   await adapter.register(multipart, {
     attachFieldsToBody: false,
     limits: {
-      fileSize: 2 * 1024 * 1024, // 2MB
+      fileSize: 2 * 1024 * 1024, 
       files: 1
     }
   });
@@ -27,9 +27,8 @@ async function bootstrap() {
     transform: true
   }));
 
-  const port = process.env.PORT || '4003';
+  const port = process.env.PORT || '3003';
   await app.listen({ port: parseInt(port), host: '0.0.0.0' });
-  // eslint-disable-next-line no-console
   console.log(`Management API running on port ${port}`);
 }
 

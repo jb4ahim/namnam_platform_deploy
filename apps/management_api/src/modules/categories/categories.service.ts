@@ -7,8 +7,8 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 export class CategoriesService {
   constructor(private readonly categoriesRepository: CategoriesRepository) {}
 
-  async getAll() {
-    return this.categoriesRepository.getAllCategories();
+  async getAll(parentId?: number) {
+    return this.categoriesRepository.getAllCategories(parentId);
   }
 
   async create(dto: CreateCategoryDto) {

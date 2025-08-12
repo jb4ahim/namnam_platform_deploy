@@ -44,7 +44,7 @@ export class DatabaseUtils {
 
     return rows.map(row => {
       // Check if data is nested in function name property
-      if (row && typeof row === 'object' && row[functionName]) {
+      if (row && typeof row === 'object') {
         return row[functionName];
       }
       
