@@ -3,9 +3,9 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { AuthModule } from './modules/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from '@app/database';
-import { GlobalExceptionFilter } from 'nest generate library auth/common/filters/global-exception.filter';
-import { LoggerModule } from 'nest generate library auth/common/logger';
-import { ResponseEnvelopeInterceptor } from 'nest generate library auth/common/interceptors/response-envelope.interceptor';
+import { GlobalExceptionFilter } from '@app/common';
+import { LoggerModule } from '@app/common';
+import { ResponseEnvelopeInterceptor } from '@app/common';
 import { UploadsModule } from './modules/uploads/uploads.module';
 
 @Module({

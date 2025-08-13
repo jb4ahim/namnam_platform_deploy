@@ -36,10 +36,10 @@
       "@app/storage/*": [
         "libs/storage/src/*"
       ],
-      "nest generate library auth/common": [
+      "@app/common": [
         "libs/common/src"
       ],
-      "nest generate library auth/common/*": [
+      "@app/common/*": [
         "libs/common/src/*"
       ]
     }

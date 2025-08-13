@@ -4,7 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthController } from './auth.controller';
 import { UsersModule } from '../users/users.module';
-import { TwilioModule } from 'nest generate library auth/common/twillio';
+// import { TwilioModule } from '@app/common';
 import { JwtStrategyWithConfig } from '@app/auth';
 import { DatabaseModule } from '@app/database';
 import { AuthRepository } from './auth.repository';
@@ -22,7 +22,7 @@ import { AuthRepository } from './auth.repository';
       }),
       inject: [ConfigService]
     }),
-    TwilioModule,
+    // TwilioModule,
     UsersModule,
     DatabaseModule
   ],

@@ -5,7 +5,7 @@ import { RegisterUserDto } from './dto/register-user.dto';
 import { SendOtpDto } from './dto/send-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { v4 as uuidv4 } from 'uuid';
-import { TwilioSmsService } from 'nest generate library auth/common/twillio';
+// import { TwilioSmsService } from '@app/common';
 
 // NEW: Updated interfaces for better session management
 interface VerificationSession {
@@ -39,7 +39,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
 
     private readonly authRepository: AuthRepository,
-    private readonly twilioService: TwilioSmsService
+    // private readonly twilioService: TwilioSmsService
   ) {
     // NEW: Clean up expired sessions and tokens every 5 minutes
     setInterval(() => this.cleanupExpired(), 5 * 60 * 1000);

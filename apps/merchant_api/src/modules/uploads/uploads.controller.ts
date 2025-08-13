@@ -38,7 +38,7 @@ export class UploadsController {
       key: presigned.key,
       url: presigned.url,
       fields: presigned.fields,
-      expiresInSeconds: presigned.expiresInSeconds,
+      expiresInSeconds: presigned.expiresInSeconds
     };
   }
 }

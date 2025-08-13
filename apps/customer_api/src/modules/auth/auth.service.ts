@@ -5,7 +5,7 @@ import { AuthRepository } from './auth.repository';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { SendOtpDto } from './dto/send-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
-import { TwilioSmsService } from 'nest generate library auth/common/twillio';
+// import { TwilioSmsService } from '@app/common';
 // If using a cache (e.g., Redis), inject it or use your own storage solution
 
 @Injectable()
@@ -16,7 +16,7 @@ export class AuthService {
     @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
     private readonly authRepository: AuthRepository,
-    private readonly twilioService: TwilioSmsService
+    // private readonly twilioService: TwilioSmsService
     // private readonly cache: CacheService, // Optional cache for OTP
   ) {}
 
