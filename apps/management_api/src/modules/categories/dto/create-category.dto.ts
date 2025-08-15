@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString, MaxLength, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, MaxLength, IsUUID, IsNumber } from 'class-validator';
 
 export class CreateCategoryDto {
   @IsString()
@@ -6,14 +6,10 @@ export class CreateCategoryDto {
   @MaxLength(100)
   name: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(50)
-  type: string;
 
-  @IsUUID()
+  @IsNumber()
   @IsOptional()
-  parentId?: string;
+  parentId?: number;
 
   @IsString()
   @IsOptional()

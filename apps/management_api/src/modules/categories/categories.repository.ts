@@ -31,7 +31,7 @@ export class CategoriesRepository {
     const result = await DatabaseUtils.callProcedure<Category>(
       this.pg,
       'create_category',
-      [params.name, params.type, params.parentId, params.status, params.imageKey]
+      [params.name, params.parentId, params.status, params.imageKey, null]
     );
   }
 
