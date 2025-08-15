@@ -4,7 +4,7 @@ import { IsInt, IsOptional, Min, Max } from 'class-validator';
 import { API_CONSTANTS } from '../constants';
 
 export class PaginationQueryDto {
-  @ApiProperty({ 
+  @ApiProperty({
     example: 1, 
     description: 'Page number (1-based)',
     minimum: 1,
@@ -30,7 +30,7 @@ export class PaginationQueryDto {
   @IsOptional()
   pageSize?: number = API_CONSTANTS.DEFAULT_PAGE_SIZE;
 
-  @ApiProperty({ 
+  @ApiProperty({
     example: 'createdAt',
     description: 'Field to sort by',
     required: false
@@ -38,7 +38,7 @@ export class PaginationQueryDto {
   @IsOptional()
   sortBy?: string;
 
-  @ApiProperty({ 
+  @ApiProperty({
     example: 'ASC',
     description: 'Sort order',
     enum: ['ASC', 'DESC'],
@@ -94,7 +94,7 @@ export class PaginatedResultDto<T> {
       items,
       totalCount,
       pagination.page || API_CONSTANTS.DEFAULT_PAGE,
-      pagination.pageSize || API_CONSTANTS.DEFAULT_PAGE_SIZE,
+      pagination.pageSize || API_CONSTANTS.DEFAULT_PAGE_SIZE
     );
   }
 }

@@ -37,9 +37,7 @@ export class AuthService {
 
   constructor(
     private readonly jwtService: JwtService,
-
-    private readonly authRepository: AuthRepository,
-    // private readonly twilioService: TwilioSmsService
+    private readonly authRepository: AuthRepository
   ) {
     // NEW: Clean up expired sessions and tokens every 5 minutes
     setInterval(() => this.cleanupExpired(), 5 * 60 * 1000);
@@ -77,7 +75,6 @@ export class AuthService {
         return { step: 2, sessionId };
       }
     }
-
     throw new BadRequestException('Invalid OTP request');
   }
 
@@ -126,7 +123,8 @@ export class AuthService {
       const registrationToken = uuidv4();
       const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
 
-      this.registrationTokens.set(registrationToken, {
+      this.registrationTokens.set(registrationToken, 
+      {
         email: session.email,
         countryCode: session.countryCode,
         phoneNumber: session.phoneNumber,

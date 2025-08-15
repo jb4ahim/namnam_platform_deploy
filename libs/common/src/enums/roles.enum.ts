@@ -12,5 +12,5 @@ export const RoleHierarchy: Record<Role, number> = {
   [Role.ADMIN]: 4,
   [Role.MANAGER]: 3,
   [Role.USER]: 2,
-  [Role.GUEST]: 1,
+  [Role.GUEST]: 1
 };
