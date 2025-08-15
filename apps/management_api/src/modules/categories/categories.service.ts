@@ -11,7 +11,7 @@ export class CategoriesService {
     return this.categoriesRepository.getAllCategories(parentId);
   }
 
-  async create(dto: CreateCategoryDto) {
+  async create(dto: CreateCategoryDto) : Promise<void> {
     return this.categoriesRepository.createCategory(dto);
   }
 

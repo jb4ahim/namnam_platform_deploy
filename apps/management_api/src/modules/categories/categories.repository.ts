@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseUtils, PostgresService } from '@app/database';
 import { Console } from 'console';
+import { CreateCategoryDto } from './dto/create-category.dto';
+import { UpdateCategoryDto } from './dto/update-category.dto';
 
 export type Category = {
   id: string;
@@ -25,25 +27,19 @@ export class CategoriesRepository {
     return (result as Category[]) ?? [];
   }
 
-  async createCategory(params: { name: string; description?: string | null }): Promise<Category> {
-    const result = await DatabaseUtils.callFunction<Category>(
+  async createCategory(params: CreateCategoryDto): Promise<void> {
+    const result = await DatabaseUtils.callProcedure<Category>(
       this.pg,
-      'management_create_category_json',
-      [params.name, params.description ?? null],
-      false
+      'create_category',
+      [params.name, params.type, params.parentId, params.status, params.imageKey]
     );
-    if (!result) {
-      throw new Error('Failed to create category');
-    }
-    return result as Category;
   }
 
-  async updateCategory(id: string, params: { name?: string; description?: string | null; is_active?: boolean }): Promise<Category> {
-    const result = await DatabaseUtils.callFunction<Category>(
+  async updateCategory(id: string, params: UpdateCategoryDto): Promise<Category> {
+    const result = await DatabaseUtils.callProcedure<Category>(
       this.pg,
-      'management_update_category_json',
-      [id, params.name ?? null, params.description ?? null, params.is_active ?? null],
-      false
+      'update_category',
+      [id, params.name ?? null, params.type ?? null, params.parentId ?? null, params.status ?? null, params.imageKey ?? null]
     );
     if (!result) {
       throw new Error('Failed to update category');

@@ -1,19 +1,29 @@
-import { IsBoolean, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsOptional, IsString, MaxLength, IsUUID, IsNumber } from 'class-validator';
 
 export class UpdateCategoryDto {
-  @IsString()
+  @IsNumber()
   @IsOptional()
   @MaxLength(100)
-  name?: string;
+  name?: number;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(50)
+  type?: string;
+
+  @IsNumber()
+  @IsOptional()
+  parentId?: number;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(50)
+  status?: string;
 
   @IsString()
   @IsOptional()
   @MaxLength(255)
-  description?: string;
-
-  @IsBoolean()
-  @IsOptional()
-  is_active?: boolean;
+  imageKey?: string;
 }
 
 

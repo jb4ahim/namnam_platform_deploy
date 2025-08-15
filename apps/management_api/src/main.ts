@@ -19,7 +19,8 @@ async function bootstrap() {
     NamnamManagementApiModule,
     adapter
   );
-
+  
+  app.setGlobalPrefix('api');
   app.enableCors({ origin: true });
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,

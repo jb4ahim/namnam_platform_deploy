@@ -8,7 +8,7 @@ import { CategoriesRepository } from './categories.repository';
   imports: [DatabaseModule],
   controllers: [CategoriesController],
   providers: [CategoriesService, CategoriesRepository],
-  exports: [CategoriesService],
+  exports: [CategoriesService]
 })
 export class CategoriesModule {}
 

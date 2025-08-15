@@ -11,6 +11,8 @@ async function bootstrap() {
     NamnamCustomerApiModule,
     new FastifyAdapter()
   );
+  app.setGlobalPrefix('api');
+
   app.enableCors({ origin: true });
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
