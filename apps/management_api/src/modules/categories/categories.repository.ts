@@ -35,16 +35,12 @@ export class CategoriesRepository {
     );
   }
 
-  async updateCategory(id: string, params: UpdateCategoryDto): Promise<Category> {
-    const result = await DatabaseUtils.callProcedure<Category>(
+  async updateCategory(id: string, params: UpdateCategoryDto): Promise<void> {
+     await DatabaseUtils.callProcedure<Category>(
       this.pg,
       'update_category',
-      [id, params.name ?? null, params.type ?? null, params.parentId ?? null, params.status ?? null, params.imageKey ?? null]
+      [id, params.name ?? null, params.parentId ?? null, params.status ?? null, params.imageKey ?? null]
     );
-    if (!result) {
-      throw new Error('Failed to update category');
-    }
-    return result as Category;
   }
 }
 

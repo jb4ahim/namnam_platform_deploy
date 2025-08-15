@@ -1,10 +1,10 @@
 import { IsOptional, IsString, MaxLength, IsUUID, IsNumber } from 'class-validator';
 
 export class UpdateCategoryDto {
-  @IsNumber()
+  @IsString()
   @IsOptional()
   @MaxLength(100)
-  name?: number;
+  name?: string;
 
   @IsString()
   @IsOptional()
