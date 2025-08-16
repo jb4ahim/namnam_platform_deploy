@@ -9,7 +9,20 @@ type PresignBody = {
 
 @Controller('uploads')
 export class UploadsController {
-  private readonly allowedMimeTypes = new Set(['image/png', 'image/jpeg', 'image/gif']);
+  private readonly allowedMimeTypes = new Set([
+    'image/png',
+    'image/jpeg',
+    'image/gif',
+    'image/webp',
+    'image/svg+xml',
+    'image/avif',
+    'image/bmp',
+    'image/tiff',
+    'image/heic',
+    'image/heif',
+    'image/ico',
+    'image/jfif',
+  ]);
 
   constructor(private readonly presignService: S3PresignService) {}
 
