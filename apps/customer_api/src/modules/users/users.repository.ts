@@ -53,13 +53,11 @@ export class UsersRepository {
         firstName,
         lastName,
         null,
-        // OUT parameter is handled automatically by the procedure
         email || null,
         gender || null,
         birthday || null,
         defaultCurrency || null,
         status || 'active'
-        // No need for user_id parameter - it's OUT
       ]
     );
     
