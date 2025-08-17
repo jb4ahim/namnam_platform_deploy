@@ -6,7 +6,8 @@ import { DatabaseModule } from '@app/database';
 import { GlobalExceptionFilter } from '@app/common';
 import { LoggerModule } from '@app/common';
 import { ResponseEnvelopeInterceptor } from '@app/common';
-import { UploadsModule } from './modules/uploads/uploads.module';
+import { UploadsModule } from '@app/common/uploads/uploads.module';
+import { AddressModule } from './modules/address/address.module';
 
 @Module({
   imports: [
@@ -15,8 +16,9 @@ import { UploadsModule } from './modules/uploads/uploads.module';
     }),
     DatabaseModule, 
     AuthModule, 
-    LoggerModule,
-    UploadsModule
+  LoggerModule,
+  UploadsModule,
+  AddressModule
   ],
   providers: [
     {

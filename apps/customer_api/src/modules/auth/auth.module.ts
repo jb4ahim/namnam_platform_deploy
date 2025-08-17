@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -23,7 +23,7 @@ import { AuthRepository } from './auth.repository';
       inject: [ConfigService]
     }),
     // TwilioModule,
-    UsersModule,
+  forwardRef(() => UsersModule),
     DatabaseModule
   ],
   providers: [
@@ -32,6 +32,6 @@ import { AuthRepository } from './auth.repository';
     JwtStrategyWithConfig
   ],
   controllers: [AuthController],
-  exports: [AuthService]
+  exports: [AuthService, JwtModule]
 })
 export class AuthModule {}

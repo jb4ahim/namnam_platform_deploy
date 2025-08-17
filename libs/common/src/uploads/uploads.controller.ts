@@ -21,7 +21,7 @@ export class UploadsController {
     'image/heic',
     'image/heif',
     'image/ico',
-    'image/jfif',
+    'image/jfif'
   ]);
 
   constructor(private readonly presignService: S3PresignService) {}

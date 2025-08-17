@@ -1,0 +1,96 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "build:customer",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"build:customer"
+			],
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "build:customer",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"build:customer"
+			],
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "build:customer:2",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"build:customer"
+			],
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "build:customer:address",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"build:customer"
+			],
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "build:customer:address:2",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"build:customer"
+			],
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "build:customer:address:sync",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"build:customer"
+			],
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "build:customer:users-jwt",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"build:customer"
+			],
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		}
+	]
+}

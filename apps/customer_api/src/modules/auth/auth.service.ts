@@ -31,7 +31,7 @@ export class AuthService {
 
 
   async verifyOtp(verifyOtpDto: VerifyOtpDto) {
-    
+    console.log('verifyOtpDto', verifyOtpDto);
     // if (code !== expectedCode)
     if (!verifyOtpDto.code || verifyOtpDto.code !== '123456') {
       throw new UnauthorizedException('Invalid or expired code');

@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { S3Client } from '@aws-sdk/client-s3';
+import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { createPresignedPost, PresignedPost } from '@aws-sdk/s3-presigned-post';
 import { randomUUID } from 'crypto';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 export type PresignRequest = {
   contentType: string;
@@ -75,5 +76,19 @@ export class S3PresignService {
 
     return { url: post.url, fields: post.fields, key, expiresInSeconds };
   }
+
+  async getPresignedDownloadUrl(key: string, expiresInSeconds: number = 60 * 5): Promise<string> {
+      const bucket = process.env.AWS_S3_BUCKET as string;
+      if (!bucket) {
+        throw new Error('AWS_S3_BUCKET is not set');
+      }
+
+      const command = new GetObjectCommand({
+        Bucket: bucket,
+        Key: key,
+      });
+
+      return await getSignedUrl(this.s3, command, { expiresIn: expiresInSeconds });
+    }
 }
 
