@@ -12,13 +12,16 @@ export class MerchantService {
   constructor(
     private readonly merchantRepository: MerchantRepository
   ) {}
+  async getMerchantInfo(merchantId: number) {
+    return await this.merchantRepository.getMerchantInfo(merchantId);
+  }
+
+  async getWeeklySchedule(merchantId: number) {
+    return await this.merchantRepository.getWeeklySchedule(merchantId);
+  }
 
   async createMerchantInfo(createMerchantInfoDto: CreateMerchantInfoDto) {
     try {
-      // Validate that either cuisineTypeIds or shopTypeIds is provided
-      if (!createMerchantInfoDto.cuisineTypeIds && !createMerchantInfoDto.shopTypeIds) {
-        throw new BadRequestException('Either cuisineTypeIds or shopTypeIds must be provided');
-      }
 
       const result = await this.merchantRepository.createMerchantInfo(createMerchantInfoDto);
       if (!result) {
@@ -35,7 +38,7 @@ export class MerchantService {
     }
   }
 
-  async createWeeklySchedule(createWeeklyScheduleDto: CreateWeeklyScheduleDto) {
+  async createWeeklySchedule(createWeeklyScheduleDto: CreateWeeklyScheduleDto, userId:number) {
     try {
       // Validate that all days of the week are provided
       const validDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];

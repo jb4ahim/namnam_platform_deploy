@@ -8,17 +8,9 @@ class LocationDto {
   @IsNumber()
   longitude!: number;
 
-  @IsNumber()
-  cityId!: number;
-
-  @IsNumber()
-  countryId!: number;
 
   @IsString()
-  street!: string;
-
-  @IsString()
-  addressDescription!: string;
+  addressText!: string;
 }
 
 export class CreateMerchantInfoDto {
@@ -28,11 +20,22 @@ export class CreateMerchantInfoDto {
   @IsString()
   description!: string;
 
-  @IsString()
-  hotline!: string;
+   @IsString()
+  addressText!: string;
 
-  @IsNumber()
-  appSectionId!: number;
+  @IsOptional()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => LocationDto)
+  location?: LocationDto;
+  @IsString()
+  coverKey!: string;
+
+  @IsString()
+  imageKey!: string;
+
+  @IsArray()
+  imageKeys!: string[];
 
   @IsOptional()
   @IsArray()

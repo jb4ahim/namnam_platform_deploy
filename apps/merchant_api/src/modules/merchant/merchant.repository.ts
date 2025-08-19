@@ -12,30 +12,54 @@ export class MerchantRepository {
   async createMerchantInfo(merchantInfoDto: CreateMerchantInfoDto) {
     const result = await DatabaseUtils.callProcedure(
       this.pg,
-      'insert_merchant_info',
+      'create_restaurant_merchant',
       [
+        null,
+        null,
+        null,
         merchantInfoDto.name,
         merchantInfoDto.description,
-        merchantInfoDto.hotline,
-        merchantInfoDto.appSectionId,
-        merchantInfoDto.cuisineTypeIds || null,
-        merchantInfoDto.shopTypeIds || null
+        null,
+        merchantInfoDto.addressText,
+        merchantInfoDto.location?.latitude,
+        merchantInfoDto.location?.longitude,
+        merchantInfoDto.coverKey,
+        merchantInfoDto.imageKey,
+        merchantInfoDto.imageKeys
       ]
     );
     return result;
   }
 
   async createWeeklySchedule(scheduleDto: CreateWeeklyScheduleDto) {
+
     const result = await DatabaseUtils.callProcedure(
       this.pg,
-      'insert_weekly_schedule',
+      'create_weekly_schedule',
       [
         scheduleDto.merchant_id,
         JSON.stringify(scheduleDto.weeklySchedule)
       ]
     );
+
     return result;
   }
 
+  async getMerchantInfo(merchantId: number) {
+    const result = await DatabaseUtils.callProcedure(
+      this.pg,
+      'get_merchant_info',
+      [merchantId]
+    );
+    return result;
+  }
 
+  async getWeeklySchedule(merchantId: number) {
+    const result = await DatabaseUtils.callProcedure(
+      this.pg,
+      'get_weekly_schedule',
+      [merchantId]
+    );
+    return result;
+  }
 }

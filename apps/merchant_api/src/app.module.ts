@@ -5,9 +5,10 @@ import { AuthModule } from './modules/auth/auth.module';
 import { LoggerModule } from '@app/common';
 import { GlobalExceptionFilter } from '@app/common';
 import { ResponseEnvelopeInterceptor } from '@app/common';
+import { MerchantModule } from './modules/merchant/merchant.module';
 
 @Module({
-  imports: [LoggerModule, AuthModule],
+  imports: [LoggerModule, AuthModule, MerchantModule],
   providers: [
     {
       provide: APP_FILTER,
