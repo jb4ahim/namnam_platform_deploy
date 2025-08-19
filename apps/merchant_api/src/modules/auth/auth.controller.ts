@@ -18,7 +18,6 @@ export class AuthController {
     return this.authService.verifyOtp(verifyOtpDto);
   }
 
-  // UPDATED: Registration token now included in request body
   @Post('register')
   async registerUser(@Body() registerUserDto: RegisterUserDto) {
     return this.authService.register(registerUserDto);

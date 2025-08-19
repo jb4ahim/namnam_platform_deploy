@@ -6,7 +6,7 @@ class DayScheduleDto {
   day!: string;
 
   @IsBoolean()
-  is_open!: boolean;
+  isOpen!: boolean;
 
   @IsOptional()
   @IsString()

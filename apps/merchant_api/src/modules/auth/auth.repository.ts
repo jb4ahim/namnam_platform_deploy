@@ -25,7 +25,6 @@ export class AuthRepository {
     return result || null;
   }
 
-  // NEW: Verify OTP against database using stored procedure
   async verifyOtp(destination: string, method: 'email' | 'phone', code: string): Promise<boolean> {
     const result = await DatabaseUtils.callFunction(
       this.pg,

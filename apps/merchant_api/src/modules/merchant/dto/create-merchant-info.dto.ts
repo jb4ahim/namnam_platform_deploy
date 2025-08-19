@@ -31,18 +31,13 @@ export class CreateMerchantInfoDto {
   @IsString()
   hotline!: string;
 
-  @IsObject()
-  @ValidateNested()
-  @Type(() => LocationDto)
-  location!: LocationDto;
-
   @IsNumber()
-  app_section_id!: number;
+  appSectionId!: number;
 
   @IsOptional()
   @IsArray()
   @IsNumber({}, { each: true })
-  cuisine_type_ids?: number[];
+  cuisineTypeIds?: number[];
 
   @IsOptional()
   @IsArray()
