@@ -30,6 +30,13 @@ export class MerchantRepository {
     );
     return result;
   }
+  async getMerchant(email: string, countryCode: string, phoneNumber: string) {
+   return await DatabaseUtils.callProcedure(
+     this.pg,
+     'select_merchant',
+     [email, countryCode, phoneNumber]
+   );
+  }
 
   async createWeeklySchedule(scheduleDto: CreateWeeklyScheduleDto) {
 

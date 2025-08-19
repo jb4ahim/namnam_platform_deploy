@@ -16,5 +16,4 @@ export class UsersController {
     return user;
   }
 
-  // Add more endpoints (profile, update, etc.) as needed
 }

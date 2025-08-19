@@ -7,7 +7,7 @@ import { MerchantRepository } from './merchant.repository';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [AuthModule, DatabaseModule, JwtModule],
+  imports: [ DatabaseModule, JwtModule],
   controllers: [MerchantController],
   providers: [MerchantService, MerchantRepository],
   exports: [MerchantService]

@@ -19,7 +19,9 @@ export class MerchantService {
   async getWeeklySchedule(merchantId: number) {
     return await this.merchantRepository.getWeeklySchedule(merchantId);
   }
-
+  async getMerchant(email: string, countryCode: string, phoneNumber: string) {
+    return await this.merchantRepository.getMerchant(email, countryCode, phoneNumber);
+  }
   async createMerchantInfo(createMerchantInfoDto: CreateMerchantInfoDto) {
     try {
 

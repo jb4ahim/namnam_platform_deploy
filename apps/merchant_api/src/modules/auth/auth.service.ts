@@ -5,6 +5,7 @@ import { RegisterUserDto } from './dto/register-user.dto';
 import { SendOtpDto } from './dto/send-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { v4 as uuidv4 } from 'uuid';
+import { MerchantService } from '../merchant/merchant.service';
 // import { TwilioSmsService } from '@app/common';
 
 // NEW: Updated interfaces for better session management
@@ -37,7 +38,9 @@ export class AuthService {
 
   constructor(
     private readonly jwtService: JwtService,
-    private readonly authRepository: AuthRepository
+    private readonly authRepository: AuthRepository,
+    @Inject(forwardRef(() => MerchantService))
+    private readonly merchantService: MerchantService 
   ) {
     // NEW: Clean up expired sessions and tokens every 5 minutes
     setInterval(() => this.cleanupExpired(), 5 * 60 * 1000);
@@ -137,6 +140,18 @@ export class AuthService {
       if (session.email) this.sessionLookup.delete(session.email);
       if (session.countryCode && session.phoneNumber) {
         this.sessionLookup.delete(session.countryCode + session.phoneNumber);
+      }
+      const merchant = await this.merchantService.getMerchant(session.email, session.countryCode, session.phoneNumber);
+
+      if (merchant) {
+        const access_token = this.jwtService.sign({ userId: merchant.id });
+        return {
+          isVerified: true,
+          bothVerified: true,
+          registrationToken,
+          expiresAt: expiresAt.toISOString(),
+          accessToken: access_token
+        };
       }
 
       return {

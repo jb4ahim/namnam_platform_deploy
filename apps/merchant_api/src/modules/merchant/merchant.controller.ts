@@ -8,7 +8,7 @@ import { AuthGuard } from '@app/auth';
 @Controller('merhcant')
 export class MerchantController {
   constructor(private readonly merchantService: MerchantService) {}
-
+  
   @Get('merchant-info')
   @UseGuards(AuthGuard)
   async getMerchantInfo(@Req() req: any) {

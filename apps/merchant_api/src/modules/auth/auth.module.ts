@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -7,6 +7,7 @@ import { AuthRepository } from './auth.repository'; // NEW: Added import
 // import { TwilioModule } from '@app/common';
 import { DatabaseModule } from '@app/database';
 import { JwtStrategyWithConfig } from '@app/auth';
+import { MerchantModule } from '../merchant/merchant.module';
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { JwtStrategyWithConfig } from '@app/auth';
       inject: [ConfigService]
     }),
     // TwilioModule,
-    DatabaseModule
+    DatabaseModule,
+    forwardRef(() => MerchantModule)
   ],
   providers: [
     AuthService,

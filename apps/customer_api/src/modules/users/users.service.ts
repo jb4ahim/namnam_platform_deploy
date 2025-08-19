@@ -8,7 +8,6 @@ export class UsersService {
 
   constructor(
     private readonly usersRepository: UsersRepository
-    // private readonly cache: CacheService, // Optional cache for OTP
   ) {}
 
   async findUserByPhone(countryCode: string, phoneNumber: string) {

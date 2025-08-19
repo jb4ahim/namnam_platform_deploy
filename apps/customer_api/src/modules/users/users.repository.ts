@@ -12,12 +12,7 @@ export class UsersRepository {
     return rows[0] || null;
   }
 
-  // async findUserByPhone(countryCode: string,phoneNumber: string) {
-  //   const rows = await this.pg.query('Select fetch_user_by_phone($1, $2)', [countryCode, phoneNumber]);
-  //   console.log('saveOtp', rows);
-  //   return rows[0] || null;
-  // }
-  async findUserByPhone(countryCode: string,phoneNumber: string) {
+  async findUserByPhone(countryCode: string, phoneNumber: string) {
     const result = await DatabaseUtils.callFunction(
       this.pg,
       'fetch_user_by_phone',
@@ -27,6 +22,7 @@ export class UsersRepository {
     console.log('findUserByPhone', result); 
     return (result) ?? null;
   }
+
   async getCustomerInfos(userId: number) {
     const rows = await this.pg.query('Call select_user_infos($1, $2, $3, $4, $5)', [userId]);
     console.log('saveOtp', rows);
@@ -64,5 +60,4 @@ export class UsersRepository {
     console.log('createUserWithPhone', result);
     return result?.user_id || result?.p_user_id;
   }
-  
 }
