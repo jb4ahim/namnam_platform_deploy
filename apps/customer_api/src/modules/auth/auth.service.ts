@@ -69,4 +69,12 @@ export class AuthService {
     const payload = { userId: userId };
     return { access_token: this.jwtService.sign(payload) };
   }
+  async refreshToken(token: string) {
+    const userId = this.jwtService.verify(token);
+    if (!userId) {
+      throw new UnauthorizedException('Invalid token');
+    }
+    const newToken = this.jwtService.sign({ userId });
+    return { access_token: newToken };
+  }
 }

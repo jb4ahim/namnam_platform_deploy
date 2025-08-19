@@ -22,4 +22,9 @@ export class AuthController {
   async registerUser(@Body() verifyOtpDto: RegisterUserDto) {
     return this.authService.registerWithPhone(verifyOtpDto);
   }
+
+  @Post('refresh-token')
+  async refreshToken(@Body() refreshTokenDto: { token: string }) {
+    return this.authService.refreshToken(refreshTokenDto.token);
+  }
 }
