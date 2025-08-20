@@ -43,17 +43,16 @@ export class AuthService {
     await this.authRepository.verifyOtp(phoneKey, verifyOtpDto.code);
     
     let userId = await this.usersService.findUserByPhone(verifyOtpDto.countryCode, verifyOtpDto.phoneNumber);
-    console.log('user', userId);
+    console.log('userId', userId);
     if (userId) {
        // JWT
       const payload = { userId: userId};
-    
+      
       return { isRegistered: true, access_token: this.jwtService.sign(payload) };
     }else{
-      return { isRegistered: false}
+      return { isRegistered: false };
     }
   }
-
 
   async registerWithPhone(registerUserDto: RegisterUserDto) {
     // Save OTP
@@ -61,14 +60,15 @@ export class AuthService {
 
     // Create user if not exists
     const userId = await this.usersService.createUserWithPhone(registerUserDto);
-    console.log('userId', userId);
+
     if (!userId) {
       throw new UnauthorizedException('User creation failed');
     }
     // Return JWT token
     const payload = { userId: userId };
-    return { access_token: this.jwtService.sign(payload) };
+    return { access_token: this.jwtService.sign(payload)};
   }
+
   async refreshToken(token: string) {
     const userId = this.jwtService.verify(token);
     if (!userId) {

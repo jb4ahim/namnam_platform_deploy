@@ -5,7 +5,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthController } from './auth.controller';
 import { UsersModule } from '../users/users.module';
 // import { TwilioModule } from '@app/common';
-import { JwtStrategyWithConfig } from '@app/auth';
 import { DatabaseModule } from '@app/database';
 import { AuthRepository } from './auth.repository';
 
@@ -28,8 +27,7 @@ import { AuthRepository } from './auth.repository';
   ],
   providers: [
     AuthService,
-    AuthRepository,
-    JwtStrategyWithConfig
+    AuthRepository
   ],
   controllers: [AuthController],
   exports: [AuthService, JwtModule]

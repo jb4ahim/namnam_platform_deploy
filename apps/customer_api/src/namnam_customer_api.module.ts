@@ -8,17 +8,20 @@ import { LoggerModule } from '@app/common';
 import { ResponseEnvelopeInterceptor } from '@app/common';
 import { UploadsModule } from '@app/common/uploads/uploads.module';
 import { AddressModule } from './modules/address/address.module';
+import { JwtModule } from '@app/auth/jwt.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true,
+          isGlobal: true,
+          envFilePath: '.env', // This will load from root
     }),
+    JwtModule,
     DatabaseModule, 
     AuthModule, 
-  LoggerModule,
-  UploadsModule,
-  AddressModule
+    LoggerModule,
+    UploadsModule,
+    AddressModule
   ],
   providers: [
     {

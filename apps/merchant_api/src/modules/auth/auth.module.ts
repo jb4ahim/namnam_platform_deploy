@@ -6,7 +6,6 @@ import { AuthController } from './auth.controller';
 import { AuthRepository } from './auth.repository'; // NEW: Added import
 // import { TwilioModule } from '@app/common';
 import { DatabaseModule } from '@app/database';
-import { JwtStrategyWithConfig } from '@app/auth';
 import { MerchantModule } from '../merchant/merchant.module';
 
 @Module({
@@ -28,8 +27,7 @@ import { MerchantModule } from '../merchant/merchant.module';
   ],
   providers: [
     AuthService,
-    AuthRepository, 
-    JwtStrategyWithConfig
+    AuthRepository
   ],
   controllers: [AuthController],
   exports: [AuthService]

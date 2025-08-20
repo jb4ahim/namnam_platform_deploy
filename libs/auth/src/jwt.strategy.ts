@@ -12,6 +12,7 @@ export class JwtStrategyWithConfig extends PassportStrategy(Strategy) {
       ignoreExpiration: false,
       secretOrKey: configService.get<string>('JWT_SECRET', { infer: true })!,
     });
+
     // At runtime, also validate:
     if (!this.configService.get<string>('JWT_SECRET')) {
       throw new Error('JWT_SECRET is not defined in environment variables');

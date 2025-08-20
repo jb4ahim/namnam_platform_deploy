@@ -8,12 +8,15 @@ import { GlobalExceptionFilter } from '@app/common';
 import { ResponseEnvelopeInterceptor } from '@app/common';
 import { UsersModule } from './modules/users/users.module';
 import { UploadsModule } from '@app/common/uploads/uploads.module';
+import { JwtModule } from '@app/auth/jwt.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-        isGlobal: true
+          isGlobal: true,
+          envFilePath: '.env'
     }),
+    JwtModule,
     LoggerModule,
     AuthModule,
     CategoriesModule,

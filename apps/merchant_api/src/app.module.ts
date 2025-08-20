@@ -6,9 +6,20 @@ import { LoggerModule } from '@app/common';
 import { GlobalExceptionFilter } from '@app/common';
 import { ResponseEnvelopeInterceptor } from '@app/common';
 import { MerchantModule } from './modules/merchant/merchant.module';
+import { ConfigModule } from '@nestjs/config';
+import { JwtModule } from '@app/auth/jwt.module';
 
 @Module({
-  imports: [LoggerModule, AuthModule, MerchantModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env'
+    }),
+    JwtModule,
+    LoggerModule,
+    AuthModule,
+    MerchantModule
+  ],
   providers: [
     {
       provide: APP_FILTER,

@@ -5,7 +5,7 @@ import { SendOtpDto } from './dto/send-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { MerchantService } from '../merchant/merchant.service';
-import { signAccessToken, verifyRefreshToken } from '@app/auth';
+import { JwtService } from '@app/auth/jwt.service';
 // import { TwilioSmsService } from '@app/common';
 
 // NEW: Updated interfaces for better session management
@@ -30,9 +30,7 @@ interface RegistrationToken {
 
 @Injectable()
 export class AuthService {
-  // NEW: Updated session storage - now using sessionId as key
   private verificationSessions = new Map<string, VerificationSession>();
-  // NEW: Helper map to find sessions by email or phone
   private sessionLookup = new Map<string, string>(); // Maps email/phone -> sessionId
   private registrationTokens = new Map<string, RegistrationToken>();
 
@@ -40,6 +38,7 @@ export class AuthService {
     private readonly authRepository: AuthRepository,
     @Inject(forwardRef(() => MerchantService))
     private readonly merchantService: MerchantService,
+    private readonly jwtService: JwtService
   ) {
     // NEW: Clean up expired sessions and tokens every 5 minutes
     setInterval(() => this.cleanupExpired(), 5 * 60 * 1000);
@@ -143,7 +142,7 @@ export class AuthService {
       const merchant = await this.merchantService.getMerchant(session.email, session.countryCode, session.phoneNumber);
 
       if (merchant) {
-        const access_token = signAccessToken({ userId: merchant.id });
+        const access_token = this.jwtService.signAccessToken({ userId: merchant.id });
         return {
           isVerified: true,
           bothVerified: true,
@@ -197,7 +196,7 @@ export class AuthService {
       
       // NEW: Generate JWT token with userId
       const payload = { userId };
-      const access_token = signAccessToken(payload);
+      const access_token = this.jwtService.signAccessToken(payload);
 
       // NEW: Invalidate the registration token
       this.registrationTokens.delete(registerUserDto.registrationToken);
@@ -280,11 +279,11 @@ export class AuthService {
   }
 
   async refreshToken(token: string) {
-    const userId = verifyRefreshToken(token);
+    const userId = this.jwtService.verifyRefreshToken(token);
     if (!userId) {
       throw new UnauthorizedException('Invalid token');
     }
-    const newToken = signAccessToken({ userId });
+    const newToken = this.jwtService.signAccessToken({ userId });
     return { access_token: newToken };
   }
 }
