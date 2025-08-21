@@ -20,16 +20,18 @@ export class CreateMerchantInfoDto {
   @IsString()
   description!: string;
 
-   @IsString()
-  addressText!: string;
 
   @IsOptional()
   @IsObject()
   @ValidateNested()
   @Type(() => LocationDto)
   location?: LocationDto;
+
   @IsString()
   coverKey!: string;
+  
+  @IsString()
+  categoryId!: string;
 
   @IsString()
   imageKey!: string;

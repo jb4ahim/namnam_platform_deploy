@@ -40,6 +40,8 @@ export class MerchantController {
   @Post('schedule')
   @UseGuards(AuthGuard)
   async createWeeklySchedule(@Body() createWeeklyScheduleDto: CreateWeeklyScheduleDto, @Req() req: any) {
+    console.log('Creating weekly schedule:', createWeeklyScheduleDto);
+    console.log('For request:', req);
     const userId = req.user.userId; 
     return await this.merchantService.createWeeklySchedule(createWeeklyScheduleDto, userId);
   }

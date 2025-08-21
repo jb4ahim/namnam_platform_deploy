@@ -20,12 +20,13 @@ export class MerchantRepository {
         merchantInfoDto.name,
         merchantInfoDto.description,
         null,
-        merchantInfoDto.addressText,
+        merchantInfoDto.location?.addressText,
         merchantInfoDto.location?.latitude,
         merchantInfoDto.location?.longitude,
         merchantInfoDto.coverKey,
         merchantInfoDto.imageKey,
-        merchantInfoDto.imageKeys
+        JSON.stringify(merchantInfoDto.imageKeys),
+        merchantInfoDto.categoryId
       ]
     );
     return result;
@@ -38,13 +39,15 @@ export class MerchantRepository {
    );
   }
 
-  async createWeeklySchedule(scheduleDto: CreateWeeklyScheduleDto) {
-
+  async createWeeklySchedule(scheduleDto: CreateWeeklyScheduleDto, merchantId: number) {
+    console.log('Creating weekly schedule for merchantId:', merchantId);
     const result = await DatabaseUtils.callProcedure(
       this.pg,
-      'create_weekly_schedule',
+      'insert_weekly_schedule',
       [
-        scheduleDto.merchant_id,
+        null,
+        null, 
+        merchantId,
         JSON.stringify(scheduleDto.weeklySchedule)
       ]
     );

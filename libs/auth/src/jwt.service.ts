@@ -4,7 +4,6 @@ import * as jwt from 'jsonwebtoken';
 import { JwtConfig } from './jwt.config';
 
 export interface TokenPayload {
-  sub: string; // user id
   email?: string;
   roles?: string[];
   merchantId?: string;
@@ -26,7 +25,6 @@ export interface JwtSignOptions {
   expiresIn?: string;
   issuer?: string;
   audience?: string;
-  subject?: string;
 }
 
 @Injectable()
@@ -56,15 +54,13 @@ export class JwtService {
   signAccessToken(payload: Omit<TokenPayload, 'type' | 'iat' | 'exp'>, options?: JwtSignOptions): string {
     const tokenPayload: TokenPayload = {
       ...payload,
-      type: 'access',
-      sub: ''
+      type: 'access'
     };
 
     return jwt.sign(tokenPayload, this.config.accessTokenSecret, {
       expiresIn: options?.expiresIn || this.config.accessTokenExpiry,
       issuer: options?.issuer || this.config.issuer,
-      audience: options?.audience || this.config.audience,
-      subject: options?.subject || payload.sub,
+      audience: options?.audience || this.config.audience
     });
   }
 
@@ -75,14 +71,12 @@ export class JwtService {
     const tokenPayload: TokenPayload = {
       ...payload,
       type: 'refresh',
-      sub: ''
     };
 
     return jwt.sign(tokenPayload, this.config.refreshTokenSecret, {
       expiresIn: options?.expiresIn || this.config.refreshTokenExpiry,
       issuer: options?.issuer || this.config.issuer,
       audience: options?.audience || this.config.audience,
-      subject: options?.subject || payload.sub,
     });
   }
 

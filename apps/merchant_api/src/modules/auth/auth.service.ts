@@ -142,13 +142,13 @@ export class AuthService {
       const merchant = await this.merchantService.getMerchant(session.email, session.countryCode, session.phoneNumber);
 
       if (merchant) {
-        const access_token = this.jwtService.signAccessToken({ userId: merchant.id });
+        const tokens = this.jwtService.generateTokenPair({ userId: merchant.id });
         return {
           isVerified: true,
           bothVerified: true,
           registrationToken,
           expiresAt: expiresAt.toISOString(),
-          accessToken: access_token
+          ...tokens
         };
       }
 
@@ -196,14 +196,14 @@ export class AuthService {
       
       // NEW: Generate JWT token with userId
       const payload = { userId };
-      const access_token = this.jwtService.signAccessToken(payload);
-
+      const tokens = this.jwtService.generateTokenPair(payload);
+      console.log('Generated tokens:', tokens);
       // NEW: Invalidate the registration token
-      this.registrationTokens.delete(registerUserDto.registrationToken);
-      
+      // this.registrationTokens.delete(registerUserDto.registrationToken);
+      console.log('Generated tokens:', tokens);
       return { 
         userId, 
-        access_token,
+        tokens,
         message: 'User registered successfully',
         // NEW: Return the verified email/phone for confirmation
         userData: {
@@ -284,6 +284,6 @@ export class AuthService {
       throw new UnauthorizedException('Invalid token');
     }
     const newToken = this.jwtService.signAccessToken({ userId });
-    return { access_token: newToken };
+    return { accessToken: newToken };
   }
 }

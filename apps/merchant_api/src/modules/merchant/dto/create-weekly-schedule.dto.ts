@@ -18,8 +18,6 @@ class DayScheduleDto {
 }
 
 export class CreateWeeklyScheduleDto {
-  @IsString()
-  merchant_id!: string;
 
   @IsArray()
   @ValidateNested({ each: true })

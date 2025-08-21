@@ -22,6 +22,7 @@ export class MerchantService {
   async getMerchant(email: string, countryCode: string, phoneNumber: string) {
     return await this.merchantRepository.getMerchant(email, countryCode, phoneNumber);
   }
+
   async createMerchantInfo(createMerchantInfoDto: CreateMerchantInfoDto) {
     try {
 
@@ -59,7 +60,7 @@ export class MerchantService {
         }
       }
 
-      const result = await this.merchantRepository.createWeeklySchedule(createWeeklyScheduleDto);
+      const result = await this.merchantRepository.createWeeklySchedule(createWeeklyScheduleDto, userId);
       if (!result) {
         throw new BadRequestException('Failed to create weekly schedule');
       }
