@@ -286,8 +286,8 @@ export class AuthService {
     if (!userId) {
       throw new UnauthorizedException('Invalid token');
     }
-    const newToken = this.jwtService.signAccessToken({ userId });
-    
-    return { accessToken: newToken };
+    const newToken = this.jwtService.generateTokenPair({ userId });
+
+    return { ...newToken };
   }
 }

@@ -4,9 +4,10 @@ import { UsersService } from './users.service';
 import { DatabaseModule } from '@app/database/database.module';
 import { UsersRepository } from './users.repository';
 import { AuthModule } from '../auth/auth.module';
+import { JwtModule } from '@app/auth';
 
 @Module({
-  imports: [DatabaseModule], 
+  imports: [DatabaseModule, JwtModule], 
   controllers: [UsersController],
   providers: [UsersService, UsersRepository],
   exports: [UsersService]

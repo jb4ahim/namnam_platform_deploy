@@ -12,7 +12,7 @@ export class MerchantController {
   @Get('merchant-info')
   @UseGuards(AuthGuard)
   async getMerchantInfo(@Req() req: any) {
-    const merchantId = req.user.userId;
+    const merchantId = req.user.userId.userId;
     const merchantInfo = await this.merchantService.getMerchantInfo(merchantId);
     if (!merchantInfo) {
       throw new NotFoundException('Merchant not found');
@@ -23,7 +23,7 @@ export class MerchantController {
   @Get('schedule')
   @UseGuards(AuthGuard)
   async getWeeklySchedule(@Req() req: any) {
-    const merchantId = req.user.userId; 
+   const merchantId = req.user.userId.userId;
     const schedule = await this.merchantService.getWeeklySchedule(merchantId);
     if (!schedule) {
       throw new NotFoundException('Schedule not found');
@@ -34,8 +34,8 @@ export class MerchantController {
   @Post('merchant-info')
   @UseGuards(AuthGuard)
   async createMerchantInfo(@Body() createMerchantInfoDto: CreateMerchantInfoDto, @Req() req: any) {
-    const userId = req.user.userId;
-    return await this.merchantService.createMerchantInfo(createMerchantInfoDto, userId);
+    const merchantId = req.user.userId.userId;
+    return await this.merchantService.createMerchantInfo(createMerchantInfoDto, merchantId);
   }
 
   @Post('schedule')
@@ -43,7 +43,7 @@ export class MerchantController {
   async createWeeklySchedule(@Body() createWeeklyScheduleDto: CreateWeeklyScheduleDto, @Req() req: any) {
     console.log('Creating weekly schedule:', createWeeklyScheduleDto);
     console.log('For request:', req);
-    const userId = req.user.userId; 
-    return await this.merchantService.createWeeklySchedule(createWeeklyScheduleDto, userId);
+    const merchantId = req.user.userId.userId;
+    return await this.merchantService.createWeeklySchedule(createWeeklyScheduleDto, merchantId);
   }
 }

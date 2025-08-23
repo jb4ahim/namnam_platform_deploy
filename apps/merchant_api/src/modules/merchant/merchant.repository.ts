@@ -9,8 +9,8 @@ export class MerchantRepository {
   constructor(private readonly pg: PostgresService) {}
 
 
-  async createMerchantInfo(merchantInfoDto: CreateMerchantInfoDto, token: any) {
-    console.log('Creating merchant info for userId:', token.userId);
+  async createMerchantInfo(merchantInfoDto: CreateMerchantInfoDto, merchantId: number) {
+    console.log('Creating merchant info for userId:', merchantId);
     const result = await DatabaseUtils.callProcedure(
       this.pg,
       'create_restaurant_merchant',
@@ -41,15 +41,15 @@ export class MerchantRepository {
    );
   }
 
-  async createWeeklySchedule(scheduleDto: CreateWeeklyScheduleDto, token: any) {
-    console.log('Creating weekly schedule for merchantId:', token.userId);
+  async createWeeklySchedule(scheduleDto: CreateWeeklyScheduleDto, merchantId: number) {
+    console.log('Creating weekly schedule for merchantId:', merchantId);
     const result = await DatabaseUtils.callProcedure(
       this.pg,
       'insert_weekly_schedule',
       [
         null,
         null, 
-        token.userId,
+        merchantId,
         JSON.stringify(scheduleDto.weeklySchedule)
       ]
     );
@@ -57,8 +57,7 @@ export class MerchantRepository {
     return result;
   }
 
-  async getMerchantInfo(token: any) {
-    const merchantId = token.userId;
+  async getMerchantInfo(merchantId: number) {
     const result = await DatabaseUtils.callFunction(
       this.pg,
       'select_merchant_info',
@@ -67,8 +66,7 @@ export class MerchantRepository {
     return result;
   }
 
-  async getWeeklySchedule(token: any) {
-    const merchantId = token.userId;
+  async getWeeklySchedule(merchantId: number) {
     const result = await DatabaseUtils.callFunction(
       this.pg,
       'select_schedule_info_by_merchant_id',

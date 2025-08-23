@@ -12,21 +12,21 @@ export class MerchantService {
   constructor(
     private readonly merchantRepository: MerchantRepository
   ) {}
-  async getMerchantInfo(merchantId: any) {
+  async getMerchantInfo(merchantId: number) {
     return await this.merchantRepository.getMerchantInfo(merchantId);
   }
 
-  async getWeeklySchedule(merchantId: any) {
+  async getWeeklySchedule(merchantId: number) {
     return await this.merchantRepository.getWeeklySchedule(merchantId);
   }
   async getMerchant(email: string, countryCode: string, phoneNumber: string) {
     return await this.merchantRepository.getMerchant(email, countryCode, phoneNumber);
   }
 
-  async createMerchantInfo(createMerchantInfoDto: CreateMerchantInfoDto, token: any) {
+  async createMerchantInfo(createMerchantInfoDto: CreateMerchantInfoDto, merchantId: number) {
     try {
 
-      const result = await this.merchantRepository.createMerchantInfo(createMerchantInfoDto, token);
+      const result = await this.merchantRepository.createMerchantInfo(createMerchantInfoDto, merchantId);
       if (!result) {
         throw new BadRequestException('Failed to create merchant info');
       }
@@ -41,7 +41,7 @@ export class MerchantService {
     }
   }
 
-  async createWeeklySchedule(createWeeklyScheduleDto: CreateWeeklyScheduleDto, token:any) {
+  async createWeeklySchedule(createWeeklyScheduleDto: CreateWeeklyScheduleDto, merchantId: number) {
     try {
       // Validate that all days of the week are provided
       const validDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
@@ -60,7 +60,7 @@ export class MerchantService {
         }
       }
 
-      const result = await this.merchantRepository.createWeeklySchedule(createWeeklyScheduleDto, token);
+      const result = await this.merchantRepository.createWeeklySchedule(createWeeklyScheduleDto, merchantId);
       if (!result) {
         throw new BadRequestException('Failed to create weekly schedule');
       }
