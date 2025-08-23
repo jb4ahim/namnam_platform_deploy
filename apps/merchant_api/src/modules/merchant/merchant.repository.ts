@@ -8,6 +8,33 @@ import { DatabaseUtils, PostgresService } from '@app/database';
 export class MerchantRepository {
   constructor(private readonly pg: PostgresService) {}
 
+  async getContactPersons(merchantId: number) {
+    const result = await DatabaseUtils.callFunction(
+      this.pg,
+      'select_restaurant_contact_person',
+      [merchantId],
+      false
+    );
+    return result || [];
+  }
+
+  async createContactPerson(contactPersonDto: CreateContactPersonDto, merchantId: number) {
+    console.log('Creating contact person for merchantId:', merchantId);
+    const result = await DatabaseUtils.callProcedure(
+      this.pg,
+      'create_restaurant_contact_person',
+      [
+        merchantId,
+        contactPersonDto.firstName,
+        contactPersonDto.lastName,
+        contactPersonDto.role,
+        contactPersonDto.emailAddress,
+        contactPersonDto.phoneNumber
+      ]
+    );
+    console.log('createContactPerson result:', result);
+    return result;
+  }
 
   async createMerchantInfo(merchantInfoDto: CreateMerchantInfoDto, merchantId: number) {
     console.log('Creating merchant info for userId:', merchantId);
@@ -21,9 +48,6 @@ export class MerchantRepository {
         merchantInfoDto.name,
         merchantInfoDto.description,
         null,
-        merchantInfoDto.location?.addressText,
-        merchantInfoDto.location?.latitude,
-        merchantInfoDto.location?.longitude,
         merchantInfoDto.coverKey,
         merchantInfoDto.imageKey,
         JSON.stringify(merchantInfoDto.imageKeys),

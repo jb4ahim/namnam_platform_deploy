@@ -5,7 +5,7 @@ import { CreateContactPersonDto } from './dto/create-contact-person.dto';
 import { MerchantService } from './merchant.service';
 import { AuthGuard } from '@app/auth';
 
-@Controller('merhcant')
+@Controller('merchant')
 export class MerchantController {
   constructor(private readonly merchantService: MerchantService) {}
   
@@ -36,6 +36,21 @@ export class MerchantController {
   async createMerchantInfo(@Body() createMerchantInfoDto: CreateMerchantInfoDto, @Req() req: any) {
     const merchantId = req.user.userId.userId;
     return await this.merchantService.createMerchantInfo(createMerchantInfoDto, merchantId);
+  }
+
+  @Get('contact-person')
+  @UseGuards(AuthGuard)
+  async getContactPersons(@Req() req: any) {
+    const merchantId = req.user.userId.userId;
+    const contactPersons = await this.merchantService.getContactPersons(merchantId);
+    return contactPersons;
+  }
+
+  @Post('contact-person')
+  @UseGuards(AuthGuard)
+  async createContactPerson(@Body() createContactPersonDto: CreateContactPersonDto, @Req() req: any) {
+    const merchantId = req.user.userId.userId;
+    return await this.merchantService.createContactPerson(createContactPersonDto, merchantId);
   }
 
   @Post('schedule')

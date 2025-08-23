@@ -2,17 +2,17 @@ import { IsString, IsOptional, IsEmail, IsPhoneNumber } from 'class-validator';
 
 export class CreateContactPersonDto {
   @IsString()
-  first_name!: string;
+  firstName!: string;
 
   @IsString()
-  last_name!: string;
+  lastName!: string;
 
   @IsString()
   role!: string;
 
   @IsString()
-  phone!: string;
+  phoneNumber!: string;
 
   @IsEmail()
-  email!: string;
+  emailAddress!: string;
 }

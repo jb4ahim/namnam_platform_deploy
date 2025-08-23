@@ -1,17 +1,6 @@
 import { IsString, IsOptional, IsNumber, IsArray, IsObject, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
-class LocationDto {
-  @IsNumber()
-  latitude!: number;
-
-  @IsNumber()
-  longitude!: number;
-
-
-  @IsString()
-  addressText!: string;
-}
 
 export class CreateMerchantInfoDto {
   @IsString()
@@ -20,12 +9,6 @@ export class CreateMerchantInfoDto {
   @IsString()
   description!: string;
 
-
-  @IsOptional()
-  @IsObject()
-  @ValidateNested()
-  @Type(() => LocationDto)
-  location?: LocationDto;
 
   @IsString()
   coverKey!: string;

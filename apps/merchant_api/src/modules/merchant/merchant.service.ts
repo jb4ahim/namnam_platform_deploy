@@ -19,6 +19,28 @@ export class MerchantService {
   async getWeeklySchedule(merchantId: number) {
     return await this.merchantRepository.getWeeklySchedule(merchantId);
   }
+
+  async getContactPersons(merchantId: number) {
+    return await this.merchantRepository.getContactPersons(merchantId);
+  }
+
+  async createContactPerson(createContactPersonDto: CreateContactPersonDto, merchantId: number) {
+    try {
+      const result = await this.merchantRepository.createContactPerson(createContactPersonDto, merchantId);
+      if (!result) {
+        throw new BadRequestException('Failed to create contact person');
+      }
+      return {
+        success: true,
+        message: 'Contact person created successfully',
+        data: result
+      };
+    } catch (error) {
+      console.error('Error creating contact person:', error);
+      throw new BadRequestException('Failed to create contact person');
+    }
+  }
+
   async getMerchant(email: string, countryCode: string, phoneNumber: string) {
     return await this.merchantRepository.getMerchant(email, countryCode, phoneNumber);
   }
