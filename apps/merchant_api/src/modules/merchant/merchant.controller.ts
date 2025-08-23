@@ -5,11 +5,11 @@ import { CreateContactPersonDto } from './dto/create-contact-person.dto';
 import { MerchantService } from './merchant.service';
 import { AuthGuard } from '@app/auth';
 
-@Controller('merchant')
+@Controller('merchants')
 export class MerchantController {
   constructor(private readonly merchantService: MerchantService) {}
   
-  @Get('merchant-info')
+  @Get('info')
   @UseGuards(AuthGuard)
   async getMerchantInfo(@Req() req: any) {
     const merchantId = req.user.userId.userId;
@@ -20,7 +20,7 @@ export class MerchantController {
     return merchantInfo;
   }
 
-  @Get('schedule')
+  @Get('schedules')
   @UseGuards(AuthGuard)
   async getWeeklySchedule(@Req() req: any) {
    const merchantId = req.user.userId.userId;
@@ -31,7 +31,7 @@ export class MerchantController {
     return schedule;
   }
 
-  @Post('merchant-info')
+  @Post('info')
   @UseGuards(AuthGuard)
   async createMerchantInfo(@Body() createMerchantInfoDto: CreateMerchantInfoDto, @Req() req: any) {
     const merchantId = req.user.userId.userId;
@@ -53,7 +53,7 @@ export class MerchantController {
     return await this.merchantService.createContactPerson(createContactPersonDto, merchantId);
   }
 
-  @Post('schedule')
+  @Post('schedules')
   @UseGuards(AuthGuard)
   async createWeeklySchedule(@Body() createWeeklyScheduleDto: CreateWeeklyScheduleDto, @Req() req: any) {
     console.log('Creating weekly schedule:', createWeeklyScheduleDto);
