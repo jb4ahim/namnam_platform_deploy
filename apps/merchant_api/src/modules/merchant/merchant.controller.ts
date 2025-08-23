@@ -33,8 +33,9 @@ export class MerchantController {
 
   @Post('merchant-info')
   @UseGuards(AuthGuard)
-  async createMerchantInfo(@Body() createMerchantInfoDto: CreateMerchantInfoDto) {
-    return await this.merchantService.createMerchantInfo(createMerchantInfoDto);
+  async createMerchantInfo(@Body() createMerchantInfoDto: CreateMerchantInfoDto, @Req() req: any) {
+    const userId = req.user.userId;
+    return await this.merchantService.createMerchantInfo(createMerchantInfoDto, userId);
   }
 
   @Post('schedule')

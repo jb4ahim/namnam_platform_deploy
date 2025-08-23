@@ -124,7 +124,8 @@ export class AuthService {
       const registrationToken = uuidv4();
       const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
 
-      this.registrationTokens.set(registrationToken, 
+      this.registrationTokens.set(
+        registrationToken, 
       {
         email: session.email,
         countryCode: session.countryCode,
@@ -135,14 +136,15 @@ export class AuthService {
 
       // Clean up verification session and lookups
       this.verificationSessions.delete(sessionId);
+
       if (session.email) this.sessionLookup.delete(session.email);
       if (session.countryCode && session.phoneNumber) {
         this.sessionLookup.delete(session.countryCode + session.phoneNumber);
       }
-      const merchant = await this.merchantService.getMerchant(session.email, session.countryCode, session.phoneNumber);
+      const merchantId = await this.merchantService.getMerchant(session.email, session.countryCode, session.phoneNumber);
 
-      if (merchant) {
-        const tokens = this.jwtService.generateTokenPair({ userId: merchant.id });
+      if (merchantId) {
+        const tokens = this.jwtService.generateTokenPair({ userId: merchantId });
         return {
           isVerified: true,
           bothVerified: true,
@@ -280,10 +282,12 @@ export class AuthService {
 
   async refreshToken(token: string) {
     const userId = this.jwtService.verifyRefreshToken(token);
+    console.log(userId);
     if (!userId) {
       throw new UnauthorizedException('Invalid token');
     }
     const newToken = this.jwtService.signAccessToken({ userId });
+    
     return { accessToken: newToken };
   }
 }

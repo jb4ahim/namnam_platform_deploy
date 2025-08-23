@@ -9,7 +9,8 @@ export class MerchantRepository {
   constructor(private readonly pg: PostgresService) {}
 
 
-  async createMerchantInfo(merchantInfoDto: CreateMerchantInfoDto) {
+  async createMerchantInfo(merchantInfoDto: CreateMerchantInfoDto, token: any) {
+    console.log('Creating merchant info for userId:', token.userId);
     const result = await DatabaseUtils.callProcedure(
       this.pg,
       'create_restaurant_merchant',
@@ -29,6 +30,7 @@ export class MerchantRepository {
         merchantInfoDto.categoryId
       ]
     );
+    console.log('createMerchantInfo result:', result);
     return result;
   }
   async getMerchant(email: string, countryCode: string, phoneNumber: string) {
@@ -39,15 +41,15 @@ export class MerchantRepository {
    );
   }
 
-  async createWeeklySchedule(scheduleDto: CreateWeeklyScheduleDto, merchantId: number) {
-    console.log('Creating weekly schedule for merchantId:', merchantId);
+  async createWeeklySchedule(scheduleDto: CreateWeeklyScheduleDto, token: any) {
+    console.log('Creating weekly schedule for merchantId:', token.userId);
     const result = await DatabaseUtils.callProcedure(
       this.pg,
       'insert_weekly_schedule',
       [
         null,
         null, 
-        merchantId,
+        token.userId,
         JSON.stringify(scheduleDto.weeklySchedule)
       ]
     );
@@ -55,19 +57,21 @@ export class MerchantRepository {
     return result;
   }
 
-  async getMerchantInfo(merchantId: number) {
-    const result = await DatabaseUtils.callProcedure(
+  async getMerchantInfo(token: any) {
+    const merchantId = token.userId;
+    const result = await DatabaseUtils.callFunction(
       this.pg,
-      'get_merchant_info',
+      'select_merchant_info',
       [merchantId]
     );
     return result;
   }
 
-  async getWeeklySchedule(merchantId: number) {
-    const result = await DatabaseUtils.callProcedure(
+  async getWeeklySchedule(token: any) {
+    const merchantId = token.userId;
+    const result = await DatabaseUtils.callFunction(
       this.pg,
-      'get_weekly_schedule',
+      'select_schedule_info_by_merchant_id',
       [merchantId]
     );
     return result;

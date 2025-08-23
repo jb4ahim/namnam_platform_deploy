@@ -29,9 +29,9 @@ export class CreateMerchantInfoDto {
 
   @IsString()
   coverKey!: string;
-  
-  @IsString()
-  categoryId!: string;
+
+  @IsNumber()
+  categoryId!: number;
 
   @IsString()
   imageKey!: string;

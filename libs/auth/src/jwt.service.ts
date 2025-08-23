@@ -44,41 +44,55 @@ export class JwtService {
     return {
       accessToken,
       refreshToken,
-      expiresIn,
+      expiresIn
     };
   }
 
   /**
-   * Sign access token
-   */
-  signAccessToken(payload: Omit<TokenPayload, 'type' | 'iat' | 'exp'>, options?: JwtSignOptions): string {
-    const tokenPayload: TokenPayload = {
-      ...payload,
-      type: 'access'
-    };
+ * Sign access token
+ */
+signAccessToken(
+  payload: Omit<TokenPayload, 'type' | 'iat' | 'exp' | 'sub'>,
+  options?: JwtSignOptions
+): string {
+  console.log('signAccessToken payload', payload);
+  const userId = String(payload.userId); // ensure string
 
-    return jwt.sign(tokenPayload, this.config.accessTokenSecret, {
-      expiresIn: options?.expiresIn || this.config.accessTokenExpiry,
-      issuer: options?.issuer || this.config.issuer,
-      audience: options?.audience || this.config.audience
-    });
-  }
+  const tokenPayload: TokenPayload = {
+    ...payload,
+    type: 'access',
+    sub: userId,
+  };
 
-  /**
-   * Sign refresh token
-   */
-  signRefreshToken(payload: Omit<TokenPayload, 'type' | 'iat' | 'exp'>, options?: JwtSignOptions): string {
-    const tokenPayload: TokenPayload = {
-      ...payload,
-      type: 'refresh',
-    };
+  return jwt.sign(tokenPayload, this.config.accessTokenSecret, {
+    expiresIn: options?.expiresIn ?? this.config.accessTokenExpiry,
+    issuer: options?.issuer ?? this.config.issuer,
+    audience: options?.audience ?? this.config.audience,
+  });
+}
 
-    return jwt.sign(tokenPayload, this.config.refreshTokenSecret, {
-      expiresIn: options?.expiresIn || this.config.refreshTokenExpiry,
-      issuer: options?.issuer || this.config.issuer,
-      audience: options?.audience || this.config.audience,
-    });
-  }
+/**
+ * Sign refresh token
+ */
+signRefreshToken(
+  payload: Omit<TokenPayload, 'type' | 'iat' | 'exp' | 'sub'>,
+  options?: JwtSignOptions
+): string {
+  console.log('signRefreshToken payload', payload);
+  const userId = String(payload.userId);
+
+  const tokenPayload: TokenPayload = {
+    ...payload,
+    type: 'refresh',
+    sub: userId,
+  };
+
+  return jwt.sign(tokenPayload, this.config.refreshTokenSecret, {
+    expiresIn: options?.expiresIn ?? this.config.refreshTokenExpiry,
+    issuer: options?.issuer ?? this.config.issuer,
+    audience: options?.audience ?? this.config.audience
+  });
+}
 
   /**
    * Verify access token
