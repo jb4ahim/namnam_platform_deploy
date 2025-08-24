@@ -5,6 +5,7 @@ import { CreateContactPersonDto } from './dto/create-contact-person.dto';
 import { CreateMerchantInfoDto } from './dto/create-merchant-info.dto';
 import { CreateWeeklyScheduleDto } from './dto/create-weekly-schedule.dto';
 import { MerchantRepository } from './merchant.repository';
+import { CreateLocationDto } from './dto/create-location.dto';
 
 @Injectable()
 export class MerchantService {
@@ -53,7 +54,6 @@ export class MerchantService {
         throw new BadRequestException('Failed to create merchant info');
       }
       return {
-        success: true,
         message: 'Merchant info created successfully',
         data: result
       };
@@ -87,7 +87,6 @@ export class MerchantService {
         throw new BadRequestException('Failed to create weekly schedule');
       }
       return {
-        success: true,
         message: 'Weekly schedule created successfully',
         data: result
       };
@@ -96,4 +95,20 @@ export class MerchantService {
       throw new BadRequestException('Failed to create weekly schedule');
     }
   }
+
+  async createLocation(createLocationDto: CreateLocationDto, merchantId: number) {
+    try {
+      const result = await this.merchantRepository.createLocation(createLocationDto, merchantId);
+
+      return {
+        message: 'Location created successfully',
+      };
+    } catch (error) {
+      console.error('Error creating location:', error);
+      throw new BadRequestException('Failed to create location');
+    }
+  }
+  async getLocation(merchantId: number) {
+    return await this.merchantRepository.getLocation(merchantId);
+  } 
 }

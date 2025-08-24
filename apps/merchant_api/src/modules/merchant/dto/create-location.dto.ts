@@ -1,6 +1,6 @@
-import { IsNumber, IsString } from "class-validator";
+import { IsArray, IsNumber, IsString } from "class-validator";
 
-class CreateLocationDto {
+export class CreateLocationDto {
   @IsNumber()
   latitude!: number;
 
@@ -9,5 +9,13 @@ class CreateLocationDto {
 
 
   @IsString()
-  addressText!: string;
+  street!: string;
+  @IsString()
+  building?: string;
+
+  @IsString()
+  notes?: string;
+
+  @IsArray()
+  buildingImage!: string[];
 }

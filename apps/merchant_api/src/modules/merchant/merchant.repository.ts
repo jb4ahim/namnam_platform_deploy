@@ -3,6 +3,7 @@ import { CreateContactPersonDto } from './dto/create-contact-person.dto';
 import { CreateMerchantInfoDto } from './dto/create-merchant-info.dto';
 import { CreateWeeklyScheduleDto } from './dto/create-weekly-schedule.dto';
 import { DatabaseUtils, PostgresService } from '@app/database';
+import { CreateLocationDto } from './dto/create-location.dto';
 
 @Injectable()
 export class MerchantRepository {
@@ -94,6 +95,31 @@ export class MerchantRepository {
     const result = await DatabaseUtils.callFunction(
       this.pg,
       'select_schedule_info_by_merchant_id',
+      [merchantId]
+    );
+    return result;
+  }
+  async createLocation(createLocationDto: CreateLocationDto, merchantId: number) {
+    const result = await DatabaseUtils.callProcedure(
+      this.pg,
+      'create_location_merchant',
+      [
+        merchantId,
+        createLocationDto.latitude,
+        createLocationDto.longitude,
+        createLocationDto.street,
+        createLocationDto.building,
+        createLocationDto.notes,
+        JSON.stringify(createLocationDto.buildingImage)
+      ]
+    );
+    return result;
+  }
+
+  async getLocation(merchantId: number) {
+    const result = await DatabaseUtils.callFunction(
+      this.pg,
+      'select_location_info_by_merchant_id',
       [merchantId]
     );
     return result;
