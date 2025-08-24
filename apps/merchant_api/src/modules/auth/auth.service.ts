@@ -141,16 +141,16 @@ export class AuthService {
       if (session.countryCode && session.phoneNumber) {
         this.sessionLookup.delete(session.countryCode + session.phoneNumber);
       }
-      const merchantId = await this.merchantService.getMerchant(session.email, session.countryCode, session.phoneNumber);
+      const merchantData = await this.merchantService.getMerchant(session.email, session.countryCode, session.phoneNumber);
 
-      if (merchantId) {
-        const tokens = this.jwtService.generateTokenPair({ userId: merchantId });
+      if (merchantData.userId) {
+        const tokens = this.jwtService.generateTokenPair({ userId: merchantData.userId });
         return {
           isVerified: true,
           bothVerified: true,
-          registrationToken,
+          steps: merchantData.steps,
           expiresAt: expiresAt.toISOString(),
-          ...tokens
+          ...tokens,
         };
       }
 
@@ -158,6 +158,7 @@ export class AuthService {
         isVerified: true,
         bothVerified: true,
         registrationToken,
+        isRegistered: true,
         expiresAt: expiresAt.toISOString()
       };
     }
@@ -166,6 +167,7 @@ export class AuthService {
       isVerified: true,
       bothVerified: false,
       [verifyOtpDto.type + 'Verified']: true,
+      isRegistered: false,
       sessionId: sessionId
     };
   }

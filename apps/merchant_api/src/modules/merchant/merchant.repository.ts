@@ -99,6 +99,7 @@ export class MerchantRepository {
     );
     return result;
   }
+  
   async createLocation(createLocationDto: CreateLocationDto, merchantId: number) {
     const result = await DatabaseUtils.callProcedure(
       this.pg,
