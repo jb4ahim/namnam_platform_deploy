@@ -6,6 +6,7 @@ import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { MerchantService } from '../merchant/merchant.service';
 import { JwtService } from '@app/auth/jwt.service';
+import { isEmail } from 'class-validator';
 // import { TwilioSmsService } from '@app/common';
 
 // NEW: Updated interfaces for better session management
@@ -50,7 +51,7 @@ export class AuthService {
       
       // NEW: Create or find existing session
       const sessionId = this.getOrCreateSession(sendOtpDto.email, 'email');
-      return { step: 1, sessionId };
+      return { step: 1};
     }
 
     if (sendOtpDto.type === 'phone' && sendOtpDto.phoneNumber && sendOtpDto.countryCode) {
@@ -69,7 +70,7 @@ export class AuthService {
         existingSession.phoneNumber = sendOtpDto.phoneNumber;
         this.sessionLookup.set(phoneKey, sendOtpDto.sessionId);
         
-        return { step: 2, sessionId: sendOtpDto.sessionId };
+        return { step: 2 };
       } else {
         // Create new session for phone-only flow
         const sessionId = this.getOrCreateSession(phoneKey, 'phone', sendOtpDto.countryCode, sendOtpDto.phoneNumber);
@@ -151,6 +152,7 @@ export class AuthService {
           steps: merchantData.steps,
           expiresAt: expiresAt.toISOString(),
           ...tokens,
+          sessionId: session.sessionId,
         };
       }
 
@@ -164,11 +166,11 @@ export class AuthService {
     }
 
     return {
-      isVerified: true,
+      idVerified: true,
       bothVerified: false,
       [verifyOtpDto.type + 'Verified']: true,
       isRegistered: false,
-      sessionId: sessionId
+      sessionId: session.sessionId
     };
   }
 
@@ -176,6 +178,7 @@ export class AuthService {
   async register(registerUserDto: RegisterUserDto) {
     // NEW: Validate registration token
     const tokenData = this.registrationTokens.get(registerUserDto.registrationToken);
+
     if (!tokenData) {
       throw new UnauthorizedException('Invalid or expired registration token');
     }
