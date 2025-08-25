@@ -166,7 +166,7 @@ export class AuthService {
     }
 
     return {
-      idVerified: true,
+      isVerified: true,
       bothVerified: false,
       [verifyOtpDto.type + 'Verified']: true,
       isRegistered: false,
