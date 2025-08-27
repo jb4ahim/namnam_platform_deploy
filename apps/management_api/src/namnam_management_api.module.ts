@@ -9,6 +9,7 @@ import { ResponseEnvelopeInterceptor } from '@app/common';
 import { UsersModule } from './modules/users/users.module';
 import { UploadsModule } from '@app/common/uploads/uploads.module';
 import { JwtModule } from '@app/auth/jwt.module';
+import { ZonesModule } from './modules/zones/zones.module';
 
 @Module({
   imports: [
@@ -21,7 +22,8 @@ import { JwtModule } from '@app/auth/jwt.module';
     AuthModule,
     CategoriesModule,
     UsersModule,
-    UploadsModule
+    UploadsModule,
+    ZonesModule
   ],
   providers: [
       {
