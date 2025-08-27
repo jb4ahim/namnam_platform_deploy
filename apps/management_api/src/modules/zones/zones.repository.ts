@@ -45,16 +45,12 @@ export class ZonesRepository {
     return (result as Zone) || null;
   }
 
-  async createZone(dto: CreateZoneDto): Promise<Zone> {
-    const result = await DatabaseUtils.callProcedure<Zone>(
+  async createZone(dto: CreateZoneDto): Promise<void> {
+    const result = await DatabaseUtils.callProcedure(
       this.pg,
       'create_zone',
       [dto.zoneName, dto.zoneDescription ?? null]
     );
-    if (!result) {
-      throw new Error('Failed to create zone');
-    }
-    return result as Zone;
   }
 
   async updateZone(id: number, dto: UpdateZoneDto): Promise<Zone> {
