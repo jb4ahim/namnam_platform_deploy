@@ -51,7 +51,7 @@ export class MerchantRepository {
         null,
         merchantInfoDto.coverKey,
         merchantInfoDto.imageKey,
-        JSON.stringify(merchantInfoDto.imageKeys),
+        null,
         merchantInfoDto.categoryId
       ]
     );
@@ -111,7 +111,7 @@ export class MerchantRepository {
         createLocationDto.street,
         createLocationDto.building,
         createLocationDto.notes,
-        JSON.stringify(createLocationDto.buildingImage)
+        JSON.stringify(createLocationDto.buildingImages)
       ]
     );
     return result;

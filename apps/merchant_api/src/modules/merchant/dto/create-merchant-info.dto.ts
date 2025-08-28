@@ -19,8 +19,6 @@ export class CreateMerchantInfoDto {
   @IsString()
   imageKey!: string;
 
-  @IsArray()
-  imageKeys!: string[];
 
   @IsOptional()
   @IsArray()

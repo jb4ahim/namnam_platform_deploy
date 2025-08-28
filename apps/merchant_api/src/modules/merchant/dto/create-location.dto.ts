@@ -17,5 +17,5 @@ export class CreateLocationDto {
   notes?: string;
 
   @IsArray()
-  buildingImage!: string[];
+  buildingImages!: string[];
 }
