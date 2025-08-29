@@ -40,7 +40,8 @@ export class AuthRepository {
     phoneNumber: string,
     firstName: string,
     lastName: string,
-    role: string
+    role: string,
+    password: string
   ): Promise<number> {
     const result = await DatabaseUtils.callProcedure(
       this.pg,
@@ -51,6 +52,7 @@ export class AuthRepository {
         firstName,
         lastName,
         role, 
+        password,
         'USD',
         null,
         null,

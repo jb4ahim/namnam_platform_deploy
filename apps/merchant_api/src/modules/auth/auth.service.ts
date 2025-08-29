@@ -8,6 +8,7 @@ import { MerchantService } from '../merchant/merchant.service';
 import { JwtService } from '@app/auth/jwt.service';
 import { isEmail } from 'class-validator';
 // import { TwilioSmsService } from '@app/common';
+import * as bcrypt from 'bcrypt';
 
 // NEW: Updated interfaces for better session management
 interface VerificationSession {
@@ -59,6 +60,7 @@ export class AuthService {
 
     let destination = verifyOtpDto.countryCode + verifyOtpDto.phoneNumber;
     const isValidOtp = await this.authRepository.verifyOtp(destination, 'phone', verifyOtpDto.code);
+
     if (!isValidOtp) {
       throw new UnauthorizedException('Invalid or expired code');
     }
@@ -77,10 +79,9 @@ export class AuthService {
       });
 
       // Clean up verification session and lookups
-
       const merchantData = await this.merchantService.getMerchant(verifyOtpDto.countryCode, verifyOtpDto.phoneNumber);
 
-      if (merchantData.userId) {
+      if (merchantData != null) {
         const tokens = this.jwtService.generateTokenPair({ userId: merchantData.userId });
         return {
           isVerified: true,
@@ -111,17 +112,17 @@ export class AuthService {
       throw new UnauthorizedException('Registration token has expired');
     }
 
-      // NEW: Combine session data (verified email/phone) with user input
       const completeUserData = {
         countryCode: tokenData.countryCode,
         phoneNumber: tokenData.phoneNumber,
         firstName: registerUserDto.firstName,
         lastName: registerUserDto.lastName,
-        role: registerUserDto.role
+        role: registerUserDto.role,
+        password: registerUserDto.password
       };
-
+       const passwordHash = await bcrypt.hash(registerUserDto.password, 10);
       // Create user with complete data
-      const userId = await this.authRepository.registerUser(completeUserData.countryCode, completeUserData.phoneNumber, completeUserData.firstName, completeUserData.lastName, completeUserData.role);
+      const userId = await this.authRepository.registerUser(completeUserData.countryCode, completeUserData.phoneNumber, completeUserData.firstName, completeUserData.lastName, completeUserData.role, passwordHash);
 
       // NEW: Generate JWT token with userId
       const payload = { userId };

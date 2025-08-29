@@ -15,6 +15,10 @@ export class RegisterUserDto {
   @IsNotEmpty()
   role!: string;
 
+  @IsString()
+  @IsNotEmpty()
+  password!: string;
+
   // Registration token field
   @IsString()
   @IsNotEmpty({ message: 'Registration token is required' })
