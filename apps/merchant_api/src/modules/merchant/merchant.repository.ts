@@ -58,11 +58,11 @@ export class MerchantRepository {
     console.log('createMerchantInfo result:', result);
     return result;
   }
-  async getMerchant(email: string, countryCode: string, phoneNumber: string) {
+  async getMerchant( countryCode: string, phoneNumber: string) {
    return await DatabaseUtils.callFunction(
      this.pg,
      'select_merchant',
-     [email, countryCode, phoneNumber]
+     [countryCode, phoneNumber]
    );
   }
 

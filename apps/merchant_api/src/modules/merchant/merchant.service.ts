@@ -42,8 +42,8 @@ export class MerchantService {
     }
   }
 
-  async getMerchant(email: string, countryCode: string, phoneNumber: string) {
-    return await this.merchantRepository.getMerchant(email, countryCode, phoneNumber);
+  async getMerchant(countryCode: string, phoneNumber: string) {
+    return await this.merchantRepository.getMerchant(countryCode, phoneNumber);
   }
 
   async createMerchantInfo(createMerchantInfoDto: CreateMerchantInfoDto, merchantId: number) {

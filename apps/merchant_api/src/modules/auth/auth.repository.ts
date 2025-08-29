@@ -29,14 +29,13 @@ export class AuthRepository {
     const result = await DatabaseUtils.callFunction(
       this.pg,
       'verify_user_otp',
-      [destination, method, code],
+      [destination, 'phone', code],
       false
     );
     return result || false;
   }
 
   async registerUser(
-    email: string,
     countryCode: string,
     phoneNumber: string,
     firstName: string,
@@ -47,7 +46,6 @@ export class AuthRepository {
       this.pg,
       'insert_merchant',
       [
-        email,
         countryCode,
         phoneNumber,
         firstName,
