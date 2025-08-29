@@ -95,12 +95,12 @@ export class AuthService {
 
     return {
       isVerified: true,
-      isRegistered: false
+      isRegistered: false,
+      registrationToken
     };
   }
 
   async register(registerUserDto: RegisterUserDto) {
-    // NEW: Validate registration token
     const tokenData = this.registrationTokens.get(registerUserDto.registrationToken);
 
     if (!tokenData) {
@@ -120,7 +120,9 @@ export class AuthService {
         role: registerUserDto.role,
         password: registerUserDto.password
       };
-       const passwordHash = await bcrypt.hash(registerUserDto.password, 10);
+
+      const passwordHash = await bcrypt.hash(registerUserDto.password, 10);
+
       // Create user with complete data
       const userId = await this.authRepository.registerUser(completeUserData.countryCode, completeUserData.phoneNumber, completeUserData.firstName, completeUserData.lastName, completeUserData.role, passwordHash);
 

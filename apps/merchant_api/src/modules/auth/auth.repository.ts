@@ -49,10 +49,10 @@ export class AuthRepository {
       [
         countryCode,
         phoneNumber,
+        password,
         firstName,
         lastName,
         role, 
-        password,
         'USD',
         null,
         null,
