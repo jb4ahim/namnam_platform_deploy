@@ -6,12 +6,16 @@ import { CreateMerchantInfoDto } from './dto/create-merchant-info.dto';
 import { CreateWeeklyScheduleDto } from './dto/create-weekly-schedule.dto';
 import { MerchantRepository } from './merchant.repository';
 import { CreateLocationDto } from './dto/create-location.dto';
+import { GetCategoryDto } from './dto/get-category.dto';
+import { plainToInstance } from 'class-transformer';
+import { S3PresignService } from '@app/storage/s3-presign.service';
 
 @Injectable()
 export class MerchantService {
 
   constructor(
-    private readonly merchantRepository: MerchantRepository
+    private readonly merchantRepository: MerchantRepository,
+    private readonly s3Service: S3PresignService,
   ) {}
   async getMerchantInfo(merchantId: number) {
     return await this.merchantRepository.getMerchantInfo(merchantId);
@@ -25,7 +29,17 @@ export class MerchantService {
     return await this.merchantRepository.getContactPersons(merchantId);
   }
   async getCategories(parentId: number) {
-    return await this.merchantRepository.getCategories(parentId);
+   const categories = await this.merchantRepository.getCategories(parentId);
+           const dtos = await Promise.all(categories.map(async category => {
+             const imageUrl = category.imageKey
+               ? await this.s3Service.getPresignedDownloadUrl(category.imageKey)
+               : null;
+             return plainToInstance(GetCategoryDto, {
+               ...category,
+               imageUrl,
+             });
+           }));
+       return dtos;
   }
 
   async createContactPerson(createContactPersonDto: CreateContactPersonDto, merchantId: number) {

@@ -8,6 +8,7 @@ import { ResponseEnvelopeInterceptor } from '@app/common';
 import { MerchantModule } from './modules/merchant/merchant.module';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@app/auth/jwt.module';
+import { UploadsModule } from '@app/common/uploads/uploads.module';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { JwtModule } from '@app/auth/jwt.module';
     JwtModule,
     LoggerModule,
     AuthModule,
-    MerchantModule
+    MerchantModule,
+    UploadsModule
   ],
   providers: [
     {

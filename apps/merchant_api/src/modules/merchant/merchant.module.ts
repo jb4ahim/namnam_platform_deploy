@@ -5,9 +5,10 @@ import { DatabaseModule } from '@app/database/database.module';
 import { AuthModule } from '../auth/auth.module';
 import { MerchantRepository } from './merchant.repository';
 import { JwtModule } from '@nestjs/jwt';
+import { StorageModule } from '@app/storage';
 
 @Module({
-  imports: [ DatabaseModule, JwtModule],
+  imports: [ DatabaseModule, JwtModule, StorageModule],
   controllers: [MerchantController],
   providers: [MerchantService, MerchantRepository],
   exports: [MerchantService]
