@@ -19,6 +19,16 @@ export class MerchantRepository {
     return result || [];
   }
 
+  async getCategories(parentId: number) {
+    const result = await DatabaseUtils.callFunction(
+      this.pg,
+      'select_categories',
+      [parentId],
+      false
+    );
+    return result || [];
+  }
+
   async createContactPerson(contactPersonDto: CreateContactPersonDto, merchantId: number) {
     console.log('Creating contact person for merchantId:', merchantId);
     const result = await DatabaseUtils.callProcedure(

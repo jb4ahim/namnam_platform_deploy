@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, NotFoundException, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, NotFoundException, UseGuards, Req, Query } from '@nestjs/common';
 import { CreateMerchantInfoDto } from './dto/create-merchant-info.dto';
 import { CreateWeeklyScheduleDto } from './dto/create-weekly-schedule.dto';
 import { CreateContactPersonDto } from './dto/create-contact-person.dto';
@@ -42,6 +42,13 @@ export class MerchantController {
   async getContactPersons(@CurrentUserId() merchantId: number) {
     const contactPersons = await this.merchantService.getContactPersons(merchantId);
     return contactPersons;
+  }
+
+  @Get('categories')
+  @UseGuards(AuthGuard)
+  async getCategories(@Query('parentId') parentId: number) {
+    const categories = await this.merchantService.getCategories(parentId);
+    return categories;
   }
 
   @Post('contact-person')

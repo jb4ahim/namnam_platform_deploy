@@ -24,6 +24,9 @@ export class MerchantService {
   async getContactPersons(merchantId: number) {
     return await this.merchantRepository.getContactPersons(merchantId);
   }
+  async getCategories(parentId: number) {
+    return await this.merchantRepository.getCategories(parentId);
+  }
 
   async createContactPerson(createContactPersonDto: CreateContactPersonDto, merchantId: number) {
     try {
