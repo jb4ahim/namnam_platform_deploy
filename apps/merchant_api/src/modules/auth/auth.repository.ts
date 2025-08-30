@@ -38,9 +38,6 @@ export class AuthRepository {
   async registerUser(
     countryCode: string,
     phoneNumber: string,
-    firstName: string,
-    lastName: string,
-    role: string,
     password: string
   ): Promise<number> {
     const result = await DatabaseUtils.callProcedure(
@@ -50,9 +47,6 @@ export class AuthRepository {
         countryCode,
         phoneNumber,
         password,
-        firstName,
-        lastName,
-        role, 
         'USD',
         null,
         null,

@@ -1,19 +1,8 @@
 import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class RegisterUserDto {
-  // REMOVED: countryCode, phoneNumber, email - now taken from session
 
-  @IsString()
-  @IsNotEmpty()
-  firstName!: string;
 
-  @IsString()
-  @IsNotEmpty()
-  lastName!: string;
-
-  @IsString()
-  @IsNotEmpty()
-  role!: string;
 
   @IsString()
   @IsNotEmpty()

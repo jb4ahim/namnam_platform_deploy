@@ -112,19 +112,16 @@ export class AuthService {
       throw new UnauthorizedException('Registration token has expired');
     }
 
-      const completeUserData = {
-        countryCode: tokenData.countryCode,
-        phoneNumber: tokenData.phoneNumber,
-        firstName: registerUserDto.firstName,
-        lastName: registerUserDto.lastName,
-        role: registerUserDto.role,
-        password: registerUserDto.password
-      };
+    const completeUserData = {
+      countryCode: tokenData.countryCode,
+      phoneNumber: tokenData.phoneNumber,
+      password: registerUserDto.password
+    };
 
       const passwordHash = await bcrypt.hash(registerUserDto.password, 10);
 
       // Create user with complete data
-      const userId = await this.authRepository.registerUser(completeUserData.countryCode, completeUserData.phoneNumber, completeUserData.firstName, completeUserData.lastName, completeUserData.role, passwordHash);
+      const userId = await this.authRepository.registerUser(completeUserData.countryCode, completeUserData.phoneNumber,  passwordHash);
 
       // NEW: Generate JWT token with userId
       const payload = { userId };
@@ -138,10 +135,7 @@ export class AuthService {
         message: 'User registered successfully',
         // NEW: Return the verified email/phone for confirmation
         userData: {
-          phone: `${tokenData.countryCode}${tokenData.phoneNumber}`,
-          firstName: registerUserDto.firstName,
-          lastName: registerUserDto.lastName,
-          role: registerUserDto.role
+          phone: `${tokenData.countryCode}${tokenData.phoneNumber}`
         }
       };
 
