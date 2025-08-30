@@ -23,7 +23,7 @@ export class MerchantRepository {
     console.log('Creating contact person for merchantId:', merchantId);
     const result = await DatabaseUtils.callProcedure(
       this.pg,
-      'create_restaurant_contact_person',
+      'create_merchant_contact_person',
       [
         merchantId,
         contactPersonDto.firstName,
@@ -52,7 +52,8 @@ export class MerchantRepository {
         merchantInfoDto.coverKey,
         merchantInfoDto.imageKey,
         null,
-        merchantInfoDto.categoryId
+        merchantInfoDto.categoryId,
+        merchantId
       ]
     );
     console.log('createMerchantInfo result:', result);
