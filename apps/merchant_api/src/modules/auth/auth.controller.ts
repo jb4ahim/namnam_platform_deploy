@@ -18,7 +18,7 @@ export class AuthController {
     return this.authService.verifyOtp(verifyOtpDto);
   }
 
-  @Post('register')
+  @Post('password')
   async registerUser(@Body() registerUserDto: RegisterUserDto) {
     return this.authService.register(registerUserDto);
   }

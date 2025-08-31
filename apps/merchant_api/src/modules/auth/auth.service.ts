@@ -82,12 +82,11 @@ export class AuthService {
       const merchantData = await this.merchantService.getMerchant(verifyOtpDto.countryCode, verifyOtpDto.phoneNumber);
 
       if (merchantData != null) {
-        const tokens = this.jwtService.generateTokenPair({ userId: merchantData.userId });
         return {
           isVerified: true,
-          steps: merchantData.steps,
+          isRegistered: true,
           expiresAt: expiresAt.toISOString(),
-          ...tokens
+          verifyToken: registrationToken
         };
       }
 
@@ -96,7 +95,7 @@ export class AuthService {
     return {
       isVerified: true,
       isRegistered: false,
-      registrationToken
+      verifyToken: registrationToken
     };
   }
 
@@ -120,34 +119,52 @@ export class AuthService {
 
       const passwordHash = await bcrypt.hash(registerUserDto.password, 10);
 
+      const merchantData = await this.merchantService.getMerchant(tokenData.countryCode, tokenData.phoneNumber);
+    if (merchantData == null) {
       // Create user with complete data
       const userId = await this.authRepository.registerUser(completeUserData.countryCode, completeUserData.phoneNumber,  passwordHash);
-
+      
       // NEW: Generate JWT token with userId
       const payload = { userId };
+
       const tokens = this.jwtService.generateTokenPair(payload);
+
       // this.registrationTokens.delete(registerUserDto.registrationToken);
       console.log('Generated tokens:', tokens);
 
       return { 
         userId, 
         tokens,
-        message: 'User registered successfully',
-        // NEW: Return the verified email/phone for confirmation
-        userData: {
-          phone: `${tokenData.countryCode}${tokenData.phoneNumber}`
-        }
+        message: 'User registered successfully'
       };
+    }else{
+      if(await bcrypt.compare(registerUserDto.password, merchantData.passwordHash)){
+        const userId = merchantData.userId;
+        const payload = { userId };
+
+        const tokens = this.jwtService.generateTokenPair(payload);
+        return { 
+          userId, 
+          ...tokens,
+          steps: merchantData.steps,
+          message: 'User Logged in successfully'
+      };
+      }else{
+        throw new UnauthorizedException('Invalid credentials');
+      }
+    }
 
   }
 
 
   async refreshToken(token: string) {
     const userId = this.jwtService.verifyRefreshToken(token);
-    console.log(userId);
+    
+    
     if (!userId) {
       throw new UnauthorizedException('Invalid token');
     }
+
     const newToken = this.jwtService.generateTokenPair({ userId });
 
     return { ...newToken };
