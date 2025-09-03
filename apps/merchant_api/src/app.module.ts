@@ -6,6 +6,7 @@ import { LoggerModule } from '@app/common';
 import { GlobalExceptionFilter } from '@app/common';
 import { ResponseEnvelopeInterceptor } from '@app/common';
 import { MerchantModule } from './modules/merchant/merchant.module';
+import { CatalogModule } from './modules/catalog/catalog.module';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@app/auth/jwt.module';
 import { UploadsModule } from '@app/common/uploads/uploads.module';
@@ -20,6 +21,7 @@ import { UploadsModule } from '@app/common/uploads/uploads.module';
     LoggerModule,
     AuthModule,
     MerchantModule,
+    CatalogModule,
     UploadsModule
   ],
   providers: [
