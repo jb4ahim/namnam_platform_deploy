@@ -5,6 +5,7 @@ import { UpdateSectionDto } from './dto/update-section.dto';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { AuthGuard } from '@app/auth';
+import { CurrentUserId } from '@app/common/decorators/current-user-id.decorator';
 
 @Controller('catalog')
 export class CatalogController {
@@ -13,15 +14,16 @@ export class CatalogController {
   // Section endpoints
   @Get('sections')
   @UseGuards(AuthGuard)
-  async getSections(@Req() req: any) {
-    const merchantId = req.user.userId.userId;
+  async getSections(@CurrentUserId() merchantId: number) {
+    console.log('Merchant ID from request:', merchantId);
     return await this.catalogService.getSections(merchantId);
   }
 
   @Post('sections')
   @UseGuards(AuthGuard)
-  async createSection(@Body() createSectionDto: CreateSectionDto, @Req() req: any) {
-    const merchantId = req.user.userId.userId;
+  async createSection(@Body() createSectionDto: CreateSectionDto, @CurrentUserId() merchantId: number) {
+    console.log('Merchant ID from request:', merchantId);
+    
     return await this.catalogService.createSection(createSectionDto, merchantId);
   }
 
@@ -30,17 +32,15 @@ export class CatalogController {
   async updateSection(
     @Param('id', ParseIntPipe) sectionId: number,
     @Body() updateSectionDto: UpdateSectionDto,
-    @Req() req: any
+    @CurrentUserId() merchantId: number
   ) {
-    const merchantId = req.user.userId.userId;
     return await this.catalogService.updateSection(sectionId, updateSectionDto, merchantId);
   }
 
   // Product endpoints
   @Get('products')
   @UseGuards(AuthGuard)
-  async getProducts(@Req() req: any, @Query('sectionId', ParseIntPipe) sectionId?: number) {
-    const merchantId = req.user.userId.userId;
+  async getProducts(@CurrentUserId() merchantId: number, @Query('sectionId', ParseIntPipe) sectionId?: number) {
     return await this.catalogService.getProducts(merchantId, sectionId);
   }
 
@@ -56,9 +56,8 @@ export class CatalogController {
   async updateProduct(
     @Param('id', ParseIntPipe) productId: number,
     @Body() updateProductDto: UpdateProductDto,
-    @Req() req: any
+    @CurrentUserId() merchantId: number
   ) {
-    const merchantId = req.user.userId.userId;
     return await this.catalogService.updateProduct(productId, updateProductDto, merchantId);
   }
 }

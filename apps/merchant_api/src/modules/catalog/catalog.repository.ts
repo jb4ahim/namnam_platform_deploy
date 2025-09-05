@@ -13,7 +13,7 @@ export class CatalogRepository {
   async getSections(merchantId: number) {
     const result = await DatabaseUtils.callFunction(
       this.pg,
-      'get_merchant_sections',
+      'select_catalog_sections',
       [merchantId],
       true
     );
@@ -24,11 +24,12 @@ export class CatalogRepository {
     console.log('Creating section for merchantId:', merchantId);
     const result = await DatabaseUtils.callProcedure(
       this.pg,
-      'insert_merchant_section',
+      'insert_catalog_section',
       [
         merchantId,
         sectionDto.sectionTitleArabic,
-        sectionDto.sectionTitleEnglish
+        sectionDto.sectionTitleEnglish,
+        null
       ]
     );
     console.log('createSection result:', result);
@@ -55,7 +56,7 @@ export class CatalogRepository {
   async getProducts(merchantId: number, sectionId?: number) {
     const result = await DatabaseUtils.callFunction(
       this.pg,
-      'get_merchant_products',
+      'select_merchant_products',
       [merchantId, sectionId || null],
       true
     );
@@ -75,7 +76,9 @@ export class CatalogRepository {
         productDto.productNameEnglish,
         productDto.productDescriptionArabic || null,
         productDto.productDescriptionEnglish || null,
-        productDto.categoryId
+        productDto.price,
+        JSON.stringify(productDto.categoryIds),
+        null
       ]
     );
     console.log('createProduct result:', result);
@@ -96,7 +99,7 @@ export class CatalogRepository {
         productDto.productNameEnglish || null,
         productDto.productDescriptionArabic || null,
         productDto.productDescriptionEnglish || null,
-        productDto.categoryId || null
+       JSON.stringify(productDto.categoryIds)
       ]
     );
     console.log('updateProduct result:', result);

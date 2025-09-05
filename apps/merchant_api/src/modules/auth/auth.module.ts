@@ -30,6 +30,6 @@ import { MerchantModule } from '../merchant/merchant.module';
     AuthRepository
   ],
   controllers: [AuthController],
-  exports: [AuthService]
+  exports: [AuthService, JwtModule]
 })
 export class AuthModule {}

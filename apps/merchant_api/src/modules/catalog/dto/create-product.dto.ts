@@ -7,7 +7,8 @@ export class CreateProductDto {
   @IsArray()
   @IsString({ each: true })
   imageKeys!: string[];
-
+  @IsNumber()
+  price!: number;
   @IsString()
   @IsNotEmpty()
   productNameArabic!: string;
@@ -24,6 +25,7 @@ export class CreateProductDto {
   @IsOptional()
   productDescriptionEnglish?: string;
 
-  @IsNumber()
-  categoryId!: number;
+  @IsArray()
+  @IsNumber({}, { each: true })
+  categoryIds!: number[];
 }

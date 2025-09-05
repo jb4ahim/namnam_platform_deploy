@@ -14,6 +14,7 @@ export class MerchantController {
   @Get('info')
   @UseGuards(AuthGuard)
   async getMerchantInfo(@CurrentUserId() merchantId: number) {
+    console.log('Fetching merchant info for merchantId:', merchantId);
     const merchantInfo = await this.merchantService.getMerchantInfo(merchantId);
     if (!merchantInfo) {
       throw new NotFoundException('Merchant not found');

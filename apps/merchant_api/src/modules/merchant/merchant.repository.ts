@@ -94,6 +94,7 @@ export class MerchantRepository {
   }
 
   async getMerchantInfo(merchantId: number) {
+    console.log('Retrieving merchant info for merchantId:', merchantId);
     const result = await DatabaseUtils.callFunction(
       this.pg,
       'select_merchant_info',

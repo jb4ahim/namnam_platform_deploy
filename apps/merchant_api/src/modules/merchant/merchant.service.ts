@@ -70,10 +70,7 @@ export class MerchantService {
       if (!result) {
         throw new BadRequestException('Failed to create merchant info');
       }
-      return {
-        message: 'Merchant info created successfully',
-        data: result
-      };
+      return result;
     } catch (error) {
       console.error('Error creating merchant info:', error);
       throw new BadRequestException('Failed to create merchant info');
