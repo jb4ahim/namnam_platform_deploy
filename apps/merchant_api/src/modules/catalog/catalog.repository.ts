@@ -36,9 +36,9 @@ export class CatalogRepository {
     return result;
   }
 
-  async updateSection(sectionId: number, sectionDto: UpdateSectionDto, merchantId: number) {
+  async updateSection(sectionId: number, sectionDto: UpdateSectionDto, merchantId: number): Promise<void> {
     console.log('Updating section for merchantId:', merchantId, 'sectionId:', sectionId);
-    const result = await DatabaseUtils.callProcedure(
+    await DatabaseUtils.callProcedure(
       this.pg,
       'update_merchant_section',
       [
@@ -48,8 +48,6 @@ export class CatalogRepository {
         sectionDto.sectionTitleEnglish || null
       ]
     );
-    console.log('updateSection result:', result);
-    return result;
   }
 
   // Product methods
