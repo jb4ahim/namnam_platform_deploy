@@ -101,7 +101,9 @@ export class CatalogRepository {
         productDto.productNameEnglish || null,
         productDto.productDescriptionArabic || null,
         productDto.productDescriptionEnglish || null,
-       JSON.stringify(productDto.categoryIds)
+       JSON.stringify(productDto.categoryIds),
+       JSON.stringify(productDto.variations || []),
+       JSON.stringify(productDto.groupChoices || [])
       ]
     );
     console.log('updateProduct result:', result);

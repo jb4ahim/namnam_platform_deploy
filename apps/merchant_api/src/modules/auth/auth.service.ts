@@ -165,7 +165,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid token');
     }
 
-    const newToken = this.jwtService.generateTokenPair({ userId });
+    const newToken = this.jwtService.generateTokenPair({ userId: userId.userId });
 
     return { ...newToken };
   }
