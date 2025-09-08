@@ -46,8 +46,7 @@ export class CatalogController {
 
   @Post('products')
   @UseGuards(AuthGuard)
-  async createProduct(@Body() createProductDto: CreateProductDto, @Req() req: any) {
-    const merchantId = req.user.userId.userId;
+  async createProduct(@Body() createProductDto: CreateProductDto, @CurrentUserId() merchantId: number) {
     return await this.catalogService.createProduct(createProductDto, merchantId);
   }
 

@@ -78,7 +78,9 @@ export class CatalogRepository {
         productDto.productDescriptionEnglish || null,
         productDto.price,
         JSON.stringify(productDto.categoryIds),
-        null
+        null,
+        JSON.stringify(productDto.variations || []),
+        JSON.stringify(productDto.groupChoices || [])
       ]
     );
     console.log('createProduct result:', result);
