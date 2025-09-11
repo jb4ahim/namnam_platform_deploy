@@ -19,14 +19,4 @@ export class CreateMerchantInfoDto {
   @IsString()
   imageKey!: string;
 
-
-  @IsOptional()
-  @IsArray()
-  @IsNumber({}, { each: true })
-  cuisineTypeIds?: number[];
-
-  @IsOptional()
-  @IsArray()
-  @IsNumber({}, { each: true })
-  shopTypeIds?: number[];
 }
