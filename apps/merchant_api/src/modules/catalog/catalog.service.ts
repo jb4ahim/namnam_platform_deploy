@@ -33,14 +33,10 @@ export class CatalogService {
 
   async updateSection(sectionId: number, updateSectionDto: UpdateSectionDto, merchantId: number) {
     try {
-      const result = await this.catalogRepository.updateSection(sectionId, updateSectionDto, merchantId);
-      if (!result) {
-        throw new BadRequestException('Failed to update section');
-      }
+      await this.catalogRepository.updateSection(sectionId, updateSectionDto, merchantId);
       return {
         success: true,
-        message: 'Section updated successfully',
-        data: result
+        message: 'Section updated successfully'
       };
     } catch (error) {
       console.error('Error updating section:', error);
