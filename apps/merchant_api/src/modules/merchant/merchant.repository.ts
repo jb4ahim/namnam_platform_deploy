@@ -63,7 +63,8 @@ export class MerchantRepository {
         merchantInfoDto.imageKey,
         null,
         merchantInfoDto.categoryId,
-        merchantId
+        merchantId,
+        merchantInfoDto.hotline
       ]
     );
     console.log('createMerchantInfo result:', result);

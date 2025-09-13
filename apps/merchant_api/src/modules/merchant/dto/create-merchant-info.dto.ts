@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsNumber, IsArray, IsObject, ValidateNested } from 'class-validator';
+import { IsString, IsOptional, IsNumber, IsArray, IsObject, ValidateNested, IsPhoneNumber } from 'class-validator';
 import { Type } from 'class-transformer';
 
 
@@ -19,4 +19,7 @@ export class CreateMerchantInfoDto {
   @IsString()
   imageKey!: string;
 
+  @IsString()
+  @IsPhoneNumber()
+  hotline!: string;
 }
