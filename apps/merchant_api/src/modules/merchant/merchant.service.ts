@@ -45,9 +45,7 @@ export class MerchantService {
   async createContactPerson(createContactPersonDto: CreateContactPersonDto, merchantId: number) {
     try {
       const result = await this.merchantRepository.createContactPerson(createContactPersonDto, merchantId);
-      if (!result) {
-        throw new BadRequestException('Failed to create contact person');
-      }
+
       return {
         success: true,
         message: 'Contact person created successfully',

@@ -29,8 +29,8 @@ export class MerchantRepository {
     return result || [];
   }
 
-  async createContactPerson(contactPersonDto: CreateContactPersonDto, merchantId: number) {
-    console.log('Creating contact person for merchantId:', merchantId);
+  async createContactPerson(contactPersonDto: CreateContactPersonDto, merchantId: number): Promise<void> {
+    
     const result = await DatabaseUtils.callProcedure(
       this.pg,
       'create_merchant_contact_person',
@@ -43,8 +43,6 @@ export class MerchantRepository {
         contactPersonDto.phoneNumber
       ]
     );
-    console.log('createContactPerson result:', result);
-    return result;
   }
 
   async createMerchantInfo(merchantInfoDto: CreateMerchantInfoDto, merchantId: number) {
