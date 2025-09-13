@@ -100,15 +100,15 @@ export class AuthService {
   }
 
   async register(registerUserDto: RegisterUserDto) {
-    const tokenData = this.registrationTokens.get(registerUserDto.registrationToken);
+    const tokenData = this.registrationTokens.get(registerUserDto.verifyToken);
 
     if (!tokenData) {
-      throw new UnauthorizedException('Invalid or expired registration token');
+      throw new UnauthorizedException('Invalid or expired verification  token');
     }
 
     if (new Date() > tokenData.expiresAt) {
-      this.registrationTokens.delete(registerUserDto.registrationToken);
-      throw new UnauthorizedException('Registration token has expired');
+      this.registrationTokens.delete(registerUserDto.verifyToken);
+      throw new UnauthorizedException('Verification token has expired');
     }
 
     const completeUserData = {

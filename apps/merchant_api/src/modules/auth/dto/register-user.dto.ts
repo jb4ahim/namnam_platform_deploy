@@ -8,8 +8,8 @@ export class RegisterUserDto {
   @IsNotEmpty()
   password!: string;
 
-  // Registration token field
+  // Verification token field
   @IsString()
-  @IsNotEmpty({ message: 'Registration token is required' })
-  registrationToken!: string;
+  @IsNotEmpty({ message: 'Verification token is required' })
+  verifyToken!: string;
 }
