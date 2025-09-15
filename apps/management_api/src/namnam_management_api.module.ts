@@ -7,6 +7,7 @@ import { LoggerModule } from '@app/common';
 import { GlobalExceptionFilter } from '@app/common';
 import { ResponseEnvelopeInterceptor } from '@app/common';
 import { UsersModule } from './modules/users/users.module';
+import { MerchantModule } from './modules/merchant/merchant.module';
 import { UploadsModule } from '@app/common/uploads/uploads.module';
 import { JwtModule } from '@app/auth/jwt.module';
 import { ZonesModule } from './modules/zones/zones.module';
@@ -17,11 +18,11 @@ import { ZonesModule } from './modules/zones/zones.module';
           isGlobal: true,
           envFilePath: '.env'
     }),
-    JwtModule,
     LoggerModule,
     AuthModule,
     CategoriesModule,
     UsersModule,
+    MerchantModule,
     UploadsModule,
     ZonesModule
   ],
