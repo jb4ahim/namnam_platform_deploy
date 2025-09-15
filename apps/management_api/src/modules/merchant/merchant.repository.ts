@@ -144,4 +144,13 @@ export class MerchantRepository {
     );
     return result || [];
   }
+  async getCatalogProductsBySection(merchantId?: number, sectionId?: number) {
+    const result = await DatabaseUtils.callFunction(
+      this.pg,
+      'select_merchant_catalog_management',
+      [merchantId, sectionId],
+      true
+    );
+    return result || [];
+  }
 }

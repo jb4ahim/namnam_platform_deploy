@@ -123,4 +123,8 @@ export class MerchantService {
       return await this.merchantRepository.getCatalog(merchantId);
 
   }
+
+  async getCatalogProductsBySection(merchantId?: number, sectionId?: number) {
+      return await this.merchantRepository.getCatalogProductsBySection(merchantId, sectionId);
+  }
 }

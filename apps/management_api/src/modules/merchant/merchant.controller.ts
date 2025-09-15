@@ -64,6 +64,15 @@ export class MerchantController {
     return await this.merchantService.getCatalog(id);
   }
   
+  @Get(":id/catalog/sections/:sectionId/products")  
+  @UseGuards(AuthGuard)
+  async getCatalogProductsBySection(
+    @Param("id", ParseIntPipe) id: number,
+    @Param("sectionId", ParseIntPipe) sectionId: number
+  ) {
+    return await this.merchantService.getCatalogProductsBySection(id, sectionId);
+  }
+
   @Post(":id/suspend")
   @UseGuards(AuthGuard)
   async suspendMerchant(
