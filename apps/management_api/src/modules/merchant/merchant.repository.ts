@@ -4,12 +4,10 @@ import { CreateMerchantDto } from './dto/create-merchant.dto';
 import { UpdateMerchantDto } from './dto/update-merchant.dto';
 import { PaginationQueryDto } from '@app/common/dto';
 type MerchantsListRow = {
-  id: string;
+  id: number;
   name?: string | null;
-  email?: string | null;
-  phone_number?: string | null;
-  status?: string | null;
-  created_at?: string | Date;
+  description?: string | null;
+  is_owned_by_app?: boolean | null;
 };
 @Injectable()
 export class MerchantRepository {
@@ -44,7 +42,7 @@ export class MerchantRepository {
   
       const result = await DatabaseUtils.callFunction<{ items: MerchantsListRow[]; total_count: number }>(
         this.pg,
-        'select_management_merchants_json',
+        'select_management_merchants',
         [page, pageSize, sortBy, sortOrder, search || null],
         false
       );
@@ -100,7 +98,7 @@ export class MerchantRepository {
     console.log('Retrieving merchant detailed info for merchantId:', merchantId);
     const result = await DatabaseUtils.callFunction(
       this.pg,
-      'select_merchant_info',
+      'select_merchant_info_management',
       [merchantId],
       false
     );
@@ -110,7 +108,7 @@ export class MerchantRepository {
   async getWeeklySchedule(merchantId: number) {
     const result = await DatabaseUtils.callFunction(
       this.pg,
-      'select_schedule_info_by_merchant_id',
+      'select_schedule_info_by_merchant_id_management',
       [merchantId],
       false
     );
@@ -120,7 +118,7 @@ export class MerchantRepository {
   async getContactPersons(merchantId: number) {
     const result = await DatabaseUtils.callFunction(
       this.pg,
-      'select_restaurant_contact_person',
+      'select_restaurant_contact_person_management',
       [merchantId],
       true
     );
@@ -130,18 +128,18 @@ export class MerchantRepository {
   async getLocation(merchantId: number) {
     const result = await DatabaseUtils.callFunction(
       this.pg,
-      'select_location_info_by_merchant_id',
+      'select_merchant_location_info_by_merchant_id_management',
       [merchantId],
       false
     );
     return result;
   }
 
-  async getCategories(parentId?: number) {
+  async getCatalog(merchantId?: number) {
     const result = await DatabaseUtils.callFunction(
       this.pg,
-      'select_categories',
-      [parentId || null],
+      'select_merchant_catalog_management',
+      [merchantId],
       true
     );
     return result || [];

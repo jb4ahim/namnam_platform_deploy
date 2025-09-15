@@ -55,7 +55,7 @@ export class UsersRepository {
 
     const result = await DatabaseUtils.callFunction<{ items: MerchantsListRow[]; total_count: number }>(
       this.pg,
-      'select_management_merchants_json',
+      'select_management_merchant_users_json',
       [page, pageSize, sortBy, sortOrder, search || null],
       false
     );

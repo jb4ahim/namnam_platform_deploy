@@ -25,7 +25,7 @@ export class MerchantService {
     }
   }
 
-  async getMerchants(searchTerm: string, limit?: number, offset?: number) {
+  async getMerchants(searchTerm?: string, limit?: number, offset?: number) {
       return await this.merchantRepository.getMerchants({ page: offset, pageSize: limit }, searchTerm);
   }
 
@@ -119,12 +119,8 @@ export class MerchantService {
     }
   }
 
-  async getCategories(parentId?: number) {
-    try {
-      return await this.merchantRepository.getCategories(parentId);
-    } catch (error) {
-      console.error('Error getting categories:', error);
-      throw new BadRequestException('Failed to get categories');
-    }
+  async getCatalog(merchantId?: number) {
+      return await this.merchantRepository.getCatalog(merchantId);
+
   }
 }

@@ -10,28 +10,20 @@ export class MerchantController {
   @Get()
   @UseGuards(AuthGuard)
   async getMerchants(
-    @Query("q") searchTerm: string,
+    @Query("q") searchTerm?: string,
     @Query("limit", ParseIntPipe) limit?: number,
     @Query("offset", ParseIntPipe) offset?: number
   ) {
     return await this.merchantService.getMerchants(searchTerm, limit, offset);
   }
 
-  @Get("categories")
-  @UseGuards(AuthGuard)
-  async getCategories(@Query("parentId", ParseIntPipe) parentId?: number) {
-    return await this.merchantService.getCategories(parentId);
-  }
 
-  @Get(":id")
-  @UseGuards(AuthGuard)
-  async getMerchantById(@Param("id", ParseIntPipe) id: number) {
-    return await this.merchantService.getMerchantById(id);
-  }
+
 
   @Get(":id/info")
   @UseGuards(AuthGuard)
   async getMerchantInfo(@Param("id", ParseIntPipe) merchantId: number) {
+    console.log('Fetching merchant info for merchantId:', merchantId);
     return await this.merchantService.getMerchantDetailedInfo(merchantId);
   }
 
@@ -66,6 +58,12 @@ export class MerchantController {
     return await this.merchantService.approveMerchant(id);
   }
 
+  @Get(":id/catalog")
+  @UseGuards(AuthGuard)
+  async getCatalog(@Param("id", ParseIntPipe) id: number) {
+    return await this.merchantService.getCatalog(id);
+  }
+  
   @Post(":id/suspend")
   @UseGuards(AuthGuard)
   async suspendMerchant(

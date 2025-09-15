@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { RegisterManagementUserDto } from './dto/register-management-user.dto';
 import { LoginManagementUserDto } from './dto/login-management-user.dto';
 import * as bcrypt from 'bcrypt';
 import { AuthRepository } from './auth.repository';
+import { JwtService } from '@app/auth/jwt.service';
 
 @Injectable()
 export class AuthService {
@@ -25,18 +25,19 @@ export class AuthService {
     });
 
     const payload = { managementUserId: result.management_user_id, userId: result.user_id };
-    const access_token = this.jwtService.sign(payload);
+    const { accessToken, refreshToken } = this.jwtService.generateTokenPair(payload);
 
     return {
-      management_user_id: result.management_user_id,
-      user_id: result.user_id,
-      access_token
+      managementUserId: result.management_user_id,
+      userId: result.user_id,
+      accessToken,
+      refreshToken
     };
   }
 
   async login(dto: LoginManagementUserDto) {
     const user = await this.authRepository.getManagementUserByEmail(dto.email);
-    console.log("user", user);
+    
     if (!user || !user.password_hash) {
       throw new Error('Invalid credentials');
     }
@@ -47,12 +48,12 @@ export class AuthService {
     }
 
     const payload = { managementUserId: user.management_user_id, userId: user.user_id };
-    const access_token = this.jwtService.sign(payload);
+    const  { accessToken, refreshToken } = this.jwtService.generateTokenPair(payload);
 
     return {
-      management_user_id: user.management_user_id,
-      user_id: user.user_id,
-      access_token
+      managementUserId: user.management_user_id,
+      accessToken,
+      refreshToken
     };
   }
 }
