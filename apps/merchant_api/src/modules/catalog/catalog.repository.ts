@@ -27,8 +27,8 @@ export class CatalogRepository {
       'insert_catalog_section',
       [
         merchantId,
-        sectionDto.sectionTitleArabic,
         sectionDto.sectionTitleEnglish,
+        sectionDto.sectionTitleArabic,
         null
       ]
     );
