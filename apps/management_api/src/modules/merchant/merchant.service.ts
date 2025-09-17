@@ -2,10 +2,16 @@ import { Injectable, BadRequestException, NotFoundException } from '@nestjs/comm
 import { MerchantRepository } from './merchant.repository';
 import { CreateMerchantDto } from './dto/create-merchant.dto';
 import { UpdateMerchantDto } from './dto/update-merchant.dto';
+import { S3PresignService } from '@app/storage/s3-presign.service';
+import { GetMerchantDto } from './dto/get-merchants.dto';
+import { plainToInstance } from 'class-transformer';
+import { PaginatedResultDto } from '@app/common/dto/paginated-result.dto';
 
 @Injectable()
 export class MerchantService {
-  constructor(private readonly merchantRepository: MerchantRepository) {}
+  constructor(private readonly merchantRepository: MerchantRepository,
+    private readonly s3Service: S3PresignService
+  ) {}
 
 
 
@@ -25,8 +31,26 @@ export class MerchantService {
     }
   }
 
-  async getMerchants(searchTerm?: string, limit?: number, offset?: number) {
-      return await this.merchantRepository.getMerchants({ page: offset, pageSize: limit }, searchTerm);
+  async getMerchants(searchTerm?: string, limit?: number, offset?: number):Promise<PaginatedResultDto<GetMerchantDto>> {
+        const merchants = await this.merchantRepository.getMerchants({ page: offset, pageSize: limit }, searchTerm);
+        const dtos = await Promise.all(merchants.items.map(async merchant => {
+          const logoUrl = merchant.logoKey
+            ? await this.s3Service.getPresignedDownloadUrl(merchant.logoKey)
+            : null;
+          return plainToInstance(GetMerchantDto, {
+            ...merchant,
+            logoUrl,
+          });
+        }));
+        return {
+          items: dtos,
+          totalCount: merchants.totalCount,
+          page: merchants.page,
+          pageSize: merchants.pageSize,
+          hasNextPage: merchants.hasNextPage,
+          hasPreviousPage: merchants.hasPreviousPage,
+          totalPages: merchants.totalPages
+        };
   }
 
 
