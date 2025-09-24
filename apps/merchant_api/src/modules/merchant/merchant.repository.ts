@@ -136,12 +136,15 @@ export class MerchantRepository {
     );
     return result;
   }
-  
+
   async requestApproval(merchantId: number): Promise<{ success: boolean; message: string }> {
     const result = await DatabaseUtils.callProcedure(
       this.pg,
       'insert_merchant_request',
-      [merchantId]
+      [merchantId,
+        null,
+        null
+      ]
     );
     // result should contain success and message output parameters
     return {
