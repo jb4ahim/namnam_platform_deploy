@@ -122,5 +122,8 @@ export class MerchantService {
   }
   async getLocation(merchantId: number) {
     return await this.merchantRepository.getLocation(merchantId);
-  } 
+  }
+  async requestApproval(merchantId: number) {
+    return await this.merchantRepository.requestApproval(merchantId);
+  }
 }

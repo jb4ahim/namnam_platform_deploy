@@ -9,6 +9,8 @@ import { JwtService } from '@app/auth/jwt.service';
 import { isEmail } from 'class-validator';
 // import { TwilioSmsService } from '@app/common';
 import * as bcrypt from 'bcrypt';
+import { access } from 'fs';
+import { ref } from 'process';
 
 // NEW: Updated interfaces for better session management
 interface VerificationSession {
@@ -123,8 +125,12 @@ export class AuthService {
     if (merchantData == null) {
       // Create user with complete data
       const userId = await this.authRepository.registerUser(completeUserData.countryCode, completeUserData.phoneNumber,  passwordHash);
-      
-      // NEW: Generate JWT token with userId
+      console.log('Registered userId:', userId);
+
+      if (!userId) {
+        throw new BadRequestException('User registration failed');
+      }
+      //  Generate JWT token with userId
       const payload = { userId };
 
       const tokens = this.jwtService.generateTokenPair(payload);
@@ -133,18 +139,21 @@ export class AuthService {
       console.log('Generated tokens:', tokens);
 
       return { 
-        userId, 
-        tokens,
+        ...userId, 
+        ...tokens,
         message: 'User registered successfully'
       };
     }else{
       if(await bcrypt.compare(registerUserDto.password, merchantData.passwordHash)){
+        console.log('User logged in, userId:', merchantData.userId);
         const userId = merchantData.userId;
-        const payload = { userId };
+        const merchantId = merchantData.merchantId;
+        const payload = { userId: userId, merchantId: merchantId };
 
         const tokens = this.jwtService.generateTokenPair(payload);
         return { 
           userId, 
+          merchantId,
           ...tokens,
           steps: merchantData.steps,
           message: 'User Logged in successfully'
@@ -158,14 +167,14 @@ export class AuthService {
 
 
   async refreshToken(token: string) {
-    const userId = this.jwtService.verifyRefreshToken(token);
+    const user = this.jwtService.verifyRefreshToken(token);
     
     
-    if (!userId) {
+    if (!user) {
       throw new UnauthorizedException('Invalid token');
     }
 
-    const newToken = this.jwtService.generateTokenPair({ userId: userId.userId });
+    const newToken = this.jwtService.generateTokenPair({ userId: user.userId, merchantId: user.merchantId });
 
     return { ...newToken };
   }

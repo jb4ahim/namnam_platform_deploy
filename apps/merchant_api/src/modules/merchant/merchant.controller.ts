@@ -5,7 +5,7 @@ import { CreateContactPersonDto } from './dto/create-contact-person.dto';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { MerchantService } from './merchant.service';
 import { AuthGuard } from '@app/auth';
-import { CurrentUserId } from '@app/common/decorators';
+import { CurrentMerchantId, CurrentUserId } from '@app/common/decorators';
 
 @Controller('merchants')
 export class MerchantController {
@@ -34,13 +34,13 @@ export class MerchantController {
 
   @Post('info')
   @UseGuards(AuthGuard)
-  async createMerchantInfo(@Body() createMerchantInfoDto: CreateMerchantInfoDto,@CurrentUserId() merchantId: number) {
+  async createMerchantInfo(@Body() createMerchantInfoDto: CreateMerchantInfoDto,@CurrentMerchantId() merchantId: number) {
     return await this.merchantService.createMerchantInfo(createMerchantInfoDto, merchantId);
   }
 
   @Get('contact-person')
   @UseGuards(AuthGuard)
-  async getContactPersons(@CurrentUserId() merchantId: number) {
+  async getContactPersons(@CurrentMerchantId() merchantId: number) {
     const contactPersons = await this.merchantService.getContactPersons(merchantId);
     return contactPersons;
   }
@@ -54,13 +54,13 @@ export class MerchantController {
 
   @Post('contact-person')
   @UseGuards(AuthGuard)
-  async createContactPerson(@Body() createContactPersonDto: CreateContactPersonDto, @CurrentUserId() merchantId: number) {
+  async createContactPerson(@Body() createContactPersonDto: CreateContactPersonDto, @CurrentMerchantId() merchantId: number) {
     return await this.merchantService.createContactPerson(createContactPersonDto, merchantId);
   }
 
   @Post('schedules')
   @UseGuards(AuthGuard)
-  async createWeeklySchedule(@Body() createWeeklyScheduleDto: CreateWeeklyScheduleDto, @CurrentUserId() merchantId: number) {
+  async createWeeklySchedule(@Body() createWeeklyScheduleDto: CreateWeeklyScheduleDto, @CurrentMerchantId() merchantId: number) {
     console.log('Creating weekly schedule:', createWeeklyScheduleDto);
     console.log('For merchantId:', merchantId);
     return await this.merchantService.createWeeklySchedule(createWeeklyScheduleDto, merchantId);
@@ -68,13 +68,18 @@ export class MerchantController {
 
   @Post('location')
   @UseGuards(AuthGuard)
-  async createLocation(@Body() createLocationDto: CreateLocationDto, @CurrentUserId() merchantId: number) {
+  async createLocation(@Body() createLocationDto: CreateLocationDto, @CurrentMerchantId() merchantId: number) {
     return await this.merchantService.createLocation(createLocationDto, merchantId);
   }
 
   @Get('location')
   @UseGuards(AuthGuard)
-  async getLocation(@CurrentUserId() merchantId: number) {
+  async getLocation(@CurrentMerchantId() merchantId: number) {
     return await this.merchantService.getLocation(merchantId);
+  }
+  @Post('request-approval')
+  @UseGuards(AuthGuard)
+  async requestApproval(@CurrentMerchantId() merchantId: number) {
+    return await this.merchantService.requestApproval(merchantId);
   }
 }

@@ -12,7 +12,7 @@ export class MerchantRepository {
   async getContactPersons(merchantId: number) {
     const result = await DatabaseUtils.callFunction(
       this.pg,
-      'select_restaurant_contact_person',
+      'select_merchant_contact_person',
       [merchantId],
       false
     );
@@ -136,4 +136,18 @@ export class MerchantRepository {
     );
     return result;
   }
+  
+  async requestApproval(merchantId: number): Promise<{ success: boolean; message: string }> {
+    const result = await DatabaseUtils.callProcedure(
+      this.pg,
+      'insert_merchant_request',
+      [merchantId]
+    );
+    // result should contain success and message output parameters
+    return {
+      success: result.success,
+      message: result.message
+    };
+  }
+
 }

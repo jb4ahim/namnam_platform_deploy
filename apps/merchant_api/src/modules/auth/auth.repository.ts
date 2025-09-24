@@ -39,7 +39,7 @@ export class AuthRepository {
     countryCode: string,
     phoneNumber: string,
     password: string
-  ): Promise<number> {
+  ): Promise<{userId: number; merchantId: number}> {
     const result = await DatabaseUtils.callProcedure(
       this.pg,
       'insert_merchant',
@@ -50,7 +50,8 @@ export class AuthRepository {
         'USD',
         null,
         null,
-        null 
+        null,
+        null
       ]
     );
     
@@ -60,7 +61,10 @@ export class AuthRepository {
       throw new Error(result?.o_message || 'User registration failed');
     }
     
-    return result.o_user_id;
+    return {
+      userId: result.o_user_id,
+      merchantId: result.o_merchant_id
+    };
   }
 
   async createWithPhone(phone: string) {
