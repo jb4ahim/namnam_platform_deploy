@@ -53,7 +53,6 @@ export class MerchantRepository {
       [
         null,
         null,
-        null,
         merchantInfoDto.name,
         merchantInfoDto.description,
         null,

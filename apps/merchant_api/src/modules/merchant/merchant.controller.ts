@@ -13,18 +13,15 @@ export class MerchantController {
   
   @Get('info')
   @UseGuards(AuthGuard)
-  async getMerchantInfo(@CurrentUserId() merchantId: number) {
+  async getMerchantInfo(@CurrentMerchantId() merchantId: number) {
     console.log('Fetching merchant info for merchantId:', merchantId);
     const merchantInfo = await this.merchantService.getMerchantInfo(merchantId);
-    if (!merchantInfo) {
-      throw new NotFoundException('Merchant not found');
-    }
     return merchantInfo;
   }
 
   @Get('schedules')
   @UseGuards(AuthGuard)
-  async getWeeklySchedule(@CurrentUserId() merchantId: number) {
+  async getWeeklySchedule(@CurrentMerchantId() merchantId: number) {
     const schedule = await this.merchantService.getWeeklySchedule(merchantId);
     if (!schedule) {
       throw new NotFoundException('Schedule not found');
