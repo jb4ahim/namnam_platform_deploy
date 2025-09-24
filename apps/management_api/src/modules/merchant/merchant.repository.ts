@@ -160,4 +160,23 @@ export class MerchantRepository {
     );
     return result || [];
   }
+  async getMerchantRequests() {
+    const result = await DatabaseUtils.callFunction(
+      this.pg,
+      'select_merchant_requests_management',
+      [],
+      true
+    );
+    return result || [];
+  }
+  async updateMerchantStatus(merchantId: number, status: string) {
+    console.log('Updating merchant status:', merchantId, 'status:', status);
+    const result = await DatabaseUtils.callProcedure(
+      this.pg,
+      'update_merchant_request_status',
+      [merchantId, status, null, null, null, null]
+    );
+    console.log('updateMerchantStatus result:', result);
+    return result;
+  }
 }

@@ -151,4 +151,21 @@ export class MerchantService {
   async getCatalogProductsBySection(merchantId?: number, sectionId?: number) {
       return await this.merchantRepository.getCatalogProductsBySection(merchantId, sectionId);
   }
+
+  async getMerchantRequests() {
+      return await this.merchantRepository.getMerchantRequests();
+  }
+
+  async updateMerchantStatus(merchantId: number, status: string) {
+      const result = await this.merchantRepository.updateMerchantStatus(merchantId, status);
+      if (!result) {
+        throw new BadRequestException('Failed to update merchant status');
+      }
+      return {
+        success: true,
+        message: 'Merchant status updated successfully',
+        data: result
+      };
+    
+}
 }

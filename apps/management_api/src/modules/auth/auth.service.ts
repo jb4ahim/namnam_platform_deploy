@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { RegisterManagementUserDto } from './dto/register-management-user.dto';
 import { LoginManagementUserDto } from './dto/login-management-user.dto';
 import * as bcrypt from 'bcrypt';
@@ -56,5 +56,17 @@ export class AuthService {
       refreshToken
     };
   }
+    async refreshToken(token: string) {
+      const user = this.jwtService.verifyRefreshToken(token);
+      
+      
+      if (!user) {
+        throw new UnauthorizedException('Invalid token');
+      }
+
+      const newToken = this.jwtService.generateTokenPair({ userId: user.userId });
+
+      return { ...newToken };
+    }
 }
 

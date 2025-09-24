@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, ParseIntPipe, Query, UseGuards } from "@nestjs/common";
+import { Controller, Get, Post, Put, Delete, Body, Param, ParseIntPipe, Query, UseGuards, Patch } from "@nestjs/common";
 import { MerchantService } from "./merchant.service";
 import { AuthGuard } from "@app/auth";
 
@@ -80,5 +80,20 @@ export class MerchantController {
     @Body("reason") reason?: string
   ) {
     return await this.merchantService.suspendMerchant(id, reason);
+  }
+
+  @Get("merchant-requests")
+  @UseGuards(AuthGuard)
+  async getMerchantRequests() {
+    return await this.merchantService.getMerchantRequests();
+  }
+
+  @Patch("/:id/status")
+  @UseGuards(AuthGuard)
+  async updateMerchantStatus(
+    @Param("id", ParseIntPipe) id: number,
+    @Body("status") status: string
+  ) {
+    return await this.merchantService.updateMerchantStatus(id, status);
   }
 }

@@ -58,8 +58,7 @@ export class MerchantController {
   @Post('schedules')
   @UseGuards(AuthGuard)
   async createWeeklySchedule(@Body() createWeeklyScheduleDto: CreateWeeklyScheduleDto, @CurrentMerchantId() merchantId: number) {
-    console.log('Creating weekly schedule:', createWeeklyScheduleDto);
-    console.log('For merchantId:', merchantId);
+
     return await this.merchantService.createWeeklySchedule(createWeeklyScheduleDto, merchantId);
   }
 
