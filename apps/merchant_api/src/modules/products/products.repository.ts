@@ -11,8 +11,7 @@ export class ProductsRepository {
     const result = await DatabaseUtils.callFunction(
       this.pg,
       'select_merchant_products',
-      [merchantId, sectionId || null],
-      true
+      [merchantId, sectionId || null]
     );
     return result || [];
   }
@@ -67,12 +66,11 @@ export class ProductsRepository {
 
   async deleteProduct(productId: number, merchantId: number) {
     console.log('Deleting product for merchantId:', merchantId, 'productId:', productId);
-    const result = await DatabaseUtils.callProcedure(
+     await DatabaseUtils.callProcedure(
       this.pg,
       'delete_product_merchant',
       [productId, merchantId]
     );
-    return result;
   }
 
   async getProductById(productId: number, merchantId: number) {
@@ -86,11 +84,10 @@ export class ProductsRepository {
   }
 
   async changeProductStatus(productId: number, isDisabled: boolean, merchantId: number) {
-        const result = await DatabaseUtils.callProcedure(
+        await DatabaseUtils.callProcedure(
             this.pg,
-            'update_merchant_product_status',
-            [productId, isDisabled, merchantId]
+            'update_product_disabled_status',
+            [productId, merchantId, isDisabled]
         );
-        return result;
     }
 }

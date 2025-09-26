@@ -68,20 +68,9 @@ export class ProductsService {
 
   async deleteProduct(productId: number, merchantId: number) {
       const result = await this.productsRepository.deleteProduct(productId, merchantId);
-      return {
-        success: true,
-        message: 'Product deleted successfully',
-        data: result
-      };
-
   }
   async changeProductStatus(productId: number, isDisabled: boolean, merchantId: number) {
-        const result = await this.productsRepository.changeProductStatus(productId, isDisabled, merchantId);
-        return {
-            success: true,
-            message: 'Product status updated successfully',
-            data: result
-        };
+       await this.productsRepository.changeProductStatus(productId, isDisabled, merchantId);
 
 }
 }

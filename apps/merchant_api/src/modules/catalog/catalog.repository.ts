@@ -12,10 +12,10 @@ export class CatalogRepository {
     const result = await DatabaseUtils.callFunction(
       this.pg,
       'select_catalog_sections',
-      [merchantId],
-      true
+      [merchantId]
+      
     );
-    return result || [];
+    return result;
   }
 
   async createSection(sectionDto: CreateSectionDto, merchantId: number) {

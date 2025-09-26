@@ -16,7 +16,7 @@ export class MerchantRepository {
       [merchantId],
       false
     );
-    return result || [];
+    return result || {};
   }
 
   async getCategories(parentId: number) {
