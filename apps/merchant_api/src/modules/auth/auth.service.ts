@@ -138,8 +138,8 @@ export class AuthService {
       // this.registrationTokens.delete(registerUserDto.registrationToken);
       console.log('Generated tokens:', tokens);
 
-      return { 
-        ...userId, 
+      return {
+        ...userId,
         ...tokens,
         message: 'User registered successfully'
       };
@@ -168,14 +168,10 @@ export class AuthService {
 
   async refreshToken(token: string) {
     const user = this.jwtService.verifyRefreshToken(token);
-    
-    
     if (!user) {
       throw new UnauthorizedException('Invalid token');
     }
-
     const newToken = this.jwtService.generateTokenPair({ userId: user.userId, merchantId: user.merchantId });
-
     return { ...newToken };
   }
 }
