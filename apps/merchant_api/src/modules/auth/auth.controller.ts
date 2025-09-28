@@ -1,8 +1,10 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { SendOtpDto } from './dto/send-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
+import { CurrentUserId } from '@app/common/decorators';
+import { AuthGuard } from '@app/auth';
 
 @Controller('auth')
 export class AuthController {
@@ -26,5 +28,11 @@ export class AuthController {
   @Post('refresh-token')
   async refreshToken(@Body() refreshTokenDto: { refreshToken: string }) {
     return this.authService.refreshToken(refreshTokenDto.refreshToken);
+  }
+
+  @Post('fcm-token')
+  @UseGuards(AuthGuard)
+  async updateFcmToken(@Body() fcmTokenDto: { fcmToken: string }, @CurrentUserId() userId: number) {
+    return this.authService.updateFcmToken(fcmTokenDto.fcmToken, userId);
   }
 }

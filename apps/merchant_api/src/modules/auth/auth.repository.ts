@@ -66,6 +66,13 @@ export class AuthRepository {
       merchantId: result.o_merchant_id
     };
   }
+  async updateFcmToken(userId: number, fcmToken: string){
+    await DatabaseUtils.callProcedure(
+      this.pg,
+      'update_fcm_token_merchant',
+      [userId, fcmToken]
+    );
+  }
 
   async createWithPhone(phone: string) {
     const result = await DatabaseUtils.callFunction(

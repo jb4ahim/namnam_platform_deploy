@@ -174,4 +174,9 @@ export class AuthService {
     const newToken = this.jwtService.generateTokenPair({ userId: user.userId, merchantId: user.merchantId });
     return { ...newToken };
   }
+
+  async updateFcmToken(fcmToken: string, userId:number) {
+    await this.authRepository.updateFcmToken(userId, fcmToken);
+    return { message: 'FCM token updated successfully' };
+  }
 }
