@@ -6,11 +6,13 @@ import { S3PresignService } from '@app/storage/s3-presign.service';
 import { GetMerchantDto } from './dto/get-merchants.dto';
 import { plainToInstance } from 'class-transformer';
 import { PaginatedResultDto } from '@app/common/dto/paginated-result.dto';
+import { EmailProvider, NotificationService, NotificationTemplate, NotificationType, SendNotificationDto } from '@app/notifications';
 
 @Injectable()
 export class MerchantService {
   constructor(private readonly merchantRepository: MerchantRepository,
-    private readonly s3Service: S3PresignService
+    private readonly s3Service: S3PresignService,
+    private readonly notificationService: NotificationService
   ) {}
 
 
@@ -158,9 +160,27 @@ export class MerchantService {
 
   async updateMerchantStatus(merchantId: number, status: string) {
       const result = await this.merchantRepository.updateMerchantStatus(merchantId, status);
+      const token = await this.merchantRepository.getMerchantTokenByUserId(merchantId);
+      const notificationFirebase: SendNotificationDto = {
+        recipient: token.fcmToken,
+        subject: 'Merchant Status Update',
+        message: `Your merchant account status has been updated to: ${status}`,
+        type: NotificationType.FIREBASE
+      };
+      const notificationEmail: SendNotificationDto = {
+        recipient: token.email,
+        subject: 'Merchant Status Update',
+        message: `Your merchant account status has been updated to: ${status}`,
+        type: NotificationType.EMAIL,
+        template: NotificationTemplate.WELCOME
+      };
+      await this.notificationService.send(notificationFirebase);
+      await this.notificationService.send(notificationEmail);
+
       if (!result) {
         throw new BadRequestException('Failed to update merchant status');
       }
+
       return {
         success: true,
         message: 'Merchant status updated successfully',

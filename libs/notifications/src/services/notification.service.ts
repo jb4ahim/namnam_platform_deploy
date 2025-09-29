@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+// import { InjectRepository } from '@nestjs/typeorm';
+// import { Repository } from 'typeorm';
 import { INotificationProvider } from '../interfaces/notification-provider.interface';
 import { NotificationResponseDto, NotificationType, SendNotificationDto, BulkNotificationDto, NotificationTemplate } from '../dto/notification.dto';
 import { EmailProvider } from '../providers/email.provider';
 import { FirebaseProvider } from '../providers/firebase.provider';
 import { TemplateService } from './template.service';
-import { NotificationLog } from '../entities/notification-log.entity';
+// import { NotificationLog } from '../entities/notification-log.entity';
 
 @Injectable()
 export class NotificationService {
@@ -16,33 +16,35 @@ export class NotificationService {
     private emailProvider: EmailProvider,
     private firebaseProvider: FirebaseProvider,
     private templateService: TemplateService,
-    @InjectRepository(NotificationLog)
-    private notificationLogRepo: Repository<NotificationLog>,
+    // Comment out repository injection for now
+    // @InjectRepository(NotificationLog)
+    // private notificationLogRepo: Repository<NotificationLog>,
   ) {
+    console.log('NotificationService: Initializing service...');
     this.providers = new Map([
       [NotificationType.EMAIL, this.emailProvider],
       [NotificationType.FIREBASE, this.firebaseProvider],
     ]);
+    console.log('NotificationService: Providers registered:', Array.from(this.providers.keys()));
   }
 
   async send(notification: SendNotificationDto): Promise<NotificationResponseDto> {
-    // Create log entry
-    const log = this.notificationLogRepo.create({
+    console.log('NotificationService: Attempting to send notification:', {
       type: notification.type,
       recipient: notification.recipient,
       subject: notification.subject,
-      message: notification.message,
-      template: notification.template,
-      templateData: notification.templateData,
-      status: 'pending',
+      template: notification.template
     });
-    await this.notificationLogRepo.save(log);
 
     try {
+      // TODO: Add logging back when database is configured
+      // const log = this.notificationLogRepo.create({...});
+
       let processedNotification = { ...notification };
 
       // Apply template if specified
       if (notification.template && notification.template !== NotificationTemplate.CUSTOM) {
+        console.log('NotificationService: Applying template:', notification.template);
         const rendered = this.templateService.renderTemplate(
           notification.template,
           notification.templateData || {}
@@ -53,30 +55,24 @@ export class NotificationService {
           ...processedNotification.data,
           html: rendered.html,
         };
+        console.log('NotificationService: Template applied, new subject:', rendered.subject);
       }
 
       const provider = this.providers.get(notification.type);
       if (!provider) {
+        console.error('NotificationService: Provider not found for type:', notification.type);
         throw new Error(`Unsupported notification type: ${notification.type}`);
       }
 
+      console.log('NotificationService: Sending notification via provider:', notification.type);
       const result = await provider.send(processedNotification);
+      console.log('NotificationService: Provider response:', result);
 
-      // Update log
-      await this.notificationLogRepo.update(log.id, {
-        status: result.success ? 'sent' : 'failed',
-        messageId: result.messageId,
-        error: result.error,
-        deliveredAt: result.success ? new Date() : undefined,
-      });
-
+      // TODO: Update log when database is configured
       return result;
     } catch (error) {
-      await this.notificationLogRepo.update(log.id, {
-        status: 'failed',
-        error: error.message,
-      });
-      
+      console.error('NotificationService: Error sending notification:', error.message);
+      // TODO: Log error when database is configured
       return {
         success: false,
         error: error.message,
@@ -85,42 +81,37 @@ export class NotificationService {
   }
 
   async sendBulk(bulkNotification: BulkNotificationDto): Promise<NotificationResponseDto[]> {
+    console.log('NotificationService: Sending bulk notification to', bulkNotification.recipients.length, 'recipients');
+    
     const results = await Promise.allSettled(
-      bulkNotification.recipients.map(recipient =>
-        this.send({
+      bulkNotification.recipients.map((recipient, index) => {
+        console.log(`NotificationService: Processing bulk notification ${index + 1}/${bulkNotification.recipients.length} for:`, recipient);
+        return this.send({
           type: bulkNotification.type,
           recipient,
           subject: bulkNotification.subject,
           message: bulkNotification.message,
           template: bulkNotification.template,
           data: bulkNotification.data,
-        })
-      )
+        });
+      })
     );
 
-    return results.map(result => 
+    const responses = results.map(result => 
       result.status === 'fulfilled' 
         ? result.value 
         : { success: false, error: result.reason }
     );
-  }
 
-  async getNotificationHistory(recipient?: string, type?: NotificationType) {
-    const query = this.notificationLogRepo.createQueryBuilder('log');
-    
-    if (recipient) {
-      query.andWhere('log.recipient = :recipient', { recipient });
-    }
-    
-    if (type) {
-      query.andWhere('log.type = :type', { type });
-    }
+    console.log('NotificationService: Bulk notification completed. Success rate:', 
+      responses.filter(r => r.success).length + '/' + responses.length);
 
-    return query.orderBy('log.createdAt', 'DESC').getMany();
+    return responses;
   }
 
   // Method to add new providers in the future
   addProvider(type: NotificationType, provider: INotificationProvider) {
+    console.log('NotificationService: Adding new provider:', type);
     this.providers.set(type, provider);
   }
 }

@@ -5,9 +5,10 @@ import { MerchantService } from './merchant.service';
 import { MerchantRepository } from './merchant.repository';
 import { JwtModule } from '@nestjs/jwt';
 import { StorageModule } from '@app/storage';
+import { NotificationModule } from '@app/notifications/notification.module';
 
 @Module({
-  imports: [ DatabaseModule, JwtModule, StorageModule],
+  imports: [ DatabaseModule, JwtModule, StorageModule,  NotificationModule],
   controllers: [MerchantController],
   providers: [MerchantService, MerchantRepository],
   exports: [MerchantService],

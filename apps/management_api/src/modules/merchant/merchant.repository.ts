@@ -29,6 +29,15 @@ export class MerchantRepository {
     );
     return result || null;
   }
+  async getMerchantTokenByUserId(merchantId: number) {
+      const result = await DatabaseUtils.callFunction(
+        this.pg,
+        'select_merchant_fcm_token_by_user_id',
+        [merchantId],
+        false
+      );
+      return result || null;
+  }
 
   async getMerchants(
     pagination: PaginationQueryDto,
