@@ -11,6 +11,7 @@ import { MerchantModule } from './modules/merchant/merchant.module';
 import { UploadsModule } from '@app/common/uploads/uploads.module';
 import { ZonesModule } from './modules/zones/zones.module';
 import { NotificationModule } from '@app/notifications';
+import { PromotionsModule } from './modules/promotions/promotions.module';
 
 @Module({
   imports: [
@@ -24,7 +25,8 @@ import { NotificationModule } from '@app/notifications';
     UsersModule,
     MerchantModule,
     UploadsModule,
-    ZonesModule
+    ZonesModule,
+    PromotionsModule
   ],
   providers: [
       {
