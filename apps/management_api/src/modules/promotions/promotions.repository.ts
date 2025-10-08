@@ -62,9 +62,11 @@ export class PromotionsRepository {
         promotionDto.imageKey || null,
         promotionDto.actionType || null,
         promotionDto.categoryId || null,
-        promotionDto.productIds || null,
         promotionDto.externalUrl || null,
-        promotionDto.deeplink || null
+        promotionDto.deeplink || null,
+        promotionDto.displayOrder || null,
+        promotionDto.isDisabled || null,
+        promotionDto.productIds || null,
       ]
       );
 
