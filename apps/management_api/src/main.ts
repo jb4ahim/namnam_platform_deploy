@@ -10,7 +10,7 @@ async function bootstrap() {
   await adapter.register(multipart, {
     attachFieldsToBody: false,
     limits: {
-      fileSize: 2 * 1024 * 1024, 
+      fileSize: 2 * 1024 * 1024,
       files: 1
     }
   });
@@ -19,7 +19,6 @@ async function bootstrap() {
     NamnamManagementApiModule,
     adapter
   );
-  
   app.setGlobalPrefix('api');
   app.enableCors({ origin: true });
   app.useGlobalPipes(new ValidationPipe({
@@ -34,5 +33,3 @@ async function bootstrap() {
 }
 
 bootstrap();
-
- 

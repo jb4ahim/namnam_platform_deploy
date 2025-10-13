@@ -12,6 +12,7 @@ import { UploadsModule } from '@app/common/uploads/uploads.module';
 import { ZonesModule } from './modules/zones/zones.module';
 import { NotificationModule } from '@app/notifications';
 import { PromotionsModule } from './modules/promotions/promotions.module';
+import { AppConfigModule } from './modules/app-config/app-config.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { PromotionsModule } from './modules/promotions/promotions.module';
     MerchantModule,
     UploadsModule,
     ZonesModule,
-    PromotionsModule
+    PromotionsModule,
+    AppConfigModule
   ],
   providers: [
       {
@@ -39,4 +41,5 @@ import { PromotionsModule } from './modules/promotions/promotions.module';
       }
   ]
 })
+
 export class NamnamManagementApiModule {}

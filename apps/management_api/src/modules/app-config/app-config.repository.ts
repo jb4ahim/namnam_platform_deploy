@@ -18,7 +18,7 @@ export class AppConfigRepository {
       return null;
     }
 
-    return result.value as AppConfigDto;
+    return result;
   }
 
   async updateHomeConfig(config: AppConfigDto) {
