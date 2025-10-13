@@ -59,7 +59,6 @@ export class AuthService {
   }
 
   async verifyOtp(verifyOtpDto: VerifyOtpDto) {
-
     let destination = verifyOtpDto.countryCode + verifyOtpDto.phoneNumber;
     const isValidOtp = await this.authRepository.verifyOtp(destination, 'phone', verifyOtpDto.code);
 
@@ -72,17 +71,15 @@ export class AuthService {
     const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
 
     this.registrationTokens.set(
-      registrationToken, 
+      registrationToken,
       {
         countryCode: verifyOtpDto.countryCode,
         phoneNumber: verifyOtpDto.phoneNumber,
         createdAt: new Date(),
         expiresAt
       });
-
       // Clean up verification session and lookups
       const merchantData = await this.merchantService.getMerchant(verifyOtpDto.countryCode, verifyOtpDto.phoneNumber);
-
       if (merchantData != null) {
         return {
           isVerified: true,
@@ -91,9 +88,6 @@ export class AuthService {
           verifyToken: registrationToken
         };
       }
-
-
-
     return {
       isVerified: true,
       isRegistered: false,
@@ -103,36 +97,29 @@ export class AuthService {
 
   async register(registerUserDto: RegisterUserDto) {
     const tokenData = this.registrationTokens.get(registerUserDto.verifyToken);
-
     if (!tokenData) {
       throw new UnauthorizedException('Invalid or expired verification  token');
     }
-
     if (new Date() > tokenData.expiresAt) {
       this.registrationTokens.delete(registerUserDto.verifyToken);
       throw new UnauthorizedException('Verification token has expired');
     }
-
     const completeUserData = {
       countryCode: tokenData.countryCode,
       phoneNumber: tokenData.phoneNumber,
       password: registerUserDto.password
     };
-
-      const passwordHash = await bcrypt.hash(registerUserDto.password, 10);
-
-      const merchantData = await this.merchantService.getMerchant(tokenData.countryCode, tokenData.phoneNumber);
+    const passwordHash = await bcrypt.hash(registerUserDto.password, 10);
+    const merchantData = await this.merchantService.getMerchant(tokenData.countryCode, tokenData.phoneNumber);
     if (merchantData == null) {
       // Create user with complete data
       const userId = await this.authRepository.registerUser(completeUserData.countryCode, completeUserData.phoneNumber,  passwordHash);
       console.log('Registered userId:', userId);
-
       if (!userId) {
         throw new BadRequestException('User registration failed');
       }
       //  Generate JWT token with userId
       const payload = { userId };
-
       const tokens = this.jwtService.generateTokenPair(payload);
 
       // this.registrationTokens.delete(registerUserDto.registrationToken);

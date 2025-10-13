@@ -8,11 +8,13 @@ export class AuthRepository {
 
 
   async saveOtpPhone(countryCode: string, phoneNumber: string, otp: string) {
+
     const result = await DatabaseUtils.callProcedure(
       this.pg,
       'insert_user_otp',
       [null, countryCode + phoneNumber, 'phone', otp, 15]
     );
+
     console.log('saveOtpPhone', result);
     return result || null;
   }

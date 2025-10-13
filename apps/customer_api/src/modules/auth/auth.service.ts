@@ -1,10 +1,10 @@
 import { Injectable, UnauthorizedException, Inject, forwardRef } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { AuthRepository } from './auth.repository';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { SendOtpDto } from './dto/send-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
+import { JwtService } from '@app/auth/jwt.service';
 // import { TwilioSmsService } from '@app/common';
 // If using a cache (e.g., Redis), inject it or use your own storage solution
 
@@ -47,8 +47,8 @@ export class AuthService {
     if (userId) {
        // JWT
       const payload = { userId: userId};
-      
-      return { isRegistered: true, access_token: this.jwtService.sign(payload) };
+      const tokens = this.jwtService.generateTokenPair(payload);
+      return { isRegistered: true, ...tokens };
     }else{
       return { isRegistered: false };
     }
@@ -66,15 +66,16 @@ export class AuthService {
     }
     // Return JWT token
     const payload = { userId: userId };
-    return { access_token: this.jwtService.sign(payload)};
+    const tokens = this.jwtService.generateTokenPair(payload);
+    return { ...tokens };
   }
 
   async refreshToken(token: string) {
-    const userId = this.jwtService.verify(token);
-    if (!userId) {
+    const user = this.jwtService.verifyRefreshToken(token);
+    if (!user) {
       throw new UnauthorizedException('Invalid token');
     }
-    const newToken = this.jwtService.sign({ userId });
-    return { access_token: newToken };
+    const newToken = this.jwtService.generateTokenPair({ userId: user.userId});
+    return { ...newToken };
   }
 }
