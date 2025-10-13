@@ -16,12 +16,12 @@ export class UsersService {
     return user;
   }
   
-  async createUserWithPhone(registerUserDto: RegisterUserDto): Promise<number> {
+  async createUserWithPhone(registerUserDto: RegisterUserDto,countryCode: string, phoneNumber: string): Promise<number> {
     const userId = await this.usersRepository.createUserWithPhone(
-      registerUserDto.countryCode, 
-      registerUserDto.phoneNumber, 
-      registerUserDto.firstName, 
-      registerUserDto.lastName, 
+      countryCode,
+      phoneNumber,
+      registerUserDto.firstName,
+      registerUserDto.lastName,
       registerUserDto.email,
       registerUserDto.gender,
       registerUserDto.birthday ? new Date(registerUserDto.birthday) : undefined,

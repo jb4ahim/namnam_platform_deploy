@@ -1,50 +1,48 @@
-import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, IsLatitude, IsLongitude } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsBoolean, IsDecimal } from 'class-validator';
 
 export class CreateAddressDto {
-  @IsNumber()
-  customerId!: number;
 
   @IsString()
+  label: string;
+
+  @IsString()
+  addressLine1: string;
+
+  @IsString()
+  city: string;
+
+  @IsString()
+  state: string;
+
   @IsOptional()
-  label?: string; // e.g., home, work
-
   @IsString()
-  @IsNotEmpty()
-  addressLine1!: string;
-
-  @IsString()
-  @IsOptional()
   addressLine2?: string;
 
-  @IsString()
-  @IsNotEmpty()
-  city!: string;
-
-  @IsString()
   @IsOptional()
-  state?: string;
-
   @IsString()
-  @IsOptional()
-  postalCode?: string;
-
-  @IsString()
-  @IsNotEmpty()
-  country!: string;
+  country?: string;
 
   @IsOptional()
-  @IsLatitude()
+  @IsString()
+  apartment?: string;
+
+  @IsOptional()
+  @IsString()
+  building?: string;
+
+  @IsOptional()
+  @IsNumber()
   latitude?: number;
 
   @IsOptional()
-  @IsLongitude()
+  @IsNumber()
   longitude?: number;
 
-  @IsBoolean()
   @IsOptional()
+  @IsBoolean()
   isDefault?: boolean;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   status?: string;
 }

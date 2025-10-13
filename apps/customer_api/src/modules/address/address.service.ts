@@ -15,11 +15,11 @@ export class AddressService {
     return this.repo.getById(addressId);
   }
 
-  async create(dto: CreateAddressDto) {
-    return this.repo.create(dto);
+  async create(userId: number, dto: CreateAddressDto) {
+    return this.repo.create(userId, dto);
   }
 
-  async update(addressId: number, dto: UpdateAddressDto) {
-    return this.repo.update(addressId, dto);
+  async update(userId: number, addressId: number, dto: UpdateAddressDto) {
+    return this.repo.update(userId, addressId, dto);
   }
 }

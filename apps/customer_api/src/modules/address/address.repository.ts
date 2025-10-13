@@ -10,9 +10,9 @@ export class AddressRepository {
   async list(customerId: number) {
     const result = await DatabaseUtils.callFunction(
       this.pg,
-      'get_customer_addresses',
+      'select_customer_addresses',
       [customerId],
-      true
+      false
     );
     return result || [];
   }
@@ -20,55 +20,55 @@ export class AddressRepository {
   async getById(addressId: number) {
     const result = await DatabaseUtils.callFunction(
       this.pg,
-      'get_customer_address_by_id',
+      'select_customer_address_by_id',
       [addressId],
       false
     );
     return result || null;
   }
 
-  async create(dto: CreateAddressDto) {
-    const result = await DatabaseUtils.callProcedure(
+  async create(userId: number, dto: CreateAddressDto) {
+    await DatabaseUtils.callProcedure(
       this.pg,
-      'insert_customer_address',
+      'create_customer_address',
       [
-        dto.customerId,
-        dto.label ?? null,
+       userId,
+        dto.label,
         dto.addressLine1,
-        dto.addressLine2 ?? null,
         dto.city,
-        dto.state ?? null,
-        dto.postalCode ?? null,
-        dto.country,
+        dto.state,
+        dto.addressLine2 ?? null,
+        dto.country ?? null,
+        dto.apartment ?? null,
+        dto.building ?? null,
         dto.latitude ?? null,
         dto.longitude ?? null,
-        dto.isDefault ?? null,
-        dto.status ?? null,
+        dto.isDefault ?? false,
+        dto.status ?? 'active',
       ]
     );
-    return result;
   }
 
-  async update(addressId: number, dto: UpdateAddressDto) {
-    const result = await DatabaseUtils.callProcedure(
+  async update(userId: number, addressId: number, dto: UpdateAddressDto) {
+    await DatabaseUtils.callProcedure(
       this.pg,
       'update_customer_address',
       [
+        userId,
         addressId,
-        dto.customerId ?? null,
         dto.label ?? null,
         dto.addressLine1 ?? null,
         dto.addressLine2 ?? null,
         dto.city ?? null,
         dto.state ?? null,
-        dto.postalCode ?? null,
         dto.country ?? null,
+        dto.apartment ?? null,
+        dto.building ?? null,
         dto.latitude ?? null,
         dto.longitude ?? null,
         dto.isDefault ?? null,
         dto.status ?? null,
       ]
     );
-    return result;
   }
 }

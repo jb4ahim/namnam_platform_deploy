@@ -24,9 +24,8 @@ export class UsersRepository {
   }
 
   async getCustomerInfos(userId: number) {
-    const rows = await this.pg.query('Call select_user_infos($1, $2, $3, $4, $5)', [userId]);
-    console.log('saveOtp', rows);
-    return rows[0] || null;
+    const result = await DatabaseUtils.callFunction(this.pg, 'select_customer_infos', [userId]);
+    return result;
   }
 
   async createUserWithPhone(
