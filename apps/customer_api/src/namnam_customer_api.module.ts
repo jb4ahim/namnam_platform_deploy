@@ -9,6 +9,7 @@ import { ResponseEnvelopeInterceptor } from '@app/common';
 import { UploadsModule } from '@app/common/uploads/uploads.module';
 import { AddressModule } from './modules/address/address.module';
 import { JwtModule } from '@app/auth/jwt.module';
+import { AppConfigModule } from './modules/app-config/app-config.module';
 
 @Module({
   imports: [
@@ -21,7 +22,8 @@ import { JwtModule } from '@app/auth/jwt.module';
     AuthModule, 
     LoggerModule,
     UploadsModule,
-    AddressModule
+    AddressModule,
+    AppConfigModule
   ],
   providers: [
     {
