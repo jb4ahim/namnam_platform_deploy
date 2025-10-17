@@ -3,9 +3,10 @@ import { DatabaseModule } from '@app/database';
 import { PromotionsController } from './promotions.controller';
 import { PromotionsRepository } from './promotions.repository';
 import { PromotionsService } from './promotions.service';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-    imports: [DatabaseModule],
+    imports: [DatabaseModule, JwtModule],
     controllers: [PromotionsController],
     providers: [PromotionsService, PromotionsRepository],
     exports: [PromotionsService],

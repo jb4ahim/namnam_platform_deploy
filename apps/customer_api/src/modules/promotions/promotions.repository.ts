@@ -18,7 +18,7 @@ export class PromotionsRepository {
     async getPromotionById(promotionId: number) {
         const result = await DatabaseUtils.callFunction(
         this.pg,
-        'select_promotion_by_id_customer',
+        'select_promotion_by_id',
         [promotionId],
         false
         );

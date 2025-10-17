@@ -10,6 +10,10 @@ import { UploadsModule } from '@app/common/uploads/uploads.module';
 import { AddressModule } from './modules/address/address.module';
 import { JwtModule } from '@app/auth/jwt.module';
 import { AppConfigModule } from './modules/app-config/app-config.module';
+import { PromotionsModule } from './modules/promotions/promotions.module';
+import { MerchantsModule } from './modules/merchants/merchants.module';
+import { ProductsModule } from './modules/products/products.module';
+import { CategoriesModule } from 'apps/management_api/src/modules/categories/categories.module';
 
 @Module({
   imports: [
@@ -23,7 +27,11 @@ import { AppConfigModule } from './modules/app-config/app-config.module';
     LoggerModule,
     UploadsModule,
     AddressModule,
-    AppConfigModule
+    AppConfigModule,
+    MerchantsModule,
+    ProductsModule,
+    PromotionsModule,
+    CategoriesModule
   ],
   providers: [
     {
