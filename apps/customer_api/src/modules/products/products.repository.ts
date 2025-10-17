@@ -17,10 +17,10 @@ export class ProductsRepository {
 
     async getProductById(productId: number) {
         const result = await DatabaseUtils.callFunction(
-        this.pg,
-        'select_product_by_id_customer',
-        [productId],
-        false
+            this.pg,
+            'select_product_by_id_customer',
+            [productId],
+            false
         );
         return result;
     }
