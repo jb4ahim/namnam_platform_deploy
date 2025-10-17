@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Query, UseGuards } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { AuthGuard } from '@app/auth/jwt-auth.guard';
 @Controller('categories')
@@ -7,8 +7,8 @@ export class CategoriesController {
 
     @Get()
     @UseGuards(AuthGuard)
-    async getCategories() {
-        return await this.categoriesService.getCategories();
+    async getCategories(@Query('parentId', ParseIntPipe) parentId?: number) {
+        return await this.categoriesService.getCategories(parentId);
     }
 
     @Get(':id')

@@ -77,7 +77,7 @@ export class ProductsRepository {
     const result = await DatabaseUtils.callFunction(
       this.pg,
       'select_merchant_product_by_id',
-      [productId, merchantId],
+      [ merchantId, productId],
       false
     );
     return result;
