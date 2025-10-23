@@ -158,15 +158,18 @@ export class MerchantService {
       return await this.merchantRepository.getMerchantRequests();
   }
 
-  async updateMerchantStatus(merchantId: number, status: string) {
-      const result = await this.merchantRepository.updateMerchantStatus(merchantId, status);
+  async updateMerchantStatus(merchantId: number, status: string, zoneId: number) {
+      const result = await this.merchantRepository.updateMerchantStatus(merchantId, status, zoneId);
       const token = await this.merchantRepository.getMerchantTokenByUserId(merchantId);
+      if(token) {
       const notificationFirebase: SendNotificationDto = {
         recipient: token.fcmToken,
         subject: 'Merchant Status Update',
         message: `Your merchant account status has been updated to: ${status}`,
         type: NotificationType.FIREBASE
       };
+      await this.notificationService.send(notificationFirebase);
+    }
       const notificationEmail: SendNotificationDto = {
         recipient: token.email,
         subject: 'Merchant Status Update',
@@ -174,7 +177,7 @@ export class MerchantService {
         type: NotificationType.EMAIL,
         template: NotificationTemplate.WELCOME
       };
-      await this.notificationService.send(notificationFirebase);
+      
       await this.notificationService.send(notificationEmail);
 
       if (!result) {

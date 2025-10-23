@@ -35,4 +35,10 @@ export class AuthController {
   async updateFcmToken(@Body() fcmTokenDto: { fcmToken: string }, @CurrentUserId() userId: number) {
     return this.authService.updateFcmToken(fcmTokenDto.fcmToken, userId);
   }
+
+  @Post('set-locale')
+  @UseGuards(AuthGuard)
+  async setLocale(@Body() setLocaleDto: { locale: string }, @CurrentUserId() userId: number) {
+    return this.authService.setLocale(userId, setLocaleDto.locale);
+  }
 }

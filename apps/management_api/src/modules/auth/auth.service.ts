@@ -68,5 +68,9 @@ export class AuthService {
 
       return { ...newToken };
     }
+    async setLocale(locale: string) {
+      // Here you would typically update the user's locale in the database
+      return { message: `Locale set to ${locale}` };
+    }
 }
 

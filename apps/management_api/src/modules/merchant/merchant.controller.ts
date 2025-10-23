@@ -92,8 +92,9 @@ export class MerchantController {
   @UseGuards(AuthGuard)
   async updateMerchantStatus(
     @Param("id", ParseIntPipe) id: number,
-    @Body("status") status: string
+    @Body("status") status: string,
+    @Body("zoneId", ParseIntPipe) zoneId: number
   ) {
-    return await this.merchantService.updateMerchantStatus(id, status);
+    return await this.merchantService.updateMerchantStatus(id, status, zoneId);
   }
 }

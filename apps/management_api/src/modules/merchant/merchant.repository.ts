@@ -178,8 +178,8 @@ export class MerchantRepository {
     );
     return result || [];
   }
-  async updateMerchantStatus(merchantId: number, status: string) {
-    console.log('Updating merchant status:', merchantId, 'status:', status);
+  async updateMerchantStatus(merchantId: number, status: string, zoneId: number) {
+    console.log('Updating merchant status:', merchantId, 'status:', status, 'zoneId:', zoneId);
     const result = await DatabaseUtils.callProcedure(
       this.pg,
       'update_merchant_request_status',

@@ -66,14 +66,12 @@ export class ZonesRepository {
     return result as Zone;
   }
 
-  async deleteZone(id: number): Promise<boolean> {
-    const result = await DatabaseUtils.callFunction<{ success: boolean }>(
+  async deleteZone(id: number): Promise<void> {
+    await DatabaseUtils.callProcedure(
       this.pg,
       'delete_zone',
       [id],
-      false
     );
-    return (result as { success: boolean })?.success ?? false;
   }
 
   async getZonePolygons(zoneId: number): Promise<ZonePolygon[]> {

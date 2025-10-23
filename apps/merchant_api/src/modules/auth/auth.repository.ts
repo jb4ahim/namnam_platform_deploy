@@ -73,6 +73,13 @@ export class AuthRepository {
       [userId, fcmToken]
     );
   }
+  async setLocale(merchantId: number, locale: string) {
+    await DatabaseUtils.callProcedure(
+      this.pg,
+      'update_merchant_locale',
+      [merchantId, locale]
+    );
+  }
 
   async createWithPhone(phone: string) {
     const result = await DatabaseUtils.callFunction(

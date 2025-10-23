@@ -152,6 +152,11 @@ export class AuthService {
 
   }
 
+  async setLocale(merchantId: number, locale: string) {
+    // Here you would typically update the user's locale in the database
+    await this.authRepository.setLocale(merchantId, locale);
+
+  }
 
   async refreshToken(token: string) {
     const user = this.jwtService.verifyRefreshToken(token);
