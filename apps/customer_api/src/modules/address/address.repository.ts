@@ -67,8 +67,18 @@ export class AddressRepository {
         dto.latitude ?? null,
         dto.longitude ?? null,
         dto.isDefault ?? null,
-        dto.status ?? null,
+        dto.status ?? null
       ]
     );
+  }
+
+  async getAllowedZones() {
+    const result = await DatabaseUtils.callFunction(
+      this.pg,
+      'select_allowed_address_zones',
+      [],
+      false
+    );
+    return result;
   }
 }

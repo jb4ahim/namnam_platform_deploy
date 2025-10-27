@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
 import { AddressService } from './address.service';
@@ -31,5 +31,16 @@ export class AddressController {
   @UseGuards(AuthGuard)
   async update(@CurrentUserId() userId: number, @Param('id', ParseIntPipe) id: number, @Body() dto: UpdateAddressDto) {
     return this.addressService.update(userId, id, dto);
+  }
+
+  @Get('allowed-zones')
+  async getAllowedZones() {
+    return this.addressService.getAllowedZones();
+  }
+
+  @Patch(':id/set-default')
+  @UseGuards(AuthGuard)
+  async setDefault(@CurrentUserId() userId: number, @Param('id', ParseIntPipe) id: number) {
+    return this.addressService.setDefault(userId, id);
   }
 }
