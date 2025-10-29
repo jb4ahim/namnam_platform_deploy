@@ -119,7 +119,7 @@ export class AuthService {
         throw new BadRequestException('User registration failed');
       }
       //  Generate JWT token with userId
-      const payload = { userId };
+      const payload = { userId: userId.userId, merchantId: userId.merchantId };
       const tokens = this.jwtService.generateTokenPair(payload);
 
       // this.registrationTokens.delete(registerUserDto.registrationToken);
