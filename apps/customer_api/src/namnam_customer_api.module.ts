@@ -14,6 +14,8 @@ import { PromotionsModule } from './modules/promotions/promotions.module';
 import { MerchantsModule } from './modules/merchants/merchants.module';
 import { ProductsModule } from './modules/products/products.module';
 import { CategoriesModule } from 'apps/management_api/src/modules/categories/categories.module';
+import { CartModule } from './modules/cart/cart.module';
+import { OrdersModule } from './modules/orders/orders.module';
 
 @Module({
   imports: [
@@ -22,8 +24,8 @@ import { CategoriesModule } from 'apps/management_api/src/modules/categories/cat
           envFilePath: '.env', // This will load from root
     }),
     JwtModule,
-    DatabaseModule, 
-    AuthModule, 
+    DatabaseModule,
+    AuthModule,
     LoggerModule,
     UploadsModule,
     AddressModule,
@@ -31,7 +33,9 @@ import { CategoriesModule } from 'apps/management_api/src/modules/categories/cat
     MerchantsModule,
     ProductsModule,
     PromotionsModule,
-    CategoriesModule
+    CategoriesModule,
+    CartModule,
+    OrdersModule
   ],
   providers: [
     {

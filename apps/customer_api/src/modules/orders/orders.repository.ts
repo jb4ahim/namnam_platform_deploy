@@ -11,7 +11,7 @@ export class OrdersRepository {
   async createOrder(userId: number, dto: CreateOrderDto) {
     const result = await DatabaseUtils.callFunction(
       this.pg,
-      'create_customer_order',
+      'insert_customer_order',
       [
         userId,
         dto.merchant_id,
