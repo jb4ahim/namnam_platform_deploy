@@ -130,8 +130,8 @@ export class AuthService {
         ...tokens,
         message: 'User registered successfully'
       };
-    }else{
-      if(await bcrypt.compare(registerUserDto.password, merchantData.passwordHash)){
+    } else {
+      if (await bcrypt.compare(registerUserDto.password, merchantData.passwordHash)) {
         console.log('User logged in, userId:', merchantData.userId);
         const userId = merchantData.userId;
         const merchantId = merchantData.merchantId;
