@@ -32,7 +32,7 @@ export class AddressRepository {
       this.pg,
       'create_customer_address',
       [
-       userId,
+        userId,
         dto.label,
         dto.addressLine1,
         dto.city,
