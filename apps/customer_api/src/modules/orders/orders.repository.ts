@@ -9,6 +9,7 @@ export class OrdersRepository {
   constructor(private readonly pg: PostgresService) {}
 
   async createOrder(userId: number, dto: CreateOrderDto) {
+    console.log('Creating order with DTO:', dto, 'and cartId:', cartId, 'and userId:', userId);
     const result = await DatabaseUtils.callFunction(
       this.pg,
       'insert_customer_order',
@@ -16,7 +17,7 @@ export class OrdersRepository {
         userId,
         dto.merchant_id,
         dto.delivery_address_id,
-        JSON.stringify(dto.items),
+        dto.cartId,
         dto.payment_method,
         dto.scheduled_for || null,
         dto.delivery_instructions || null,

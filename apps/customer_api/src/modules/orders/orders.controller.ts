@@ -1,10 +1,10 @@
-import { Controller, Get, Post, Put, Body, Param, ParseIntPipe, UseGuards, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@app/auth/jwt-auth.guard';
 import { CurrentUserId } from '@app/common/decorators';
+import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateDeliveryInstructionsDto } from './dto/update-delivery-instructions.dto';
 import { RefundRequestDto } from './dto/refund-request.dto';
-import { OrdersService } from './orders.service';
 
 @Controller('orders')
 @UseGuards(AuthGuard)
@@ -12,7 +12,10 @@ export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Post()
-  async createOrder(@CurrentUserId() userId: number, @Body() dto: CreateOrderDto) {
+  async createOrder(
+    @CurrentUserId() userId: number,
+    @Body() dto: CreateOrderDto
+  ) {
     return await this.ordersService.createOrder(userId, dto);
   }
 
@@ -21,7 +24,7 @@ export class OrdersController {
     @CurrentUserId() userId: number,
     @Query('status') status?: string,
     @Query('startDate') startDate?: string,
-    @Query('endDate') endDate?: string
+    @Query('endDate') endDate?: string,
   ) {
     return await this.ordersService.listOrders(userId, status, startDate, endDate);
   }
@@ -29,7 +32,7 @@ export class OrdersController {
   @Get(':orderId')
   async getOrderDetails(
     @CurrentUserId() userId: number,
-    @Param('orderId', ParseIntPipe) orderId: number
+    @Param('orderId', ParseIntPipe) orderId: number,
   ) {
     return await this.ordersService.getOrderDetails(userId, orderId);
   }

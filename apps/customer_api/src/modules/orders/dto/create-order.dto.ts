@@ -1,17 +1,4 @@
-import { IsNumber, IsInt, IsOptional, IsString, IsDateString, IsArray, ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
-
-export class OrderItemDto {
-  @IsNumber()
-  product_id: number;
-
-  @IsInt()
-  quantity: number;
-
-  @IsOptional()
-  @IsString()
-  notes?: string;
-}
+import { IsNumber, IsOptional, IsString, IsDateString } from 'class-validator';
 
 export class CreateOrderDto {
   @IsNumber()
@@ -20,10 +7,8 @@ export class CreateOrderDto {
   @IsNumber()
   delivery_address_id: number;
 
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => OrderItemDto)
-  items: OrderItemDto[];
+  @IsNumber()
+  cartId: number;
 
   @IsString()
   payment_method: string;
@@ -35,4 +20,5 @@ export class CreateOrderDto {
   @IsOptional()
   @IsString()
   delivery_instructions?: string;
+
 }
