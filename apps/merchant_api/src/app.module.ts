@@ -11,6 +11,7 @@ import { ProductsModule } from './modules/products/products.module';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@app/auth/jwt.module';
 import { UploadsModule } from '@app/common/uploads/uploads.module';
+import { OrdersModule } from './modules/orders/orders.module';
 
 @Module({
   imports: [
@@ -24,7 +25,8 @@ import { UploadsModule } from '@app/common/uploads/uploads.module';
     MerchantModule,
     CatalogModule,
     ProductsModule,
-    UploadsModule
+    UploadsModule,
+    OrdersModule
   ],
   providers: [
     {

@@ -1,10 +1,10 @@
 import { IsNumber, IsInt, Min } from 'class-validator';
 
-    export class AddItemDto {
-        @IsNumber()
-        product_id: number;
+export class AddItemDto {
+  @IsNumber()
+  product_id: number;
 
-        @IsInt()
-        @Min(1)
-        quantity: number;
-    }
+  @IsInt()
+  @Min(1)
+  quantity: number;
+}

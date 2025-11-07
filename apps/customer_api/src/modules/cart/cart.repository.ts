@@ -40,12 +40,23 @@ export class CartRepository {
   }
 
   async addItem(userId: number, dto: AddItemDto) {
-    await DatabaseUtils.callProcedure(
-      this.pg,
-      'add_to_cart',
-      [userId, dto.product_id, dto.quantity]
-    );
-    return { success: true, message: 'Item added to cart' };
+    try {
+      await DatabaseUtils.callProcedure(
+        this.pg,
+        'add_to_cart',
+        [userId, dto.product_id, dto.quantity]
+      );
+      return { success: true, message: 'Item added to cart' };
+    } catch (error) {
+      if (error.message.includes('Cart cleared')) {
+        return { 
+          success: true, 
+          message: 'Item added to cart. Previous items from different merchant were removed.',
+          cart_cleared: true 
+        };
+      }
+      throw error;
+    }
   }
 
   async updateItem(userId: number, itemId: number, dto: UpdateItemDto) {
