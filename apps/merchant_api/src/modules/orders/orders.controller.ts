@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@app/auth';
-import { CurrentUserId } from '@app/common/decorators';
+import { CurrentMerchantId, CurrentUserId } from '@app/common/decorators';
 import { OrdersService } from './orders.service';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import { UpdateShippingDto } from './dto/update-shipping.dto';
@@ -15,7 +15,7 @@ export class OrdersController {
 
   @Get()
   async listOrders(
-    @CurrentUserId() merchantId: number,
+    @CurrentMerchantId() merchantId: number,
     @Query('status') status?: string,
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
@@ -26,7 +26,7 @@ export class OrdersController {
 
   @Get(':orderId')
   async getOrderDetails(
-    @CurrentUserId() merchantId: number,
+    @CurrentMerchantId() merchantId: number,
     @Param('orderId', ParseIntPipe) orderId: number,
   ) {
     return await this.ordersService.getOrderDetails(merchantId, orderId);
@@ -34,7 +34,7 @@ export class OrdersController {
 
   @Put(':orderId/status')
   async updateOrderStatus(
-    @CurrentUserId() merchantId: number,
+    @CurrentMerchantId() merchantId: number,
     @Param('orderId', ParseIntPipe) orderId: number,
     @Body() dto: UpdateOrderStatusDto,
   ) {
@@ -43,7 +43,7 @@ export class OrdersController {
 
   @Put(':orderId/shipping')
   async updateShipping(
-    @CurrentUserId() merchantId: number,
+    @CurrentMerchantId() merchantId: number,
     @Param('orderId', ParseIntPipe) orderId: number,
     @Body() dto: UpdateShippingDto,
   ) {
@@ -52,7 +52,7 @@ export class OrdersController {
 
   @Put(':orderId/cancel')
   async cancelOrder(
-    @CurrentUserId() merchantId: number,
+    @CurrentMerchantId() merchantId: number,
     @Param('orderId', ParseIntPipe) orderId: number,
     @Body() dto: CancelOrderDto,
   ) {
@@ -61,7 +61,7 @@ export class OrdersController {
 
   @Post(':orderId/refunds')
   async createRefund(
-    @CurrentUserId() merchantId: number,
+    @CurrentMerchantId() merchantId: number,
     @Param('orderId', ParseIntPipe) orderId: number,
     @Body() dto: CreateRefundDto,
   ) {
@@ -70,7 +70,7 @@ export class OrdersController {
 
   @Post(':orderId/notes')
   async addOrderNote(
-    @CurrentUserId() merchantId: number,
+    @CurrentMerchantId() merchantId: number,
     @Param('orderId', ParseIntPipe) orderId: number,
     @Body() dto: CreateOrderNoteDto,
   ) {

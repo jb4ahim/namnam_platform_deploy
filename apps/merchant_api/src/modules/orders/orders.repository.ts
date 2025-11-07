@@ -12,17 +12,17 @@ export class OrdersRepository {
   constructor(private readonly pg: PostgresService) {}
 
   async listOrders(merchantId: number, status?: string, startDate?: string, endDate?: string) {
-    if(status == "" || startDate == "" || endDate == ""){
-      status = null;
-      startDate = null;
-      endDate = null;
+    // if(status == "" || startDate == "" || endDate == ""){
+    //   status = null;
+    //   startDate = null;
+    //   endDate = null;
 
-    }
+    // }
     console.log('Listing orders for merchant:', merchantId, status, startDate, endDate);
     return await DatabaseUtils.callFunction(
       this.pg,
       'select_merchant_orders',
-      [merchantId, status ?? null, startDate ?? null, endDate ?? null,  null],
+      [merchantId, null, null,  null,  null],
       false
     );
   }
