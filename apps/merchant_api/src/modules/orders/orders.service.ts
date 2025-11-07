@@ -10,8 +10,8 @@ import { CreateOrderNoteDto } from './dto/create-note.dto';
 export class OrdersService {
   constructor(private readonly repo: OrdersRepository) {}
 
-  async listOrders(merchantId: number, status?: string, startDate?: string, endDate?: string, customerId?: number) {
-    return await this.repo.listOrders(merchantId, status, startDate, endDate, customerId);
+  async listOrders(merchantId: number, status?: string, startDate?: string, endDate?: string) {
+    return await this.repo.listOrders(merchantId, status, startDate, endDate);
   }
 
   async getOrderDetails(merchantId: number, orderId: number) {

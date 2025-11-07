@@ -19,9 +19,9 @@ export class OrdersController {
     @Query('status') status?: string,
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
-    @Query('customerId', ParseIntPipe) customerId?: number,
+    // @Query('customerId', ParseIntPipe) customerId?: number,
   ) {
-    return await this.ordersService.listOrders(merchantId, status, startDate, endDate, customerId);
+    return await this.ordersService.listOrders(merchantId, status, startDate, endDate);
   }
 
   @Get(':orderId')

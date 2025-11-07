@@ -5,17 +5,25 @@ import { UpdateShippingDto } from './dto/update-shipping.dto';
 import { CancelOrderDto } from './dto/cancel-order.dto';
 import { CreateRefundDto } from './dto/create-refund.dto';
 import { CreateOrderNoteDto } from './dto/create-note.dto';
+import { stat } from 'fs';
 
 @Injectable()
 export class OrdersRepository {
   constructor(private readonly pg: PostgresService) {}
 
-  async listOrders(merchantId: number, status?: string, startDate?: string, endDate?: string, customerId?: number) {
+  async listOrders(merchantId: number, status?: string, startDate?: string, endDate?: string) {
+    if(status == "" || startDate == "" || endDate == ""){
+      status = null;
+      startDate = null;
+      endDate = null;
+
+    }
+    console.log('Listing orders for merchant:', merchantId, status, startDate, endDate);
     return await DatabaseUtils.callFunction(
       this.pg,
       'select_merchant_orders',
-      [merchantId, status ?? null, startDate ?? null, endDate ?? null, customerId ?? null],
-      true
+      [merchantId, status ?? null, startDate ?? null, endDate ?? null,  null],
+      false
     );
   }
 

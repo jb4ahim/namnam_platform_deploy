@@ -13,6 +13,7 @@ import { ZonesModule } from './modules/zones/zones.module';
 import { NotificationModule } from '@app/notifications';
 import { PromotionsModule } from './modules/promotions/promotions.module';
 import { AppConfigModule } from './modules/app-config/app-config.module';
+import { CouponsModule } from './modules/coupons/coupons.module';
 
 @Module({
   imports: [
@@ -28,7 +29,8 @@ import { AppConfigModule } from './modules/app-config/app-config.module';
     UploadsModule,
     ZonesModule,
     PromotionsModule,
-    AppConfigModule
+    AppConfigModule,
+    CouponsModule
   ],
   providers: [
       {
