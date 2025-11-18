@@ -8,7 +8,7 @@ export class AppConfigRepository {
   async getHomeConfig() {
     const result = await DatabaseUtils.callFunction(
       this.pg,
-      'select_app_config',
+      'select_app_config_customer',
       ['customer_home'],
       false
     );
