@@ -18,6 +18,7 @@ import { CartModule } from './modules/cart/cart.module';
 import { OrdersModule } from './modules/orders/orders.module';
 import { FavoritesModule } from './modules/favorites/favorites.module'; // Import the FavoritesModule
 import { ReviewsModule } from './modules/reviews/reviews.module'; // Import the ReviewsModule
+import { ProfileModule } from './modules/profile/profile.module'; // Import the ProfileModule
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { ReviewsModule } from './modules/reviews/reviews.module'; // Import the 
     OrdersModule,
     FavoritesModule, // Add this line
     ReviewsModule, // Add this line
+    ProfileModule, // Add this line
   ],
   providers: [
     {

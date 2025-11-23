@@ -22,6 +22,9 @@ The Customer API is a NestJS-based backend service for a food delivery/marketpla
 - Validation: class-validator with global pipes
 - Port: 3002 (configurable)
 - API Prefix: `/api`
+- Postman: `docs/postman/customer-api.postman_collection.json` (importable; contains sample payloads and variables)
+
+> Reality checks: OTP verification currently uses a hardcoded code (`123456`); several optional query params are treated as required due to Nest pipes; some repository filters are ignored (see module notes below).
 
 ---
 
@@ -62,6 +65,8 @@ The API follows a modular architecture with the following modules:
 2. **Verify OTP**: Customer submits OTP code (currently hardcoded as '123456' for testing)
 3. **Register/Login**: System generates JWT access and refresh tokens
 4. **Protected Routes**: Include JWT token in `Authorization: Bearer <token>` header
+
+> Reality check: `send-otp` currently returns `200` with an empty body; `verify-otp` returns either token pair for existing users or `{ isRegistered: false, verifyToken, expiresAt }` for new users; `register` requires `verifyToken` from the previous step and returns a token pair (no user object).
 
 ### Token Management
 
@@ -112,15 +117,11 @@ Content-Type: application/json
 
 **Response:**
 ```json
-{
-  "accessToken": "eyJhbGc...",
-  "refreshToken": "eyJhbGc...",
-  "user": {
-    "id": 123,
-    "phoneNumber": "1234567890",
-    "countryCode": "+1"
-  }
-}
+// existing user
+{ "isRegistered": true, "accessToken": "...", "refreshToken": "..." }
+
+// new user
+{ "isRegistered": false, "verifyToken": "...", "expiresAt": "ISO string" }
 ```
 
 #### Register User
@@ -134,7 +135,8 @@ Content-Type: application/json
   "email": "john@example.com",
   "gender": "male",
   "birthday": "1990-01-01",
-  "defaultCurrency": "USD"
+  "defaultCurrency": "USD",
+  "verifyToken": "<from verify-otp>"  // Required
 }
 ```
 
@@ -144,7 +146,7 @@ POST /api/auth/refresh-token
 Content-Type: application/json
 
 {
-  "refreshToken": "eyJhbGc..."
+  "token": "eyJhbGc..." // property name is "token" in controller/service
 }
 ```
 
@@ -171,6 +173,76 @@ Authorization: Bearer <token>
   "birthday": "1990-01-01",
   "defaultCurrency": "USD"
 }
+```
+
+---
+
+### Profile Module (`/api/users`)
+
+All profile endpoints require authentication.
+
+#### Get Profile
+```http
+GET /api/users/profile
+Authorization: Bearer <token>
+```
+
+#### Update Profile
+```http
+PUT /api/users/profile
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "first_name": "John",
+  "last_name": "Doe",
+  "date_of_birth": "1990-01-01",
+  "gender": "male",
+  "profile_image_url": "https://example.com/avatar.jpg"
+}
+```
+
+#### Change Password
+```http
+PUT /api/users/password
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "current_password": "old",
+  "new_password": "new"
+}
+```
+
+#### Get Preferences
+```http
+GET /api/users/preferences
+Authorization: Bearer <token>
+```
+
+#### Update Preferences
+```http
+PUT /api/users/preferences
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "language": "en",
+  "currency": "USD",
+  "notifications_enabled": true,
+  "email_notifications": true,
+  "push_notifications": true,
+  "sms_notifications": false,
+  "marketing_emails": false,
+  "theme": "auto",
+  "timezone": "UTC"
+}
+```
+
+#### Delete Account
+```http
+DELETE /api/users/account
+Authorization: Bearer <token>
 ```
 
 ---
@@ -253,6 +325,8 @@ Authorization: Bearer <token>
 - `hasDiscount`: Only products with discounts
 - `limit`: Results limit
 
+> Reality check: repository defaults `isAvailable` to `true` and ignores explicit `false`; `hasDiscount=false` is treated as `null`; zero `limit` is dropped.
+
 #### Get Product Details
 ```http
 GET /api/products/:id
@@ -278,6 +352,8 @@ Authorization: Bearer <token>
 - `isOpen`: Only open merchants
 - `hasDiscount`: Only merchants with active discounts
 - `limit`: Results limit (default: 50)
+
+> Reality check: repository currently ignores `minRating`, `isOpen`, and `hasDiscount`, and only forwards latitude/longitude/category/zone/limit.
 
 #### Get Merchant Details
 ```http
@@ -317,6 +393,8 @@ GET /api/promotions?categoryId=1&isFeatured=true&limit=10
 - `categoryId`: Filter by category
 - `isFeatured`: Only featured promotions
 - `limit`: Results limit
+
+> Reality check: repository ignores `isFeatured` and forwards only `categoryId` and `limit`.
 
 #### Get Promotion Details
 ```http
@@ -534,6 +612,8 @@ GET /api/app-config/home?zoneId=1
 ## Missing Features Analysis
 
 ### Critical Missing Features
+
+> Include also: optional query params use `ParseIntPipe`/`ParseFloatPipe` even when omitted, causing 400s if absent. Consider custom pipes that allow `undefined`.
 
 #### 1. **Favorites/Wishlist System**
 - **What's Missing**: No endpoints to save favorite products or merchants
@@ -802,13 +882,13 @@ TWILIO_PHONE_NUMBER=+1234567890
 # Install dependencies
 npm install
 
-# Run database migrations
-npm run migrate
+# Start customer API (dev)
+npm run start:dev:customer
 
-# Start development server
-npm run start:dev
+# Start customer API (prod build then run)
+npm run build:customer && npm run start:customer
 
-# Run tests
+# Run targeted tests (see note below)
 npm run test
 
 # Build for production
@@ -820,20 +900,14 @@ npm run start:prod
 
 ### Testing
 
-The API includes:
-- Unit tests for services and repositories
-- E2E tests for endpoints
-- Test coverage reports
+Current state:
+- Unit tests are minimal; new specs exist for `auth.controller`, `promotions.service`, and `app-config.service`.
+- E2E spec (`apps/customer_api/test/app.e2e-spec.ts`) is skipped until integration deps are available.
+- Jest has two configs (`jest.config.js` and `jest` in `package.json`); choose one or remove the other to run tests cleanly.
 
 ```bash
-# Run all tests
-npm run test
-
-# Run tests with coverage
-npm run test:cov
-
-# Run E2E tests
-npm run test:e2e
+# Example: run specific specs with the root Jest config
+npx jest --config jest.config.js --runTestsByPath apps/customer_api/src/modules/auth/auth.controller.spec.ts
 ```
 
 ### API Client Examples
