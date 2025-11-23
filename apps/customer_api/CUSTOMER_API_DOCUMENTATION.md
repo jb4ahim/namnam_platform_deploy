@@ -615,6 +615,25 @@ GET /api/app-config/home?zoneId=1
 
 > Include also: optional query params use `ParseIntPipe`/`ParseFloatPipe` even when omitted, causing 400s if absent. Consider custom pipes that allow `undefined`.
 
+#### Security & Sessions (critical)
+- No logout or refresh-token revocation; no device/session listing to cut off compromised tokens.
+- OTP is hardcoded (`123456`) with no expiry enforcement, rate limiting, or replay protection.
+
+#### Payments (critical)
+- No payment intent/confirmation flow, no saved methods, no COD/zone rules, and no audit trail for payment events; orders cannot be safely completed.
+
+#### Observability & Protection (critical)
+- No health/version endpoint, no structured request logging/correlation IDs, and no rate limiting/throttling to protect auth/OTP and other endpoints.
+
+#### Catalog Filter Correctness (high)
+- Repositories ignore key filters (promotions: `isFeatured`; merchants: `minRating`, `isOpen`, `hasDiscount`; products: `hasDiscount`, `isAvailable=false`), so responses can violate API contracts.
+
+#### Account Management Gaps (high)
+- No address delete endpoint; no verified change-phone/email flow; profile/password flows lack brute-force limits and audit trails.
+
+#### Notifications & Order Updates (high)
+- No order-status/promo notifications end-to-end; no live tracking/push for order lifecycle; preferences are present in DTOs but lack full delivery plumbing.
+
 #### 1. **Favorites/Wishlist System**
 - **What's Missing**: No endpoints to save favorite products or merchants
 - **Impact**: Customers cannot bookmark items for later purchase

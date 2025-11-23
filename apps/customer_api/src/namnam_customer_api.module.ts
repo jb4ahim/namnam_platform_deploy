@@ -19,12 +19,14 @@ import { OrdersModule } from './modules/orders/orders.module';
 import { FavoritesModule } from './modules/favorites/favorites.module'; // Import the FavoritesModule
 import { ReviewsModule } from './modules/reviews/reviews.module'; // Import the ReviewsModule
 import { ProfileModule } from './modules/profile/profile.module'; // Import the ProfileModule
+import { NotificationsModule } from './modules/notifications/notifications.module'; // Import the NotificationsModule
+import { SearchModule } from './modules/search/search.module'; // Import the SearchModule
 
 @Module({
   imports: [
     ConfigModule.forRoot({
           isGlobal: true,
-          envFilePath: '.env', // This will load from root
+          envFilePath: '.env'
     }),
     JwtModule,
     DatabaseModule,
@@ -39,9 +41,11 @@ import { ProfileModule } from './modules/profile/profile.module'; // Import the 
     CategoriesModule,
     CartModule,
     OrdersModule,
-    FavoritesModule, // Add this line
-    ReviewsModule, // Add this line
-    ProfileModule, // Add this line
+    FavoritesModule,
+    ReviewsModule,
+    ProfileModule,
+    NotificationsModule, // Add this line
+    SearchModule, // Add this line
   ],
   providers: [
     {
