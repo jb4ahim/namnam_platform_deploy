@@ -31,13 +31,13 @@ export class MerchantsRepository {
         return result || [];
     }
 
-  async getMerchantById(merchantId: number) {
-    const result = await DatabaseUtils.callFunction(
-      this.pg,
-      'select_merchant_by_id_customer',
-      [merchantId],
-      false
-    );
-    return result;
-  }
-}
+    async getMerchantById(merchantId: number) {
+        const result = await DatabaseUtils.callFunction(
+        this.pg,
+        'select_merchant_by_id_customer',
+        [merchantId],
+        false
+        );
+        return result;
+    }
+    }

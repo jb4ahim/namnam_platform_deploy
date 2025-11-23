@@ -16,6 +16,7 @@ import { ProductsModule } from './modules/products/products.module';
 import { CategoriesModule } from 'apps/management_api/src/modules/categories/categories.module';
 import { CartModule } from './modules/cart/cart.module';
 import { OrdersModule } from './modules/orders/orders.module';
+import { FavoritesModule } from './modules/favorites/favorites.module'; // Import the FavoritesModule
 
 @Module({
   imports: [
@@ -35,7 +36,8 @@ import { OrdersModule } from './modules/orders/orders.module';
     PromotionsModule,
     CategoriesModule,
     CartModule,
-    OrdersModule
+    OrdersModule,
+    FavoritesModule, // Add this line
   ],
   providers: [
     {
