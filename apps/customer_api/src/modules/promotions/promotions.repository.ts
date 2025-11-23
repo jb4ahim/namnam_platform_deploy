@@ -9,7 +9,12 @@ export class PromotionsRepository {
         const result = await DatabaseUtils.callFunction(
         this.pg,
         'select_promotions_customer',
-        [categoryId || null, isFeatured || null, limit || null],
+        [
+            null, // p_manual_ids - null for filter mode
+            categoryId || null,
+            isFeatured || null,
+            limit || null
+        ],
         true
         );
         return result || [];

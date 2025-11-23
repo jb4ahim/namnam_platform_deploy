@@ -19,16 +19,14 @@ export class MerchantsRepository {
       this.pg,
       'select_merchants_customer',
       [
+        null, // p_manual_ids - null for filter mode
         filters?.latitude || null,
         filters?.longitude || null,
         filters?.categoryId || null,
         filters?.zoneId || null,
-        filters?.minRating || null,
-        filters?.isOpen || null,
-        filters?.hasDiscount || null,
         filters?.limit || 50,
       ],
-      true
+      false
     );
     return result || [];
   }

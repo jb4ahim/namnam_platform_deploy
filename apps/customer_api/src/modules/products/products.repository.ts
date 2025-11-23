@@ -18,6 +18,7 @@ export class ProductsRepository {
       'select_products_customer',
       [
         merchantId,
+        null, // p_manual_ids - null for filter mode
         filters?.categoryId || null,
         filters?.minPrice || null,
         filters?.maxPrice || null,

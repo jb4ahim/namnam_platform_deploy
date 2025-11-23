@@ -1,0 +1,708 @@
+{
+  "info": {
+    "name": "Namnam Customer API",
+    "_postman_id": "d7e3c202-6f8d-4c64-982c-04a5b18f5f4c",
+    "description": "Complete Postman collection for the Customer API. The app runs with a global prefix of `/api`, so the default `baseUrl` is `http://localhost:3002/api`. Most routes are protected by the JWT AuthGuard and expect the Authorization header `Bearer {{accessToken}}`.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3002/api"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "description": "Set after login/verify. Used by default for protected routes."
+    },
+    {
+      "key": "promotionId",
+      "value": "1"
+    },
+    {
+      "key": "productId",
+      "value": "1"
+    },
+    {
+      "key": "merchantId",
+      "value": "1"
+    },
+    {
+      "key": "categoryId",
+      "value": "1"
+    },
+    {
+      "key": "addressId",
+      "value": "1"
+    },
+    {
+      "key": "cartItemId",
+      "value": "1"
+    },
+    {
+      "key": "orderId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Send OTP",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"countryCode\": \"+961\",\n  \"phoneNumber\": \"70000000\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/send-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "send-otp"]
+            },
+            "description": "Triggers OTP generation for a phone number. No auth required."
+          }
+        },
+        {
+          "name": "Verify OTP",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"countryCode\": \"+961\",\n  \"phoneNumber\": \"70000000\",\n  \"code\": \"123456\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/verify-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "verify-otp"]
+            },
+            "description": "Validates the OTP. Returns `{ isRegistered: true, accessToken, refreshToken }` for existing users or `{ isRegistered: false, verifyToken, expiresAt }` for new users."
+          }
+        },
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Doe\",\n  \"email\": \"jane@example.com\",\n  \"gender\": \"female\",\n  \"birthday\": \"1990-01-01\",\n  \"defaultCurrency\": \"USD\",\n  \"status\": \"active\",\n  \"verifyToken\": \"{{verifyTokenFromVerifyOtp}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Completes registration for users who passed OTP verification. Use the `verifyToken` returned by Verify OTP."
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"{{refreshToken}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh-token",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "refresh-token"]
+            },
+            "description": "Returns a fresh `{ accessToken, refreshToken }` pair."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get My Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            },
+            "description": "Requires Authorization. Returns the authenticated user's profile."
+          }
+        }
+      ]
+    },
+    {
+      "name": "App Config",
+      "item": [
+        {
+          "name": "Get Home Config",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/app-config/home?zoneId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["app-config", "home"],
+              "query": [
+                { "key": "zoneId", "value": "1", "description": "Optional zone filter" }
+              ]
+            },
+            "description": "Fetches home page configuration. Public endpoint."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Promotions",
+      "item": [
+        {
+          "name": "List Promotions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/promotions?categoryId={{categoryId}}&isFeatured=true&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["promotions"],
+              "query": [
+                { "key": "categoryId", "value": "{{categoryId}}", "description": "Optional category filter" },
+                { "key": "isFeatured", "value": "true", "description": "Optional featured flag" },
+                { "key": "limit", "value": "10", "description": "Optional max results" }
+              ]
+            },
+            "description": "Lists promotions. Public endpoint."
+          }
+        },
+        {
+          "name": "Get Promotion By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/promotions/{{promotionId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["promotions", "{{promotionId}}"]
+            },
+            "description": "Requires Authorization. Fetches a single promotion."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "List Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/products?merchantId={{merchantId}}&categoryId={{categoryId}}&minPrice=0&maxPrice=100&isAvailable=true&hasDiscount=false&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["products"],
+              "query": [
+                { "key": "merchantId", "value": "{{merchantId}}", "description": "Required merchant id" },
+                { "key": "categoryId", "value": "{{categoryId}}", "description": "Optional category filter" },
+                { "key": "minPrice", "value": "0", "description": "Optional minimum price" },
+                { "key": "maxPrice", "value": "100", "description": "Optional maximum price" },
+                { "key": "isAvailable", "value": "true", "description": "Optional availability flag" },
+                { "key": "hasDiscount", "value": "false", "description": "Optional discount flag" },
+                { "key": "limit", "value": "20", "description": "Optional max results" }
+              ]
+            },
+            "description": "Requires Authorization. Lists products for a merchant with optional filters."
+          }
+        },
+        {
+          "name": "Get Product By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/products/{{productId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["products", "{{productId}}"]
+            },
+            "description": "Requires Authorization. Fetches a single product."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Merchants",
+      "item": [
+        {
+          "name": "List Merchants",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/merchants?latitude=33.8938&longitude=35.5018&categoryId={{categoryId}}&zoneId=1&minRating=3&isOpen=true&hasDiscount=true&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["merchants"],
+              "query": [
+                { "key": "latitude", "value": "33.8938", "description": "Optional latitude for distance sorting" },
+                { "key": "longitude", "value": "35.5018", "description": "Optional longitude for distance sorting" },
+                { "key": "categoryId", "value": "{{categoryId}}", "description": "Optional category filter" },
+                { "key": "zoneId", "value": "1", "description": "Optional zone filter" },
+                { "key": "minRating", "value": "3", "description": "Optional minimum rating" },
+                { "key": "isOpen", "value": "true", "description": "Optional open flag" },
+                { "key": "hasDiscount", "value": "true", "description": "Optional discount flag" },
+                { "key": "limit", "value": "10", "description": "Optional max results" }
+              ]
+            },
+            "description": "Requires Authorization. Lists merchants with optional filters."
+          }
+        },
+        {
+          "name": "Get Merchant By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/merchants/{{merchantId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["merchants", "{{merchantId}}"]
+            },
+            "description": "Requires Authorization. Fetches a single merchant."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "List Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/categories?parentId={{categoryId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories"],
+              "query": [
+                { "key": "parentId", "value": "{{categoryId}}", "description": "Optional parent category id" }
+              ]
+            },
+            "description": "Requires Authorization. Lists categories."
+          }
+        },
+        {
+          "name": "Get Category By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/categories/{{categoryId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories", "{{categoryId}}"]
+            },
+            "description": "Requires Authorization. Fetches a single category."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Address",
+      "item": [
+        {
+          "name": "List My Addresses",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/address",
+              "host": ["{{baseUrl}}"],
+              "path": ["address"]
+            },
+            "description": "Requires Authorization. Lists the authenticated user's saved addresses."
+          }
+        },
+        {
+          "name": "Get Address By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/address/{{addressId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["address", "{{addressId}}"]
+            },
+            "description": "Requires Authorization. Fetches a specific address."
+          }
+        },
+        {
+          "name": "Create Address",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"label\": \"Home\",\n  \"addressLine1\": \"Street 1\",\n  \"city\": \"Beirut\",\n  \"state\": \"Beirut\",\n  \"addressLine2\": \"Apartment 3\",\n  \"country\": \"LB\",\n  \"apartment\": \"3B\",\n  \"building\": \"Building A\",\n  \"latitude\": 33.8938,\n  \"longitude\": 35.5018,\n  \"isDefault\": true,\n  \"status\": \"active\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/address",
+              "host": ["{{baseUrl}}"],
+              "path": ["address"]
+            },
+            "description": "Requires Authorization. Creates a new address for the user."
+          }
+        },
+        {
+          "name": "Update Address",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"label\": \"Updated Home\",\n  \"city\": \"Updated City\",\n  \"isDefault\": false\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/address/{{addressId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["address", "{{addressId}}"]
+            },
+            "description": "Requires Authorization. Updates the specified address."
+          }
+        },
+        {
+          "name": "Get Allowed Zones",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/address/allowed-zones",
+              "host": ["{{baseUrl}}"],
+              "path": ["address", "allowed-zones"]
+            },
+            "description": "Public endpoint returning allowed delivery zones."
+          }
+        },
+        {
+          "name": "Set Default Address",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/address/{{addressId}}/set-default",
+              "host": ["{{baseUrl}}"],
+              "path": ["address", "{{addressId}}", "set-default"]
+            },
+            "description": "Requires Authorization. Marks the address as default."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cart",
+      "item": [
+        {
+          "name": "Get Cart",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/cart",
+              "host": ["{{baseUrl}}"],
+              "path": ["cart"]
+            },
+            "description": "Requires Authorization. Returns the current user's cart."
+          }
+        },
+        {
+          "name": "Get Cart Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/cart/summary",
+              "host": ["{{baseUrl}}"],
+              "path": ["cart", "summary"]
+            },
+            "description": "Requires Authorization. Returns totals/summary information."
+          }
+        },
+        {
+          "name": "Get Cart Item",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/cart/items/{{cartItemId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["cart", "items", "{{cartItemId}}"]
+            },
+            "description": "Requires Authorization. Fetches a single cart item."
+          }
+        },
+        {
+          "name": "Add Item",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"product_id\": {{productId}},\n  \"quantity\": 1\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cart/items",
+              "host": ["{{baseUrl}}"],
+              "path": ["cart", "items"]
+            },
+            "description": "Requires Authorization. Adds a product to the cart."
+          }
+        },
+        {
+          "name": "Update Item",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 2\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cart/items/{{cartItemId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["cart", "items", "{{cartItemId}}"]
+            },
+            "description": "Requires Authorization. Updates quantity for a cart item."
+          }
+        },
+        {
+          "name": "Bulk Update Items",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    { \"cart_item_id\": {{cartItemId}}, \"quantity\": 1 },\n    { \"cart_item_id\": 2, \"quantity\": 3 }\n  ]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cart/items/bulk",
+              "host": ["{{baseUrl}}"],
+              "path": ["cart", "items", "bulk"]
+            },
+            "description": "Requires Authorization. Bulk updates multiple cart items."
+          }
+        },
+        {
+          "name": "Remove Item",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/cart/items/{{cartItemId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["cart", "items", "{{cartItemId}}"]
+            },
+            "description": "Requires Authorization. Removes a cart item."
+          }
+        },
+        {
+          "name": "Clear Cart",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/cart",
+              "host": ["{{baseUrl}}"],
+              "path": ["cart"]
+            },
+            "description": "Requires Authorization. Clears the user's cart."
+          }
+        },
+        {
+          "name": "Merge Guest Cart",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    { \"product_id\": {{productId}}, \"quantity\": 1 }\n  ]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cart/merge",
+              "host": ["{{baseUrl}}"],
+              "path": ["cart", "merge"]
+            },
+            "description": "Requires Authorization. Merges a guest cart payload into the authenticated cart."
+          }
+        },
+        {
+          "name": "Apply Coupon",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"coupon_code\": \"WELCOME10\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cart/apply-coupon",
+              "host": ["{{baseUrl}}"],
+              "path": ["cart", "apply-coupon"]
+            },
+            "description": "Requires Authorization. Applies a coupon code."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Create Order",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"delivery_address_id\": {{addressId}},\n  \"cartId\": 1,\n  \"payment_method\": \"card\",\n  \"scheduled_for\": \"2025-11-30T18:00:00.000Z\",\n  \"delivery_instructions\": \"Leave at door\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders"]
+            },
+            "description": "Requires Authorization. Creates an order from the user's cart."
+          }
+        },
+        {
+          "name": "List Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orders?status=pending&startDate=2025-01-01&endDate=2025-12-31",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders"],
+              "query": [
+                { "key": "status", "value": "pending", "description": "Optional status filter" },
+                { "key": "startDate", "value": "2025-01-01", "description": "Optional ISO start date" },
+                { "key": "endDate", "value": "2025-12-31", "description": "Optional ISO end date" }
+              ]
+            },
+            "description": "Requires Authorization. Lists the user's orders with optional filters."
+          }
+        },
+        {
+          "name": "Get Order Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orders/{{orderId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "{{orderId}}"]
+            },
+            "description": "Requires Authorization. Returns full order details."
+          }
+        },
+        {
+          "name": "Get Payment Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orders/{{orderId}}/payment",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "{{orderId}}", "payment"]
+            },
+            "description": "Requires Authorization. Returns payment status for the order."
+          }
+        },
+        {
+          "name": "Get Tracking",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orders/{{orderId}}/tracking",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "{{orderId}}", "tracking"]
+            },
+            "description": "Requires Authorization. Returns tracking information."
+          }
+        },
+        {
+          "name": "Cancel Order",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orders/{{orderId}}/cancel",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "{{orderId}}", "cancel"]
+            },
+            "description": "Requires Authorization. Attempts to cancel the order."
+          }
+        },
+        {
+          "name": "Update Delivery Instructions",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"delivery_instructions\": \"Ring bell twice\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders/{{orderId}}/delivery",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "{{orderId}}", "delivery"]
+            },
+            "description": "Requires Authorization. Updates delivery instructions for an order."
+          }
+        },
+        {
+          "name": "Request Refund",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Damaged items\",\n  \"notes\": \"Package was open\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders/{{orderId}}/refund",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "{{orderId}}", "refund"]
+            },
+            "description": "Requires Authorization. Submits a refund request for an order."
+          }
+        }
+      ]
+    }
+  ]
+}
