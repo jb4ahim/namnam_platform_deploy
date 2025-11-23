@@ -5,8 +5,17 @@ import { MerchantsRepository } from './merchants.repository';
 export class MerchantsService {
     constructor(private readonly repo: MerchantsRepository) {}
 
-    async getMerchants(categoryId?: number, latitude?: number, longitude?: number) {
-        return this.repo.getMerchants(categoryId, latitude, longitude);
+    async getMerchants(filters?: {
+    latitude?: number;
+    longitude?: number;
+    categoryId?: number;
+    zoneId?: number;
+    minRating?: number;
+    isOpen?: boolean;
+    hasDiscount?: boolean;
+    limit?: number;
+  }) {
+        return this.repo.getMerchants(filters);
     }
 
     async getMerchantById(merchantId: number) {

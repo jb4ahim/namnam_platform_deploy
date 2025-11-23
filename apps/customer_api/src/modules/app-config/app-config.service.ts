@@ -5,7 +5,7 @@ import { AppConfigRepository } from './app-config.repository';
 export class AppConfigService {
   constructor(private readonly appConfigRepository: AppConfigRepository) {}
 
-  async getHomeConfig() {
-    return await this.appConfigRepository.getHomeConfig();
+  async getHomeConfig(zoneId?: number) {
+    return await this.appConfigRepository.getHomeConfig(zoneId);
   }
 }

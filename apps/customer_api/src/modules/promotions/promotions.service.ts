@@ -5,8 +5,8 @@ import { PromotionsRepository } from './promotions.repository';
 export class PromotionsService {
     constructor(private readonly repo: PromotionsRepository) {}
 
-    async getPromotions() {
-        return this.repo.getPromotions();
+    async getPromotions(categoryId?: number, isFeatured?: boolean, limit?: number) {
+        return this.repo.getPromotions(categoryId, isFeatured, limit);
     }
 
     async getPromotionById(promotionId: number) {
