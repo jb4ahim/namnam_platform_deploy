@@ -12,10 +12,9 @@ export class PromotionsRepository {
         [
             null, // p_manual_ids - null for filter mode
             categoryId || null,
-            isFeatured || null,
             limit || null
         ],
-        true
+        false
         );
         return result || [];
     }
