@@ -5,7 +5,7 @@ import { DatabaseUtils, PostgresService } from '@app/database';
 export class PromotionsRepository {
     constructor(private readonly pg: PostgresService) {}
 
-    async getPromotions(categoryId?: number, isFeatured?: boolean, limit?: number) {
+    async getPromotions(categoryId?: number, limit?: number) {
         const result = await DatabaseUtils.callFunction(
         this.pg,
         'select_promotions_customer',

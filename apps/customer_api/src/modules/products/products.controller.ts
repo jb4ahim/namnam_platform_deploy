@@ -10,12 +10,12 @@ export class ProductsController {
   @UseGuards(AuthGuard)
   async getProducts(
     @Query('merchantId', ParseIntPipe) merchantId: number,
-    @Query('categoryId', ParseIntPipe) categoryId?: number,
-    @Query('minPrice', ParseFloatPipe) minPrice?: number,
-    @Query('maxPrice', ParseFloatPipe) maxPrice?: number,
+    @Query('categoryId', new ParseIntPipe({ optional: true })) categoryId?: number,
+    @Query('minPrice', new ParseFloatPipe({ optional: true })) minPrice?: number,
+    @Query('maxPrice', new ParseFloatPipe({ optional: true })) maxPrice?: number,
     @Query('isAvailable') isAvailable?: boolean,
     @Query('hasDiscount') hasDiscount?: boolean,
-    @Query('limit', ParseIntPipe) limit?: number,
+    @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,
   ) {
     return await this.productsService.getProducts(merchantId, {
       categoryId,

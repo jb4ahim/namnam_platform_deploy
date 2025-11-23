@@ -13,8 +13,8 @@ export class FavoritesController {
   async getFavorites(
     @CurrentUserId() userId: number,
     @Query('entityType') entityType?: 'merchant' | 'product',
-    @Query('limit', ParseIntPipe) limit?: number,
-    @Query('offset', ParseIntPipe) offset?: number,
+    @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,
+    @Query('offset', new ParseIntPipe({ optional: true })) offset?: number,
   ) {
     return await this.favoritesService.getFavorites(userId, entityType, limit, offset);
   }

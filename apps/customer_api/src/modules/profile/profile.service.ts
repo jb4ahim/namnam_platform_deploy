@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ProfileRepository } from './profile.repository';
 import { UpdateProfileDto } from './dto/update-profile.dto';
-import { ChangePasswordDto } from './dto/change-password.dto';
 import { UpdatePreferencesDto } from './dto/update-preferences.dto';
 
 @Injectable()
@@ -14,10 +13,6 @@ export class ProfileService {
 
   async updateProfile(userId: number, dto: UpdateProfileDto) {
     return this.repo.updateProfile(userId, dto);
-  }
-
-  async changePassword(userId: number, dto: ChangePasswordDto) {
-    return this.repo.changePassword(userId, dto);
   }
 
   async getPreferences(userId: number) {

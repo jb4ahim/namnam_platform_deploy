@@ -3,7 +3,6 @@ import { ProfileController } from './profile.controller';
 import { ProfileService } from './profile.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { UpdatePreferencesDto } from './dto/update-preferences.dto';
-import { ChangePasswordDto } from './dto/change-password.dto';
 
 describe('ProfileController', () => {
   let controller: ProfileController;
@@ -18,7 +17,6 @@ describe('ProfileController', () => {
           useValue: {
             getProfile: jest.fn(),
             updateProfile: jest.fn(),
-            changePassword: jest.fn(),
             getPreferences: jest.fn(),
             updatePreferences: jest.fn(),
             deleteAccount: jest.fn(),
@@ -41,22 +39,12 @@ describe('ProfileController', () => {
   });
 
   it('updates profile', async () => {
-    const dto: UpdateProfileDto = { first_name: 'Jane' };
+    const dto: UpdateProfileDto = { name: 'Jane' };
     service.updateProfile.mockResolvedValueOnce({ success: true });
 
     const result = await controller.updateProfile(2, dto);
 
     expect(service.updateProfile).toHaveBeenCalledWith(2, dto);
-    expect(result).toEqual({ success: true });
-  });
-
-  it('changes password', async () => {
-    const dto: ChangePasswordDto = { current_password: 'old', new_password: 'new' };
-    service.changePassword.mockResolvedValueOnce({ success: true });
-
-    const result = await controller.changePassword(3, dto);
-
-    expect(service.changePassword).toHaveBeenCalledWith(3, dto);
     expect(result).toEqual({ success: true });
   });
 

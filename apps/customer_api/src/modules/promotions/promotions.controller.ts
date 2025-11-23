@@ -8,11 +8,10 @@ export class PromotionsController {
 
   @Get()
   async getPromotions(
-    @Query('categoryId', ParseIntPipe) categoryId?: number,
-    @Query('isFeatured') isFeatured?: boolean,
-    @Query('limit', ParseIntPipe) limit?: number,
+    @Query('categoryId', new ParseIntPipe({ optional: true })) categoryId?: number,
+    @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,
   ) {
-    return await this.promotionsService.getPromotions(categoryId, isFeatured, limit);
+    return await this.promotionsService.getPromotions(categoryId, limit);
   }
 
   @Get(':id')

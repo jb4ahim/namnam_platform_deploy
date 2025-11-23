@@ -8,23 +8,17 @@ export class MerchantsController {
     @Get()
     @UseGuards(AuthGuard)
     async getMerchants(
-        @Query('latitude', ParseFloatPipe) latitude?: number,
-        @Query('longitude', ParseFloatPipe) longitude?: number,
-        @Query('categoryId', ParseIntPipe) categoryId?: number,
-        @Query('zoneId', ParseIntPipe) zoneId?: number,
-        @Query('minRating', ParseFloatPipe) minRating?: number,
-        @Query('isOpen') isOpen?: boolean,
-        @Query('hasDiscount') hasDiscount?: boolean,
-        @Query('limit', ParseIntPipe) limit?: number,
+        @Query('latitude', new ParseFloatPipe({ optional: true })) latitude?: number,
+        @Query('longitude', new ParseFloatPipe({ optional: true })) longitude?: number,
+        @Query('categoryId', new ParseIntPipe({ optional: true })) categoryId?: number,
+        @Query('zoneId', new ParseIntPipe({ optional: true })) zoneId?: number,
+        @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,
     ) {
         return await this.merchantsService.getMerchants({
         latitude,
         longitude,
         categoryId,
         zoneId,
-        minRating,
-        isOpen,
-        hasDiscount,
         limit,
         });
     }

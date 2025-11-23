@@ -12,8 +12,8 @@ export class NotificationsController {
   @Get()
   async getNotifications(
     @CurrentUserId() userId: number,
-    @Query('limit', ParseIntPipe) limit?: number,
-    @Query('offset', ParseIntPipe) offset?: number,
+    @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,
+    @Query('offset', new ParseIntPipe({ optional: true })) offset?: number,
     @Query('isRead') isRead?: boolean,
     @Query('type') type?: string,
   ) {

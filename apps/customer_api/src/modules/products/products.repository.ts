@@ -23,7 +23,7 @@ export class ProductsRepository {
         filters?.minPrice || null,
         filters?.maxPrice || null,
         filters?.isAvailable ?? true,
-        filters?.hasDiscount || null,
+        filters?.hasDiscount ?? null,
         filters?.limit || null,
       ],
       false

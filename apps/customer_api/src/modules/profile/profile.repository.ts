@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseUtils, PostgresService } from '@app/database';
 import { UpdateProfileDto } from './dto/update-profile.dto';
-import { ChangePasswordDto } from './dto/change-password.dto';
 import { UpdatePreferencesDto } from './dto/update-preferences.dto';
 
 @Injectable()
@@ -24,23 +23,14 @@ export class ProfileRepository {
       'update_user_profile',
       [
         userId,
-        dto.first_name || null,
-        dto.last_name || null,
-        dto.date_of_birth || null,
-        dto.gender || null,
-        dto.profile_image_url || null,
+        dto.name || null,
+        dto.email || null,
+        dto.phone_number || null,
+        dto.country_code || null,
+        dto.default_currency || null,
       ]
     );
     return { success: true, message: 'Profile updated successfully' };
-  }
-
-  async changePassword(userId: number, dto: ChangePasswordDto) {
-    await DatabaseUtils.callProcedure(
-      this.pg,
-      'update_user_password',
-      [userId, dto.current_password, dto.new_password]
-    );
-    return { success: true, message: 'Password changed successfully' };
   }
 
   async getPreferences(userId: number) {
@@ -56,9 +46,12 @@ export class ProfileRepository {
   async updatePreferences(userId: number, dto: UpdatePreferencesDto) {
     await DatabaseUtils.callProcedure(
       this.pg,
-      'update_user_preferences',
+      'update_customer',
       [
         userId,
+        null, // p_gender
+        null, // p_birthday
+        null, // p_profile_image_key
         dto.language || null,
         dto.currency || null,
         dto.notifications_enabled ?? null,

@@ -10,9 +10,6 @@ export class MerchantsRepository {
         longitude?: number;
         categoryId?: number;
         zoneId?: number;
-        minRating?: number;
-        isOpen?: boolean;
-        hasDiscount?: boolean;
         limit?: number;
     }) {
         const result = await DatabaseUtils.callFunction(

@@ -15,9 +15,9 @@ export class ReviewsController {
   @Get('products/:productId')
   async getProductReviews(
     @Param('productId', ParseIntPipe) productId: number,
-    @Query('limit', ParseIntPipe) limit?: number,
-    @Query('offset', ParseIntPipe) offset?: number,
-    @Query('minRating', ParseFloatPipe) minRating?: number,
+    @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,
+    @Query('offset', new ParseIntPipe({ optional: true })) offset?: number,
+    @Query('minRating', new ParseFloatPipe({ optional: true })) minRating?: number,
     @Query('sortBy') sortBy?: string,
   ) {
     return await this.reviewsService.getEntityReviews('product', productId, limit, offset, minRating, sortBy);
@@ -27,9 +27,9 @@ export class ReviewsController {
   @Get('merchants/:merchantId')
   async getMerchantReviews(
     @Param('merchantId', ParseIntPipe) merchantId: number,
-    @Query('limit', ParseIntPipe) limit?: number,
-    @Query('offset', ParseIntPipe) offset?: number,
-    @Query('minRating', ParseFloatPipe) minRating?: number,
+    @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,
+    @Query('offset', new ParseIntPipe({ optional: true })) offset?: number,
+    @Query('minRating', new ParseFloatPipe({ optional: true })) minRating?: number,
     @Query('sortBy') sortBy?: string,
   ) {
     return await this.reviewsService.getEntityReviews('merchant', merchantId, limit, offset, minRating, sortBy);

@@ -7,7 +7,7 @@ export class CategoriesController {
 
     @Get()
     @UseGuards(AuthGuard)
-    async getCategories(@Query('parentId', ParseIntPipe) parentId?: number) {
+    async getCategories(@Query('parentId', new ParseIntPipe({ optional: true })) parentId?: number) {
         return await this.categoriesService.getCategories(parentId);
     }
 

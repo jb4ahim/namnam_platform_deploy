@@ -24,7 +24,8 @@ The Customer API is a NestJS-based backend service for a food delivery/marketpla
 - API Prefix: `/api`
 - Postman: `docs/postman/customer-api.postman_collection.json` (importable; contains sample payloads and variables)
 
-> Reality checks: OTP verification currently uses a hardcoded code (`123456`); several optional query params are treated as required due to Nest pipes; some repository filters are ignored (see module notes below).
+> Reality checks: OTP verification currently uses a hardcoded code (`123456`); numeric query params are optional but must be valid numbers when provided; filters align with available DB arguments (see module notes below).
+> Recently added and working: favorites, reviews/ratings, notifications, and search endpoints are implemented and guarded where expected (see module sections).
 
 ---
 
@@ -71,7 +72,7 @@ The API follows a modular architecture with the following modules:
 3. **Register/Login**: System generates JWT access and refresh tokens
 4. **Protected Routes**: Include JWT token in `Authorization: Bearer <token>` header
 
-> Reality check: `send-otp` currently returns `200` with an empty body; `verify-otp` returns either token pair for existing users or `{ isRegistered: false, verifyToken, expiresAt }` for new users; `register` requires `verifyToken` from the previous step and returns a token pair (no user object).
+> Reality check: `send-otp` currently returns `201` with an empty body; `verify-otp` returns either token pair for existing users or `{ isRegistered: false, verifyToken, expiresAt }` for new users; `register` requires `verifyToken` from the previous step and returns a token pair (no user object).
 > Postman: collection includes a `refreshToken` variable and profile endpoints; refresh body property must be `token`.
 
 ### Token Management
@@ -101,13 +102,7 @@ Content-Type: application/json
 }
 ```
 
-**Response:**
-```json
-{
-  "success": true,
-  "message": "OTP sent successfully"
-}
-```
+**Response:** `201 Created` with an empty body (no payload returned).
 
 #### Verify OTP
 ```http
@@ -142,7 +137,7 @@ Content-Type: application/json
   "gender": "male",
   "birthday": "1990-01-01",
   "defaultCurrency": "USD",
-  "verifyToken": "<from verify-otp>"  // Required
+  "verifyToken": "<from verify-otp>"  // Required (in-memory; cleared on restart/expiry)
 }
 ```
 
@@ -257,10 +252,10 @@ Authorization: Bearer <token>
 
 All favorites endpoints require authentication.
 
-- **GET /api/favorites?entityType=product|merchant&limit&offset** — List favorites (ParseInt pipes on limit/offset).
-- **GET /api/favorites/check/:entityType/:entityId** — Returns `{ is_favorite: boolean }`.
-- **POST /api/favorites** — Body: `{ "entity_type": "product|merchant", "entity_id": <number> }`.
-- **DELETE /api/favorites/:entityType/:entityId** — Remove favorite.
+- **GET /api/favorites?entityType=product|merchant&limit&offset** - List favorites (ParseInt pipes on limit/offset; provide numbers to avoid 400).
+- **GET /api/favorites/check/:entityType/:entityId** - Returns `{ is_favorite: boolean }`.
+- **POST /api/favorites** - Body: `{ "entity_type": "product|merchant", "entity_id": <number> }`.
+- **DELETE /api/favorites/:entityType/:entityId** - Remove favorite.
 
 ---
 
@@ -270,13 +265,13 @@ All reviews endpoints require authentication.
 
 - **GET /api/reviews/products/:productId?limit&offset&minRating&sortBy**
 - **GET /api/reviews/merchants/:merchantId?limit&offset&minRating&sortBy**
-- **POST /api/reviews/products/:productId** — Body: `CreateReviewDto` (rating, comment, pros/cons).
-- **POST /api/reviews/merchants/:merchantId** — Body: `CreateReviewDto`.
-- **PUT /api/reviews/:reviewId** — Body: `UpdateReviewDto`.
+- **POST /api/reviews/products/:productId** - Body: `CreateReviewDto` (rating, comment, pros/cons).
+- **POST /api/reviews/merchants/:merchantId** - Body: `CreateReviewDto`.
+- **PUT /api/reviews/:reviewId** - Body: `UpdateReviewDto`.
 - **DELETE /api/reviews/:reviewId**
-- **POST /api/reviews/:reviewId/vote-helpful** — Body: `{ is_helpful: boolean }`.
+- **POST /api/reviews/:reviewId/vote-helpful** - Body: `{ is_helpful: boolean }`
 
-> Optional query params are parsed with pipes; if omitted, requests can 400. Provide numeric values or adjust pipes.
+> Numeric query params are optional; when provided, they must be valid numbers.
 
 ---
 
@@ -284,11 +279,11 @@ All reviews endpoints require authentication.
 
 All notifications endpoints require authentication.
 
-- **GET /api/notifications?limit&offset&isRead&type** — List notifications.
-- **PUT /api/notifications/:id/read** — Mark one as read.
-- **PUT /api/notifications/read-all** — Mark all as read.
-- **GET /api/notifications/preferences** — Get preferences.
-- **PUT /api/notifications/preferences** — Update preferences. Body booleans: `email_notifications`, `push_notifications`, `sms_notifications`, `order_updates`, `promotional_offers`, `delivery_updates`, `payment_updates`, `system_announcements`.
+- **GET /api/notifications?limit&offset&isRead&type** - List notifications.
+- **PUT /api/notifications/:id/read** - Mark one as read.
+- **PUT /api/notifications/read-all** - Mark all as read.
+- **GET /api/notifications/preferences** - Get preferences.
+- **PUT /api/notifications/preferences** - Update preferences. Body booleans: `email_notifications`, `push_notifications`, `sms_notifications`, `order_updates`, `promotional_offers`, `delivery_updates`, `payment_updates`, `system_announcements`.
 
 ---
 
@@ -296,12 +291,10 @@ All notifications endpoints require authentication.
 
 Public endpoints (no auth guard).
 
-- **GET /api/search?q=&type=products|merchants&categoryId&zoneId&latitude&longitude&limit&offset** — Unified search.
+- **GET /api/search?q=&type=products|merchants&categoryId&zoneId&latitude&longitude&limit&offset** - Unified search (numeric params optional).
 - **GET /api/search/products?q=&merchantId&categoryId&minPrice&maxPrice&limit&offset**
 - **GET /api/search/merchants?q=&categoryId&zoneId&latitude&longitude&limit&offset**
 - **GET /api/search/suggestions?q=&type=products|merchants&limit**
-
-> Many query params use ParseIntPipe/ParseFloatPipe; omit them and Nest will 400. Provide numeric strings or adjust pipes if you want truly optional params.
 
 ### Address Module (`/api/address`)
 
@@ -351,6 +344,12 @@ Content-Type: application/json
 }
 ```
 
+#### Delete Address
+```http
+DELETE /api/address/:id
+Authorization: Bearer <token>
+```
+
 #### Set Default Address
 ```http
 PATCH /api/address/:id/set-default
@@ -381,7 +380,7 @@ Authorization: Bearer <token>
 - `hasDiscount`: Only products with discounts
 - `limit`: Results limit
 
-> Reality check: repository defaults `isAvailable` to `true` and ignores explicit `false`; `hasDiscount=false` is treated as `null`; zero `limit` is dropped.
+> Reality check: boolean flags are forwarded as provided; passing `hasDiscount=false` will be honored. Zero `limit` is still dropped by the repository defaults.
 
 #### Get Product Details
 ```http
@@ -395,7 +394,7 @@ Authorization: Bearer <token>
 
 #### List Merchants
 ```http
-GET /api/merchants?latitude=40.7128&longitude=-74.0060&categoryId=1&zoneId=1&minRating=4&isOpen=true&hasDiscount=true&limit=50
+GET /api/merchants?latitude=40.7128&longitude=-74.0060&categoryId=1&zoneId=1&limit=50
 Authorization: Bearer <token>
 ```
 
@@ -404,12 +403,7 @@ Authorization: Bearer <token>
 - `longitude`: User's longitude for distance calculation
 - `categoryId`: Filter by category
 - `zoneId`: Filter by delivery zone
-- `minRating`: Minimum rating filter
-- `isOpen`: Only open merchants
-- `hasDiscount`: Only merchants with active discounts
 - `limit`: Results limit (default: 50)
-
-> Reality check: repository currently ignores `minRating`, `isOpen`, and `hasDiscount`, and only forwards latitude/longitude/category/zone/limit.
 
 #### Get Merchant Details
 ```http
@@ -442,15 +436,12 @@ Authorization: Bearer <token>
 
 #### List Promotions
 ```http
-GET /api/promotions?categoryId=1&isFeatured=true&limit=10
+GET /api/promotions?categoryId=1&limit=10
 ```
 
 **Query Parameters:**
 - `categoryId`: Filter by category
-- `isFeatured`: Only featured promotions
 - `limit`: Results limit
-
-> Reality check: repository ignores `isFeatured` and forwards only `categoryId` and `limit`.
 
 #### Get Promotion Details
 ```http
@@ -667,135 +658,14 @@ GET /api/app-config/home?zoneId=1
 
 ## Missing Features Analysis
 
-### Critical Missing Features
+### Critical / High Gaps (current state)
 
-> Include also: optional query params use `ParseIntPipe`/`ParseFloatPipe` even when omitted, causing 400s if absent. Consider custom pipes that allow `undefined`.
-
-#### Security & Sessions (critical)
-- No logout or refresh-token revocation; no device/session listing to cut off compromised tokens.
-- OTP is hardcoded (`123456`) with no expiry enforcement, rate limiting, or replay protection.
-
-#### Payments (critical)
-- No payment intent/confirmation flow, no saved methods, no COD/zone rules, and no audit trail for payment events; orders cannot be safely completed.
-
-#### Observability & Protection (critical)
-- No health/version endpoint, no structured request logging/correlation IDs, and no rate limiting/throttling to protect auth/OTP and other endpoints.
-
-#### Catalog Filter Correctness (high)
-- Repositories ignore key filters (promotions: `isFeatured`; merchants: `minRating`, `isOpen`, `hasDiscount`; products: `hasDiscount`, `isAvailable=false`), so responses can violate API contracts.
-
-#### Account Management Gaps (high)
-- No address delete endpoint; no verified change-phone/email flow; profile/password flows lack brute-force limits and audit trails.
-
-#### Notifications & Order Updates (high)
-- No order-status/promo notifications end-to-end; no live tracking/push for order lifecycle; preferences are present in DTOs but lack full delivery plumbing.
-
-#### 1. **Favorites/Wishlist System**
-- **What's Missing**: No endpoints to save favorite products or merchants
-- **Impact**: Customers cannot bookmark items for later purchase
-- **Priority**: HIGH
-- **Suggested Endpoints**:
-  - `POST /api/favorites/products/:productId` - Add product to favorites
-  - `DELETE /api/favorites/products/:productId` - Remove from favorites
-  - `GET /api/favorites/products` - List favorite products
-  - `POST /api/favorites/merchants/:merchantId` - Add merchant to favorites
-  - `GET /api/favorites/merchants` - List favorite merchants
-
-#### 2. **Reviews & Ratings**
-- **What's Missing**: No customer review/rating system
-- **Impact**: No social proof, no feedback mechanism
-- **Priority**: HIGH
-- **Suggested Endpoints**:
-  - `POST /api/reviews/products/:productId` - Review a product
-  - `POST /api/reviews/merchants/:merchantId` - Review a merchant
-  - `GET /api/reviews/products/:productId` - Get product reviews
-  - `GET /api/reviews/merchants/:merchantId` - Get merchant reviews
-  - `PUT /api/reviews/:reviewId` - Update review
-  - `DELETE /api/reviews/:reviewId` - Delete review
-
-#### 3. **Search Functionality**
-- **What's Missing**: No unified search endpoint
-- **Impact**: Poor user experience for finding products/merchants
-- **Priority**: HIGH
-- **Suggested Endpoints**:
-  - `GET /api/search?q=pizza&type=products` - Unified search
-  - `GET /api/search/products?q=pizza` - Product search
-  - `GET /api/search/merchants?q=restaurant` - Merchant search
-  - `GET /api/search/suggestions?q=piz` - Autocomplete suggestions
-
-#### 4. **Notifications System**
-- **What's Missing**: No notification endpoints
-- **Impact**: Customers miss important order updates
-- **Priority**: MEDIUM
-- **Suggested Endpoints**:
-  - `GET /api/notifications` - List user notifications
-  - `PUT /api/notifications/:id/read` - Mark as read
-  - `PUT /api/notifications/read-all` - Mark all as read
-  - `GET /api/notifications/preferences` - Get notification preferences
-  - `PUT /api/notifications/preferences` - Update preferences
-
-#### 5. **Payment Integration**
-- **What's Missing**: No payment processing endpoints
-- **Impact**: Orders cannot be completed
-- **Priority**: CRITICAL
-- **Suggested Endpoints**:
-  - `POST /api/payments/intent` - Create payment intent
-  - `POST /api/payments/:orderId/confirm` - Confirm payment
-  - `GET /api/payments/methods` - List saved payment methods
-  - `POST /api/payments/methods` - Add payment method
-  - `DELETE /api/payments/methods/:id` - Remove payment method
-
-#### 6. **Customer Support**
-- **What's Missing**: No support/help ticket system
-- **Impact**: No direct communication channel for issues
-- **Priority**: MEDIUM
-- **Suggested Endpoints**:
-  - `POST /api/support/tickets` - Create support ticket
-  - `GET /api/support/tickets` - List user tickets
-  - `GET /api/support/tickets/:id` - Get ticket details
-  - `POST /api/support/tickets/:id/messages` - Add message to ticket
-  - `PUT /api/support/tickets/:id/close` - Close ticket
-
-#### 7. **Loyalty & Rewards**
-- **What's Missing**: No loyalty points or rewards system
-- **Impact**: No incentive for repeat purchases
-- **Priority**: LOW
-- **Suggested Endpoints**:
-  - `GET /api/loyalty/points` - Get user points balance
-  - `GET /api/loyalty/history` - Points transaction history
-  - `GET /api/loyalty/rewards` - Available rewards
-  - `POST /api/loyalty/redeem/:rewardId` - Redeem reward
-
-#### 8. **User Profile Enhancement**
-- **What's Missing**: Limited profile management
-- **Impact**: Cannot update profile, manage preferences
-- **Priority**: MEDIUM
-- **Suggested Endpoints**:
-  - `PUT /api/users/profile` - Update user profile
-  - `PUT /api/users/password` - Change password (if password auth added)
-  - `GET /api/users/preferences` - Get user preferences
-  - `PUT /api/users/preferences` - Update preferences
-  - `DELETE /api/users/account` - Delete account
-
-#### 9. **Order History Enhancements**
-- **What's Missing**: Limited order history features
-- **Impact**: Poor order management experience
-- **Priority**: MEDIUM
-- **Suggested Endpoints**:
-  - `POST /api/orders/:orderId/reorder` - Reorder previous order
-  - `GET /api/orders/:orderId/invoice` - Download invoice
-  - `POST /api/orders/:orderId/rate` - Rate delivery experience
-  - `GET /api/orders/statistics` - User order statistics
-
-#### 10. **Social Features**
-- **What's Missing**: No sharing or referral system
-- **Impact**: Limited organic growth
-- **Priority**: LOW
-- **Suggested Endpoints**:
-  - `POST /api/referrals/code` - Generate referral code
-  - `GET /api/referrals/stats` - Referral statistics
-  - `POST /api/share/product/:productId` - Share product
-  - `POST /api/share/merchant/:merchantId` - Share merchant
+- **Payments & checkout**: No payment intent/confirmation endpoints, no saved methods, and no PSP integration; orders can be created without verified payment and `getOrderPaymentStatus` simply proxies a DB function.
+- **Auth/session hardening**: OTP is hardcoded (`123456`) and registration tokens live only in memory (lost on restart); no logout/revocation, no refresh rotation, and no rate limiting or brute-force controls on OTP/verify/register.
+- **Filtering surface**: Merchant listing currently supports only latitude/longitude/category/zone/limit filters (rating/open/discount filters are not exposed). Promotions listing supports category/limit only. Add back richer filters if product requirements demand them.
+- **Observability & protection**: No health/version endpoint, structured request logging, correlation IDs, or rate limiting/throttling. No audit trail around auth/profile/password changes.
+- **Reliability of OTP/account creation**: `send-otp` returns 201 with no body; verify/register relies on an in-memory `verifyToken` (15-minute TTL) with no persistence or replay protection.
+- **Order lifecycle gaps**: No reorder/invoice endpoints, no status change notifications or live tracking hooks; refund flow is DB-only without PSP callbacks.
 
 ---
 
@@ -998,7 +868,8 @@ const sendOTP = async (countryCode: string, phoneNumber: string) => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ countryCode, phoneNumber })
   });
-  return response.json();
+  if (!response.ok) throw new Error('Failed to send OTP');
+  return { success: true }; // endpoint returns 201 with no body
 };
 
 // Get Cart
@@ -1057,18 +928,17 @@ app.setGlobalPrefix('api/v1');
 ## Next Steps
 
 ### Immediate Priorities
-1. Implement payment integration (CRITICAL)
-2. Add search functionality (HIGH)
-3. Build reviews & ratings system (HIGH)
-4. Create favorites/wishlist (HIGH)
-5. Set up notification system (MEDIUM)
+1. Implement payment integration and wire `payment_method` to a PSP (intents, confirmations, webhooks) before allowing order confirmation.
+2. Harden auth/OTP: real provider, rate limiting, refresh rotation + revocation, logout, and persistent registration tokens.
+3. Add health/version endpoints, structured logging, correlation IDs, and rate limiting around auth-heavy routes.
+4. Expand merchant/promotion filters (rating/open/discount/featured) if needed and back them with DB support + tests; current surface is minimal by design.
+5. Wire order lifecycle hooks: notifications, tracking events, and PSP callbacks for refunds.
 
 ### Medium-Term Goals
-1. Real-time order tracking
-2. Customer support ticketing
-3. Enhanced user profile management
-4. Loyalty & rewards program
-5. Live chat integration
+1. Order lifecycle UX: reorder/invoice endpoints, delivery status notifications, live tracking.
+2. Customer support ticketing + SLA/audit trails.
+3. Loyalty & rewards program and wallet/credits.
+4. Live chat integration (support/merchant/driver) once notification plumbing is ready.
 
 ### Long-Term Vision
 1. AI-powered recommendations
@@ -1084,5 +954,5 @@ app.setGlobalPrefix('api/v1');
 For issues, questions, or contributions, please contact the development team.
 
 **API Version:** 1.0.0
-**Last Updated:** November 2025
+**Last Updated:** November 2025 (refreshed after recent module additions)
 **Maintained By:** NamNam Platform Team
