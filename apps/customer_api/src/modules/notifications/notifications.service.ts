@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { NotificationsRepository } from './notifications.repository';
-import { UpdateNotificationPreferencesDto } from './dto/update-notification-preferences.dto';
 
 @Injectable()
 export class NotificationsService {
@@ -10,10 +9,9 @@ export class NotificationsService {
     userId: number,
     limit?: number,
     offset?: number,
-    isRead?: boolean,
-    type?: string
+    isRead?: boolean
   ) {
-    return this.repo.getNotifications(userId, limit, offset, isRead, type);
+    return this.repo.getNotifications(userId, limit, offset, isRead);
   }
 
   async markAsRead(userId: number, notificationId: number) {
@@ -24,15 +22,7 @@ export class NotificationsService {
     return this.repo.markAllAsRead(userId);
   }
 
-  async getPreferences(userId: number) {
-    return this.repo.getPreferences(userId);
-  }
-
-  async updatePreferences(userId: number, dto: UpdateNotificationPreferencesDto) {
-    return this.repo.updatePreferences(userId, dto);
-  }
-
-  async createNotification(userId: number, type: string, title: string, message: string, data?: any) {
-    return this.repo.createNotification(userId, type, title, message, data);
+  async createNotification(userId: number, title: string, message: string, data?: any) {
+    return this.repo.createNotification(userId, title, message, data);
   }
 }
