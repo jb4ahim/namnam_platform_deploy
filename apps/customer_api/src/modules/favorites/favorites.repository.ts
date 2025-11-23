@@ -28,7 +28,7 @@ export class FavoritesRepository {
   async addFavorite(userId: number, entityType: 'merchant' | 'product', entityId: number) {
     await DatabaseUtils.callProcedure(
       this.pg,
-      'add_customer_favorite',
+      'insert_customer_favorite',
       [userId, entityType, entityId]
     );
     return { success: true, message: 'Added to favorites' };
@@ -37,7 +37,7 @@ export class FavoritesRepository {
   async removeFavorite(userId: number, entityType: 'merchant' | 'product', entityId: number) {
     await DatabaseUtils.callProcedure(
       this.pg,
-      'remove_customer_favorite',
+      'delete_customer_favorite',
       [userId, entityType, entityId]
     );
     return { success: true, message: 'Removed from favorites' };
