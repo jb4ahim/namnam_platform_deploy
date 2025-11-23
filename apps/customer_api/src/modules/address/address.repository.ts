@@ -72,6 +72,15 @@ export class AddressRepository {
     );
   }
 
+  async delete(userId: number, addressId: number) {
+    await DatabaseUtils.callProcedure(
+      this.pg,
+      'delete_customer_address',
+      [userId, addressId]
+    );
+    return { success: true, message: 'Address deleted successfully' };
+  }
+
   async getAllowedZones() {
     const result = await DatabaseUtils.callFunction(
       this.pg,

@@ -26,6 +26,11 @@
       "description": "Set after login/verify. Used by default for protected routes."
     },
     {
+      "key": "refreshToken",
+      "value": "",
+      "description": "Set from verify/register response when available."
+    },
+    {
       "key": "promotionId",
       "value": "1"
     },
@@ -35,6 +40,10 @@
     },
     {
       "key": "merchantId",
+      "value": "1"
+    },
+    {
+      "key": "reviewId",
       "value": "1"
     },
     {
@@ -51,6 +60,10 @@
     },
     {
       "key": "orderId",
+      "value": "1"
+    },
+    {
+      "key": "notificationId",
       "value": "1"
     }
   ],
@@ -127,7 +140,471 @@
               "host": ["{{baseUrl}}"],
               "path": ["auth", "refresh-token"]
             },
-            "description": "Returns a fresh `{ accessToken, refreshToken }` pair."
+            "description": "Returns a fresh `{ accessToken, refreshToken }` pair. Body property name is `token` (refresh token)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Favorites",
+      "item": [
+        {
+          "name": "List Favorites",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/favorites?entityType=product&limit=20&offset=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["favorites"],
+              "query": [
+                { "key": "entityType", "value": "product", "description": "product|merchant (optional)" },
+                { "key": "limit", "value": "20", "description": "Optional; pipe requires number" },
+                { "key": "offset", "value": "0", "description": "Optional; pipe requires number" }
+              ]
+            },
+            "description": "Requires Authorization. Lists favorites for the user."
+          }
+        },
+        {
+          "name": "Check Favorite",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/favorites/check/product/{{productId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["favorites", "check", "product", "{{productId}}"]
+            },
+            "description": "Requires Authorization. Returns `{ is_favorite: boolean }` for entity."
+          }
+        },
+        {
+          "name": "Add Favorite",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"entity_type\": \"product\",\n  \"entity_id\": {{productId}}\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/favorites",
+              "host": ["{{baseUrl}}"],
+              "path": ["favorites"]
+            },
+            "description": "Requires Authorization. Adds a product or merchant to favorites."
+          }
+        },
+        {
+          "name": "Remove Favorite",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/favorites/product/{{productId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["favorites", "product", "{{productId}}"]
+            },
+            "description": "Requires Authorization. Removes a favorite."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "item": [
+        {
+          "name": "Get Product Reviews",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reviews/products/{{productId}}?limit=20&offset=0&minRating=0&sortBy=recent",
+              "host": ["{{baseUrl}}"],
+              "path": ["reviews", "products", "{{productId}}"],
+              "query": [
+                { "key": "limit", "value": "20", "description": "Optional; pipe requires number" },
+                { "key": "offset", "value": "0", "description": "Optional; pipe requires number" },
+                { "key": "minRating", "value": "0", "description": "Optional" },
+                { "key": "sortBy", "value": "recent", "description": "Optional" }
+              ]
+            },
+            "description": "Requires Authorization. Lists product reviews."
+          }
+        },
+        {
+          "name": "Get Merchant Reviews",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reviews/merchants/{{merchantId}}?limit=20&offset=0&minRating=0&sortBy=recent",
+              "host": ["{{baseUrl}}"],
+              "path": ["reviews", "merchants", "{{merchantId}}"],
+              "query": [
+                { "key": "limit", "value": "20" },
+                { "key": "offset", "value": "0" },
+                { "key": "minRating", "value": "0" },
+                { "key": "sortBy", "value": "recent" }
+              ]
+            },
+            "description": "Requires Authorization. Lists merchant reviews."
+          }
+        },
+        {
+          "name": "Create Product Review",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5,\n  \"comment\": \"Great!\",\n  \"pros\": \"Fast delivery\",\n  \"cons\": \"None\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reviews/products/{{productId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["reviews", "products", "{{productId}}"]
+            },
+            "description": "Requires Authorization. Creates a product review."
+          }
+        },
+        {
+          "name": "Create Merchant Review",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 4,\n  \"comment\": \"Nice place\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reviews/merchants/{{merchantId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["reviews", "merchants", "{{merchantId}}"]
+            },
+            "description": "Requires Authorization. Creates a merchant review."
+          }
+        },
+        {
+          "name": "Update Review",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 4,\n  \"comment\": \"Updated comment\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reviews/{{reviewId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["reviews", "{{reviewId}}"]
+            },
+            "description": "Requires Authorization. Updates a review."
+          }
+        },
+        {
+          "name": "Delete Review",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reviews/{{reviewId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["reviews", "{{reviewId}}"]
+            },
+            "description": "Requires Authorization. Deletes a review."
+          }
+        },
+        {
+          "name": "Vote Review Helpful",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_helpful\": true\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reviews/{{reviewId}}/vote-helpful",
+              "host": ["{{baseUrl}}"],
+              "path": ["reviews", "{{reviewId}}", "vote-helpful"]
+            },
+            "description": "Requires Authorization. Votes a review helpful/unhelpful."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "List Notifications",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/notifications?limit=20&offset=0&isRead=false&type=order",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications"],
+              "query": [
+                { "key": "limit", "value": "20", "description": "Optional; pipe requires number" },
+                { "key": "offset", "value": "0", "description": "Optional; pipe requires number" },
+                { "key": "isRead", "value": "false", "description": "Optional" },
+                { "key": "type", "value": "order", "description": "Optional type filter" }
+              ]
+            },
+            "description": "Requires Authorization. Lists notifications."
+          }
+        },
+        {
+          "name": "Mark Notification Read",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/{{notificationId}}/read",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "{{notificationId}}", "read"]
+            },
+            "description": "Requires Authorization. Marks a notification as read."
+          }
+        },
+        {
+          "name": "Mark All Read",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/read-all",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "read-all"]
+            },
+            "description": "Requires Authorization. Marks all notifications as read."
+          }
+        },
+        {
+          "name": "Get Notification Preferences",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/preferences",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "preferences"]
+            },
+            "description": "Requires Authorization. Gets notification preferences."
+          }
+        },
+        {
+          "name": "Update Notification Preferences",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email_notifications\": true,\n  \"push_notifications\": true,\n  \"sms_notifications\": false,\n  \"order_updates\": true,\n  \"promotional_offers\": false,\n  \"delivery_updates\": true,\n  \"payment_updates\": true,\n  \"system_announcements\": false\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/notifications/preferences",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "preferences"]
+            },
+            "description": "Requires Authorization. Updates notification preferences."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Search",
+      "item": [
+        {
+          "name": "Unified Search",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/search?q=pizza&type=products&categoryId={{categoryId}}&zoneId=1&latitude=33.89&longitude=35.5&limit=20&offset=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["search"],
+              "query": [
+                { "key": "q", "value": "pizza", "description": "Search query" },
+                { "key": "type", "value": "products", "description": "products|merchants (optional)" },
+                { "key": "categoryId", "value": "{{categoryId}}", "description": "Optional; pipe requires number" },
+                { "key": "zoneId", "value": "1", "description": "Optional; pipe requires number" },
+                { "key": "latitude", "value": "33.89", "description": "Optional; pipe requires number" },
+                { "key": "longitude", "value": "35.5", "description": "Optional; pipe requires number" },
+                { "key": "limit", "value": "20", "description": "Optional" },
+                { "key": "offset", "value": "0", "description": "Optional" }
+              ]
+            },
+            "description": "Public unified search across products/merchants."
+          }
+        },
+        {
+          "name": "Search Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/search/products?q=pizza&merchantId={{merchantId}}&categoryId={{categoryId}}&minPrice=0&maxPrice=100&limit=20&offset=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["search", "products"],
+              "query": [
+                { "key": "q", "value": "pizza" },
+                { "key": "merchantId", "value": "{{merchantId}}", "description": "Optional; pipe requires number" },
+                { "key": "categoryId", "value": "{{categoryId}}", "description": "Optional; pipe requires number" },
+                { "key": "minPrice", "value": "0" },
+                { "key": "maxPrice", "value": "100" },
+                { "key": "limit", "value": "20" },
+                { "key": "offset", "value": "0" }
+              ]
+            },
+            "description": "Public product search."
+          }
+        },
+        {
+          "name": "Search Merchants",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/search/merchants?q=burger&categoryId={{categoryId}}&zoneId=1&latitude=33.89&longitude=35.5&limit=20&offset=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["search", "merchants"],
+              "query": [
+                { "key": "q", "value": "burger" },
+                { "key": "categoryId", "value": "{{categoryId}}" },
+                { "key": "zoneId", "value": "1" },
+                { "key": "latitude", "value": "33.89" },
+                { "key": "longitude", "value": "35.5" },
+                { "key": "limit", "value": "20" },
+                { "key": "offset", "value": "0" }
+              ]
+            },
+            "description": "Public merchant search."
+          }
+        },
+        {
+          "name": "Search Suggestions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/search/suggestions?q=pi&type=products&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["search", "suggestions"],
+              "query": [
+                { "key": "q", "value": "pi" },
+                { "key": "type", "value": "products" },
+                { "key": "limit", "value": "10" }
+              ]
+            },
+            "description": "Public autocomplete suggestions."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Profile",
+      "item": [
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "profile"]
+            },
+            "description": "Requires Authorization. Returns the authenticated user's profile."
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"first_name\": \"Jane\",\n  \"last_name\": \"Doe\",\n  \"date_of_birth\": \"1990-01-01\",\n  \"gender\": \"female\",\n  \"profile_image_url\": \"https://example.com/avatar.jpg\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "profile"]
+            },
+            "description": "Requires Authorization. Updates profile fields (all optional)."
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"current_password\": \"oldPass123\",\n  \"new_password\": \"newPass456\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/password",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "password"]
+            },
+            "description": "Requires Authorization. Changes password (controller expects current/new)."
+          }
+        },
+        {
+          "name": "Get Preferences",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/preferences",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "preferences"]
+            },
+            "description": "Requires Authorization. Returns user preferences."
+          }
+        },
+        {
+          "name": "Update Preferences",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"language\": \"en\",\n  \"currency\": \"USD\",\n  \"notifications_enabled\": true,\n  \"email_notifications\": true,\n  \"push_notifications\": true,\n  \"sms_notifications\": false,\n  \"marketing_emails\": false,\n  \"theme\": \"auto\",\n  \"timezone\": \"UTC\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/preferences",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "preferences"]
+            },
+            "description": "Requires Authorization. Updates user preferences (all optional)."
+          }
+        },
+        {
+          "name": "Delete Account",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/account",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "account"]
+            },
+            "description": "Requires Authorization. Deletes the authenticated user's account."
           }
         }
       ]
@@ -185,11 +662,11 @@
               "path": ["promotions"],
               "query": [
                 { "key": "categoryId", "value": "{{categoryId}}", "description": "Optional category filter" },
-                { "key": "isFeatured", "value": "true", "description": "Optional featured flag" },
-                { "key": "limit", "value": "10", "description": "Optional max results" }
+                { "key": "isFeatured", "value": "true", "description": "Optional featured flag (controller accepts, repository currently ignores)" },
+                { "key": "limit", "value": "10", "description": "Optional max results (required if pipe enforces number)" }
               ]
             },
-            "description": "Lists promotions. Public endpoint."
+            "description": "Lists promotions. Public endpoint. Note: repository ignores `isFeatured` today."
           }
         },
         {
@@ -221,15 +698,15 @@
               "path": ["products"],
               "query": [
                 { "key": "merchantId", "value": "{{merchantId}}", "description": "Required merchant id" },
-                { "key": "categoryId", "value": "{{categoryId}}", "description": "Optional category filter" },
+                { "key": "categoryId", "value": "{{categoryId}}", "description": "Optional category filter (provide to avoid ParseIntPipe errors)" },
                 { "key": "minPrice", "value": "0", "description": "Optional minimum price" },
                 { "key": "maxPrice", "value": "100", "description": "Optional maximum price" },
-                { "key": "isAvailable", "value": "true", "description": "Optional availability flag" },
-                { "key": "hasDiscount", "value": "false", "description": "Optional discount flag" },
+                { "key": "isAvailable", "value": "true", "description": "Optional availability flag; repository defaults true and ignores false" },
+                { "key": "hasDiscount", "value": "false", "description": "Optional discount flag; false becomes null in repository" },
                 { "key": "limit", "value": "20", "description": "Optional max results" }
               ]
             },
-            "description": "Requires Authorization. Lists products for a merchant with optional filters."
+            "description": "Requires Authorization. Lists products for a merchant with optional filters. Note: repository forces isAvailable=true by default and treats hasDiscount=false as null."
           }
         },
         {
@@ -262,15 +739,15 @@
               "query": [
                 { "key": "latitude", "value": "33.8938", "description": "Optional latitude for distance sorting" },
                 { "key": "longitude", "value": "35.5018", "description": "Optional longitude for distance sorting" },
-                { "key": "categoryId", "value": "{{categoryId}}", "description": "Optional category filter" },
+                { "key": "categoryId", "value": "{{categoryId}}", "description": "Optional category filter (provide to avoid ParseIntPipe errors)" },
                 { "key": "zoneId", "value": "1", "description": "Optional zone filter" },
-                { "key": "minRating", "value": "3", "description": "Optional minimum rating" },
-                { "key": "isOpen", "value": "true", "description": "Optional open flag" },
-                { "key": "hasDiscount", "value": "true", "description": "Optional discount flag" },
+                { "key": "minRating", "value": "3", "description": "Optional minimum rating (controller accepts; repository currently ignores)" },
+                { "key": "isOpen", "value": "true", "description": "Optional open flag (controller accepts; repository currently ignores)" },
+                { "key": "hasDiscount", "value": "true", "description": "Optional discount flag (controller accepts; repository currently ignores)" },
                 { "key": "limit", "value": "10", "description": "Optional max results" }
               ]
             },
-            "description": "Requires Authorization. Lists merchants with optional filters."
+            "description": "Requires Authorization. Lists merchants with optional filters. Note: repository ignores minRating/isOpen/hasDiscount today."
           }
         },
         {

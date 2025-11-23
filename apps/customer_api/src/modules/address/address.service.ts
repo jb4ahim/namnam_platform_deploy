@@ -22,9 +22,15 @@ export class AddressService {
   async update(userId: number, addressId: number, dto: UpdateAddressDto) {
     return this.repo.update(userId, addressId, dto);
   }
+
+  async delete(userId: number, addressId: number) {
+    return this.repo.delete(userId, addressId);
+  }
+
   async getAllowedZones() {
     return this.repo.getAllowedZones();
   }
+
   async setDefault(userId: number, addressId: number) {
     return this.repo.update(userId, addressId, { isDefault: true });
   }

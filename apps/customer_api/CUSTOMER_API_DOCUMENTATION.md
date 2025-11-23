@@ -46,6 +46,11 @@ The API follows a modular architecture with the following modules:
 | Cart | `/api/cart` | Yes | Shopping cart operations |
 | Orders | `/api/orders` | Yes | Order management |
 | App-Config | `/api/app-config` | No | App configuration |
+| Profile | `/api/users/profile` | Yes | Profile, preferences, password, account delete |
+| Favorites | `/api/favorites` | Yes | User favorites (products/merchants) |
+| Reviews | `/api/reviews` | Yes | Product & merchant reviews |
+| Notifications | `/api/notifications` | Yes | Notifications + preferences |
+| Search | `/api/search` | Mixed | Public search/suggestions |
 
 ### Design Patterns
 
@@ -67,6 +72,7 @@ The API follows a modular architecture with the following modules:
 4. **Protected Routes**: Include JWT token in `Authorization: Bearer <token>` header
 
 > Reality check: `send-otp` currently returns `200` with an empty body; `verify-otp` returns either token pair for existing users or `{ isRegistered: false, verifyToken, expiresAt }` for new users; `register` requires `verifyToken` from the previous step and returns a token pair (no user object).
+> Postman: collection includes a `refreshToken` variable and profile endpoints; refresh body property must be `token`.
 
 ### Token Management
 
@@ -246,6 +252,56 @@ Authorization: Bearer <token>
 ```
 
 ---
+
+### Favorites Module (`/api/favorites`)
+
+All favorites endpoints require authentication.
+
+- **GET /api/favorites?entityType=product|merchant&limit&offset** — List favorites (ParseInt pipes on limit/offset).
+- **GET /api/favorites/check/:entityType/:entityId** — Returns `{ is_favorite: boolean }`.
+- **POST /api/favorites** — Body: `{ "entity_type": "product|merchant", "entity_id": <number> }`.
+- **DELETE /api/favorites/:entityType/:entityId** — Remove favorite.
+
+---
+
+### Reviews Module (`/api/reviews`)
+
+All reviews endpoints require authentication.
+
+- **GET /api/reviews/products/:productId?limit&offset&minRating&sortBy**
+- **GET /api/reviews/merchants/:merchantId?limit&offset&minRating&sortBy**
+- **POST /api/reviews/products/:productId** — Body: `CreateReviewDto` (rating, comment, pros/cons).
+- **POST /api/reviews/merchants/:merchantId** — Body: `CreateReviewDto`.
+- **PUT /api/reviews/:reviewId** — Body: `UpdateReviewDto`.
+- **DELETE /api/reviews/:reviewId**
+- **POST /api/reviews/:reviewId/vote-helpful** — Body: `{ is_helpful: boolean }`.
+
+> Optional query params are parsed with pipes; if omitted, requests can 400. Provide numeric values or adjust pipes.
+
+---
+
+### Notifications Module (`/api/notifications`)
+
+All notifications endpoints require authentication.
+
+- **GET /api/notifications?limit&offset&isRead&type** — List notifications.
+- **PUT /api/notifications/:id/read** — Mark one as read.
+- **PUT /api/notifications/read-all** — Mark all as read.
+- **GET /api/notifications/preferences** — Get preferences.
+- **PUT /api/notifications/preferences** — Update preferences. Body booleans: `email_notifications`, `push_notifications`, `sms_notifications`, `order_updates`, `promotional_offers`, `delivery_updates`, `payment_updates`, `system_announcements`.
+
+---
+
+### Search Module (`/api/search`)
+
+Public endpoints (no auth guard).
+
+- **GET /api/search?q=&type=products|merchants&categoryId&zoneId&latitude&longitude&limit&offset** — Unified search.
+- **GET /api/search/products?q=&merchantId&categoryId&minPrice&maxPrice&limit&offset**
+- **GET /api/search/merchants?q=&categoryId&zoneId&latitude&longitude&limit&offset**
+- **GET /api/search/suggestions?q=&type=products|merchants&limit**
+
+> Many query params use ParseIntPipe/ParseFloatPipe; omit them and Nest will 400. Provide numeric strings or adjust pipes if you want truly optional params.
 
 ### Address Module (`/api/address`)
 
