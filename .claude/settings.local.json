@@ -6,7 +6,8 @@
       "Bash(tree:*)",
       "Bash(cat:*)",
       "Bash(\"apps/merchant_api/MERCHANT_API_DOCUMENTATION.md\")",
-      "Bash(\"apps/management_api/MANAGEMENT_API_DOCUMENTATION.md\")"
+      "Bash(\"apps/management_api/MANAGEMENT_API_DOCUMENTATION.md\")",
+      "Bash(\"README.md\")"
     ],
     "deny": [],
     "ask": []
