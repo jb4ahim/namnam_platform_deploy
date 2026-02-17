@@ -1,0 +1,214 @@
+{
+  "info": {
+    "name": "Management API – Notifications",
+    "description": "Endpoints for sending notifications (email / Firebase push) from the management panel.\n\n## Authentication\nAll requests require a Bearer JWT token obtained from `POST /auth/login`.\n\nSet the `token` collection variable to avoid repeating it on every request.\n\n## Notification Types\n| Value | Channel |\n|---|---|\n| `email` | SMTP email |\n| `firebase` | Firebase Cloud Messaging (FCM) push |\n\n## Templates\n| Value | Description |\n|---|---|\n| `welcome` | Welcome email with branding |\n| `password-reset` | Password reset instructions |\n| `order-confirmation` | Order confirmed |\n| `payment-success` | Payment received |\n| `custom` | No template – plain `subject` + `message` used |\n\nWhen `template` is set (and is not `custom`), `subject` and `message` are overridden by the rendered template. Pass variables via `templateData`.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "description": "Management API base URL"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "description": "Bearer JWT – paste the token from POST /auth/login here"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Send Single Notification",
+      "item": [
+        {
+          "name": "Send Email (plain)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/notifications/send",
+              "host": ["{{base_url}}"],
+              "path": ["notifications", "send"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"email\",\n  \"recipient\": \"merchant@example.com\",\n  \"subject\": \"Your account is ready\",\n  \"message\": \"Hello, your merchant account has been set up and is ready to use.\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Send a plain email to a single recipient. `subject` and `message` are used as-is."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "Created",
+              "code": 201,
+              "body": "{\n  \"success\": true,\n  \"messageId\": \"<messageid@smtp>\"\n}"
+            },
+            {
+              "name": "Validation Error",
+              "status": "Bad Request",
+              "code": 400,
+              "body": "{\n  \"statusCode\": 400,\n  \"message\": [\"type must be a valid enum value\"],\n  \"error\": \"Bad Request\"\n}"
+            },
+            {
+              "name": "Unauthorized",
+              "status": "Unauthorized",
+              "code": 401,
+              "body": "{\n  \"statusCode\": 401,\n  \"message\": \"Unauthorized\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Send Email (with template)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/notifications/send",
+              "host": ["{{base_url}}"],
+              "path": ["notifications", "send"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"email\",\n  \"recipient\": \"merchant@example.com\",\n  \"subject\": \"fallback subject\",\n  \"message\": \"fallback message\",\n  \"template\": \"welcome\",\n  \"templateData\": {\n    \"name\": \"Maroun\",\n    \"appName\": \"NamNam\"\n  }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Send a templated email. `subject` and `message` are overridden by the rendered template. Pass template variables in `templateData`.\n\nAvailable templates: `welcome`, `password-reset`, `order-confirmation`, `payment-success`, `custom`."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "Created",
+              "code": 201,
+              "body": "{\n  \"success\": true,\n  \"messageId\": \"<messageid@smtp>\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Send Firebase Push",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/notifications/send",
+              "host": ["{{base_url}}"],
+              "path": ["notifications", "send"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"firebase\",\n  \"recipient\": \"<FCM_DEVICE_TOKEN>\",\n  \"subject\": \"Account Approved\",\n  \"message\": \"Your merchant account has been approved and is now active.\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Send a Firebase Cloud Messaging push notification. `recipient` must be the device's FCM registration token."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "Created",
+              "code": 201,
+              "body": "{\n  \"success\": true,\n  \"messageId\": \"projects/my-project/messages/123\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Send Bulk Notifications",
+      "item": [
+        {
+          "name": "Bulk Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/notifications/send-bulk",
+              "host": ["{{base_url}}"],
+              "path": ["notifications", "send-bulk"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"email\",\n  \"recipients\": [\n    \"merchant1@example.com\",\n    \"merchant2@example.com\",\n    \"merchant3@example.com\"\n  ],\n  \"subject\": \"Platform Maintenance Notice\",\n  \"message\": \"The platform will undergo scheduled maintenance on Saturday from 2:00 AM to 4:00 AM.\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Send the same email to multiple recipients in parallel. Returns an array of results — one per recipient, in the same order."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "Created",
+              "code": 201,
+              "body": "[\n  { \"success\": true, \"messageId\": \"<id1>\" },\n  { \"success\": true, \"messageId\": \"<id2>\" },\n  { \"success\": false, \"error\": \"Invalid recipient\" }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Bulk Firebase Push",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/notifications/send-bulk",
+              "host": ["{{base_url}}"],
+              "path": ["notifications", "send-bulk"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"firebase\",\n  \"recipients\": [\n    \"<FCM_TOKEN_1>\",\n    \"<FCM_TOKEN_2>\"\n  ],\n  \"subject\": \"New Promotion\",\n  \"message\": \"A new promotion is now available in your area!\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Send a push notification to multiple devices at once."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "Created",
+              "code": 201,
+              "body": "[\n  { \"success\": true, \"messageId\": \"projects/my-project/messages/1\" },\n  { \"success\": true, \"messageId\": \"projects/my-project/messages/2\" }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Bulk Email with Template",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/notifications/send-bulk",
+              "host": ["{{base_url}}"],
+              "path": ["notifications", "send-bulk"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"email\",\n  \"recipients\": [\n    \"merchant1@example.com\",\n    \"merchant2@example.com\"\n  ],\n  \"subject\": \"fallback\",\n  \"message\": \"fallback\",\n  \"template\": \"welcome\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Send a templated email to multiple recipients. All recipients receive the same rendered template."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

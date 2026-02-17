@@ -2,7 +2,7 @@ import { Injectable, BadRequestException, NotFoundException } from '@nestjs/comm
 import { MerchantRepository } from './merchant.repository';
 import { CreateMerchantDto } from './dto/create-merchant.dto';
 import { UpdateMerchantDto } from './dto/update-merchant.dto';
-import { S3PresignService } from '@app/storage/s3-presign.service';
+import { resolveS3Urls, S3PresignService } from '@app/storage';
 import { GetMerchantDto } from './dto/get-merchants.dto';
 import { plainToInstance } from 'class-transformer';
 import { PaginatedResultDto } from '@app/common/dto/paginated-result.dto';
@@ -35,15 +35,11 @@ export class MerchantService {
 
   async getMerchants(searchTerm?: string, limit?: number, offset?: number):Promise<PaginatedResultDto<GetMerchantDto>> {
         const merchants = await this.merchantRepository.getMerchants({ page: offset, pageSize: limit }, searchTerm);
-        const dtos = await Promise.all(merchants.items.map(async merchant => {
-          const logoUrl = merchant.logoKey
-            ? await this.s3Service.getPresignedDownloadUrl(merchant.logoKey)
-            : null;
-          return plainToInstance(GetMerchantDto, {
-            ...merchant,
-            logoUrl,
-          });
-        }));
+        const dtos = await Promise.all(
+          merchants.items.map(merchant =>
+            resolveS3Urls(plainToInstance(GetMerchantDto, merchant), this.s3Service)
+          )
+        );
         return {
           items: dtos,
           totalCount: merchants.totalCount,
@@ -80,6 +76,30 @@ export class MerchantService {
       if (!result) {
         throw new BadRequestException('Failed to approve merchant');
       }
+
+      // Send approval notification to merchant
+      if (result.email) {
+        const notificationEmail: SendNotificationDto = {
+          recipient: result.email,
+          subject: 'Merchant Account Approved',
+          message: `Congratulations! Your merchant account has been approved and is now active.`,
+          type: NotificationType.EMAIL,
+        };
+        await this.notificationService.send(notificationEmail);
+      }
+
+      // Send Firebase notification if FCM token is available
+      const merchantToken = await this.merchantRepository.getMerchantTokenByUserId(merchantId);
+      if (merchantToken?.fcmToken) {
+        const notificationFirebase: SendNotificationDto = {
+          recipient: merchantToken.fcmToken,
+          subject: 'Merchant Account Approved',
+          message: `Congratulations! Your merchant account has been approved and is now active.`,
+          type: NotificationType.FIREBASE,
+        };
+        await this.notificationService.send(notificationFirebase);
+      }
+
       return {
         success: true,
         message: 'Merchant approved successfully',

@@ -6,9 +6,6 @@ export enum OtpType {
 }
 
 export class SendOtpDto {
-  @IsEnum(OtpType, { message: 'Type must be either email or phone' })
-  @IsNotEmpty()
-  type!: OtpType;
 
   // Email is required when type is EMAIL
   @ValidateIf((o) => o.type === OtpType.EMAIL)

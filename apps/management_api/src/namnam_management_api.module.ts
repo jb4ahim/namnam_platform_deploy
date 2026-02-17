@@ -10,10 +10,10 @@ import { UsersModule } from './modules/users/users.module';
 import { MerchantModule } from './modules/merchant/merchant.module';
 import { UploadsModule } from '@app/common/uploads/uploads.module';
 import { ZonesModule } from './modules/zones/zones.module';
-import { NotificationModule } from '@app/notifications';
 import { PromotionsModule } from './modules/promotions/promotions.module';
 import { AppConfigModule } from './modules/app-config/app-config.module';
 import { CouponsModule } from './modules/coupons/coupons.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -30,7 +30,8 @@ import { CouponsModule } from './modules/coupons/coupons.module';
     ZonesModule,
     PromotionsModule,
     AppConfigModule,
-    CouponsModule
+    CouponsModule,
+    NotificationsModule
   ],
   providers: [
       {

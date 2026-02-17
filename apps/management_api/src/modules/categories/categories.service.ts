@@ -4,7 +4,7 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { GetCategoryDto } from './dto/get-category.dto';
 import { plainToInstance } from 'class-transformer';
-import { S3PresignService } from '@app/storage';
+import { resolveS3Urls, S3PresignService } from '@app/storage';
 
 @Injectable()
 export class CategoriesService {
@@ -14,16 +14,11 @@ export class CategoriesService {
 
   async getAll(parentId?: number): Promise<GetCategoryDto[]> {
     const categories = await this.categoriesRepository.getAllCategories(parentId);
-        const dtos = await Promise.all(categories.map(async category => {
-          const imageUrl = category.imageKey
-            ? await this.s3Service.getPresignedDownloadUrl(category.imageKey)
-            : null;
-          return plainToInstance(GetCategoryDto, {
-            ...category,
-            imageUrl,
-          });
-        }));
-    return dtos;
+    return Promise.all(
+      categories.map(category =>
+        resolveS3Urls(plainToInstance(GetCategoryDto, category), this.s3Service)
+      )
+    );
   }
 
   async create(dto: CreateCategoryDto) : Promise<void> {

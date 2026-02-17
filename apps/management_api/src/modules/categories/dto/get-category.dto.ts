@@ -1,4 +1,5 @@
 import { IsOptional, IsString, MaxLength, IsNumber } from 'class-validator';
+import { S3Url } from '@app/storage';
 
 export class GetCategoryDto {
   @IsNumber()
@@ -19,9 +20,7 @@ export class GetCategoryDto {
   @IsString()
   @IsOptional()
   imageKey?: string;
-  
-  // URL to the image, not the key
-  @IsString()
-  @IsOptional()
+
+  @S3Url()
   imageUrl?: string;
 }

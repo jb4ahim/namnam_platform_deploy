@@ -63,7 +63,7 @@ export class MerchantController {
   async getCatalog(@Param("id", ParseIntPipe) id: number) {
     return await this.merchantService.getCatalog(id);
   }
-  
+
   @Get(":id/catalog/sections/:sectionId/products")
   @UseGuards(AuthGuard)
   async getCatalogProductsBySection(

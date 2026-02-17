@@ -53,9 +53,9 @@ export class AuthService {
     //   return { step: 1};
     // }
 
-    if (sendOtpDto.type === 'phone' && sendOtpDto.phoneNumber && sendOtpDto.countryCode) {
-      await this.authRepository.saveOtpPhone(sendOtpDto.countryCode, sendOtpDto.phoneNumber, '123456');
-    }
+    // if (sendOtpDto.type === 'phone' && sendOtpDto.phoneNumber && sendOtpDto.countryCode) {
+      await this.authRepository.saveOtpPhone(sendOtpDto.countryCode!, sendOtpDto.phoneNumber!, '123456');
+    // }
   }
 
   async verifyOtp(verifyOtpDto: VerifyOtpDto) {

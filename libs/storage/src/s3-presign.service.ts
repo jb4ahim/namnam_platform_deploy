@@ -21,6 +21,7 @@ export type PresignResponse = {
 @Injectable()
 export class S3PresignService {
   private readonly s3: S3Client;
+  private readonly urlCache = new Map<string, { url: string; expiresAt: number }>();
 
   constructor() {
     this.s3 = new S3Client({
@@ -78,17 +79,23 @@ export class S3PresignService {
   }
 
   async getPresignedDownloadUrl(key: string, expiresInSeconds: number = 60 * 5): Promise<string> {
-      const bucket = process.env.AWS_S3_BUCKET as string;
-      if (!bucket) {
-        throw new Error('AWS_S3_BUCKET is not set');
-      }
-
-      const command = new GetObjectCommand({
-        Bucket: bucket,
-        Key: key,
-      });
-
-      return await getSignedUrl(this.s3, command, { expiresIn: expiresInSeconds });
+    const cached = this.urlCache.get(key);
+    if (cached && cached.expiresAt > Date.now()) {
+      return cached.url;
     }
+
+    const bucket = process.env.AWS_S3_BUCKET as string;
+    if (!bucket) {
+      throw new Error('AWS_S3_BUCKET is not set');
+    }
+
+    const command = new GetObjectCommand({ Bucket: bucket, Key: key });
+    const url = await getSignedUrl(this.s3, command, { expiresIn: expiresInSeconds });
+
+    // Cache with a 1-minute safety buffer before actual expiry
+    this.urlCache.set(key, { url, expiresAt: Date.now() + (expiresInSeconds - 60) * 1000 });
+
+    return url;
+  }
 }
 

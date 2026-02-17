@@ -1,4 +1,5 @@
-import { IsOptional, IsString, MaxLength, IsNumber, IsBoolean } from 'class-validator';
+import { IsOptional, IsString, IsNumber, IsBoolean } from 'class-validator';
+import { S3Url } from '@app/storage';
 
 export class GetMerchantDto {
   @IsNumber()
@@ -14,14 +15,12 @@ export class GetMerchantDto {
   isOwnedByApp?: boolean;
 
   @IsString()
-  
   joinedAt: string;
 
   @IsString()
   @IsOptional()
   logoKey?: string;
 
-  // URL to the image, not the key
-  @IsString()
-  logoUrl: string;
+  @S3Url()
+  logoUrl?: string;
 }
