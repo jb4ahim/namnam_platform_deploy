@@ -51,6 +51,10 @@ export class AuthRepository {
         null,
         null,
         null,
+        null,
+        null, 
+        null,
+        null,
         null
       ]
     );

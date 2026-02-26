@@ -7,11 +7,11 @@ export enum OtpType {
 
 export class SendOtpDto {
 
-  // Email is required when type is EMAIL
-  @ValidateIf((o) => o.type === OtpType.EMAIL)
-  @IsEmail({}, { message: 'Please provide a valid email address' })
-  @IsNotEmpty({ message: 'Email is required when type is email' })
-  email?: string;
+  // // Email is required when type is EMAIL
+  // @ValidateIf((o) => o.type === OtpType.EMAIL)
+  // @IsEmail({}, { message: 'Please provide a valid email address' })
+  // @IsNotEmpty({ message: 'Email is required when type is email' })
+  // email?: string;
 
   // Country code is required when type is PHONE
   @ValidateIf((o) => o.type === OtpType.PHONE)

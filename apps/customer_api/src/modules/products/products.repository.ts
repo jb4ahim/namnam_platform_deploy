@@ -41,6 +41,7 @@ export class ProductsRepository {
       [productId],
       false
     );
+    console.log('>>> REPO: about to call trackView, analytics=', !!this.analytics, 'userId=', userId);
     this.analytics.trackView('product', productId, userId);
     return result;
   }

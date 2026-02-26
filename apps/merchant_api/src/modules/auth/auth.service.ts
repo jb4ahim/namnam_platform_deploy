@@ -122,12 +122,12 @@ export class AuthService {
       const payload = { userId: userId.userId, merchantId: userId.merchantId };
       const tokens = this.jwtService.generateTokenPair(payload);
 
-      // this.registrationTokens.delete(registerUserDto.registrationToken);
-      console.log('Generated tokens:', tokens);
+      const newMerchantData = await this.merchantService.getMerchant(tokenData.countryCode, tokenData.phoneNumber);
 
       return {
         ...userId,
         ...tokens,
+        steps: newMerchantData?.steps ?? [],
         message: 'User registered successfully'
       };
     } else {
