@@ -1,0 +1,18 @@
+{
+  "github.copilot.chat.mcp.enabled": true,
+  "github.copilot.chat.mcp.servers": {
+    "postgres": {
+      "command": "node",
+      "args": [
+        "--no-warnings",
+        "--loader",
+        "tsx",
+        "node_modules/@modelcontextprotocol/server-postgres/dist/index.js",
+        "postgresql://namnam_main_db_user:Krw4MIsjw0OSyEUtjEvEHoJmpHEpnwgB@dpg-d1tau5nfte5s73c6nub0-a.frankfurt-postgres.render.com:5432/namnam_main_db?sslmode=require"
+      ],
+      "env": {
+        "NODE_TLS_REJECT_UNAUTHORIZED": "0"
+      }
+    }
+  }
+}

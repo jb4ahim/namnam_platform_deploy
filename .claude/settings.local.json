@@ -7,9 +7,11 @@
       "Bash(cat:*)",
       "Bash(\"apps/merchant_api/MERCHANT_API_DOCUMENTATION.md\")",
       "Bash(\"apps/management_api/MANAGEMENT_API_DOCUMENTATION.md\")",
-      "Bash(\"README.md\")"
+      "Bash(\"README.md\")",
+      "mcp__postgres__query"
     ],
     "deny": [],
     "ask": []
-  }
+  },
+  "enableAllProjectMcpServers": true
 }

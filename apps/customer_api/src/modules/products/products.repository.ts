@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseUtils, PostgresService } from '@app/database';
+import { AnalyticsService, DatabaseUtils, PostgresService } from '@app/database';
 
 @Injectable()
 export class ProductsRepository {
-  constructor(private readonly pg: PostgresService) {}
+  constructor(
+    private readonly pg: PostgresService,
+    private readonly analytics: AnalyticsService,
+  ) {}
 
   async getProducts(merchantId: number, filters?: {
     categoryId?: number;
@@ -31,13 +34,14 @@ export class ProductsRepository {
     return result || [];
   }
 
-  async getProductById(productId: number) {
+  async getProductById(productId: number, userId: number) {
     const result = await DatabaseUtils.callFunction(
       this.pg,
       'select_product_by_id_customer',
       [productId],
       false
     );
+    this.analytics.trackView('product', productId, userId);
     return result;
   }
 }

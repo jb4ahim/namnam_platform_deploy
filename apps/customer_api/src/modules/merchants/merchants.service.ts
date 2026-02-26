@@ -15,7 +15,7 @@ export class MerchantsService {
         return this.repo.getMerchants(filters);
     }
 
-    async getMerchantById(merchantId: number) {
-        return this.repo.getMerchantById(merchantId);
+    async getMerchantById(merchantId: number, userId: number) {
+        return this.repo.getMerchantById(merchantId, userId);
     }
 }

@@ -16,7 +16,7 @@ export class ProductsService {
         return this.repo.getProducts(merchantId, filters);
     }
 
-    async getProductById(productId: number) {
-        return this.repo.getProductById(productId);
+    async getProductById(productId: number, userId: number) {
+        return this.repo.getProductById(productId, userId);
     }
 }

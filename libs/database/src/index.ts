@@ -2,3 +2,4 @@
 export * from './postgres.service';
 export * from './database.utils';
 export * from './database.module';
+export * from './analytics.service';

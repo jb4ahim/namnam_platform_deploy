@@ -1,6 +1,7 @@
 import { Controller, Get, Param, ParseFloatPipe, ParseIntPipe, Query, UseGuards } from '@nestjs/common';
 import { MerchantsService } from './merchants.service';
 import { AuthGuard } from '@app/auth/jwt-auth.guard';
+import { CurrentUserId } from '@app/common/decorators';
 @Controller('merchants')
 export class MerchantsController {
     constructor(private readonly merchantsService: MerchantsService) {}
@@ -25,7 +26,10 @@ export class MerchantsController {
 
     @Get(':id')
     @UseGuards(AuthGuard)
-    async getMerchantById(@Param('id', ParseIntPipe) merchantId: number) {
-        return await this.merchantsService.getMerchantById(merchantId);
+    async getMerchantById(
+        @Param('id', ParseIntPipe) merchantId: number,
+        @CurrentUserId() userId: number,
+    ) {
+        return await this.merchantsService.getMerchantById(merchantId, userId);
     }
 }

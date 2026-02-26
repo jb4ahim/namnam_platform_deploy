@@ -1,6 +1,7 @@
 import { Controller, Get, Param, ParseFloatPipe, ParseIntPipe, Query, UseGuards } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { AuthGuard } from '@app/auth/jwt-auth.guard';
+import { CurrentUserId } from '@app/common/decorators';
 
 @Controller('products')
 export class ProductsController {
@@ -29,7 +30,10 @@ export class ProductsController {
 
   @Get(':id')
   @UseGuards(AuthGuard)
-  async getProductById(@Param('id', ParseIntPipe) productId: number) {
-    return await this.productsService.getProductById(productId);
+  async getProductById(
+    @Param('id', ParseIntPipe) productId: number,
+    @CurrentUserId() userId: number,
+  ) {
+    return await this.productsService.getProductById(productId, userId);
   }
 }

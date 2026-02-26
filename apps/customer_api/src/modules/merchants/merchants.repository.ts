@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseUtils, PostgresService } from '@app/database';
+import { AnalyticsService, DatabaseUtils, PostgresService } from '@app/database';
 
 @Injectable()
 export class MerchantsRepository {
-  constructor(private readonly pg: PostgresService) {}
+  constructor(
+    private readonly pg: PostgresService,
+    private readonly analytics: AnalyticsService,
+  ) {}
 
     async getMerchants(filters?: {
         latitude?: number;
@@ -28,13 +31,14 @@ export class MerchantsRepository {
         return result || [];
     }
 
-    async getMerchantById(merchantId: number) {
+    async getMerchantById(merchantId: number, userId: number) {
         const result = await DatabaseUtils.callFunction(
         this.pg,
         'select_merchant_by_id_customer',
         [merchantId],
         false
         );
+        this.analytics.trackView('restaurant', merchantId, userId);
         return result;
     }
-    }
+}
