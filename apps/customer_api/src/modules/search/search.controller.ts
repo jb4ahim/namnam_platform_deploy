@@ -1,11 +1,23 @@
 import { Controller, Get, Query, ParseIntPipe, ParseFloatPipe } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { SearchService } from './search.service';
 
+@ApiTags('Search')
 @Controller('search')
 export class SearchController {
   constructor(private readonly searchService: SearchService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Unified search across products and merchants' })
+  @ApiQuery({ name: 'q', required: true, type: String })
+  @ApiQuery({ name: 'type', required: false, enum: ['products', 'merchants'] })
+  @ApiQuery({ name: 'categoryId', required: false, type: Number })
+  @ApiQuery({ name: 'zoneId', required: false, type: Number })
+  @ApiQuery({ name: 'latitude', required: false, type: Number })
+  @ApiQuery({ name: 'longitude', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({ name: 'offset', required: false, type: Number })
+  @ApiResponse({ status: 200, description: 'Return combined search results.' })
   async unifiedSearch(
     @Query('q') query: string,
     @Query('type') type?: 'products' | 'merchants',
@@ -29,6 +41,15 @@ export class SearchController {
   }
 
   @Get('products')
+  @ApiOperation({ summary: 'Search for products only' })
+  @ApiQuery({ name: 'q', required: true, type: String })
+  @ApiQuery({ name: 'merchantId', required: false, type: Number })
+  @ApiQuery({ name: 'categoryId', required: false, type: Number })
+  @ApiQuery({ name: 'minPrice', required: false, type: Number })
+  @ApiQuery({ name: 'maxPrice', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({ name: 'offset', required: false, type: Number })
+  @ApiResponse({ status: 200, description: 'Return paginated products.' })
   async searchProducts(
     @Query('q') query: string,
     @Query('merchantId', new ParseIntPipe({ optional: true })) merchantId?: number,
@@ -50,6 +71,15 @@ export class SearchController {
   }
 
   @Get('merchants')
+  @ApiOperation({ summary: 'Search for merchants only' })
+  @ApiQuery({ name: 'q', required: true, type: String })
+  @ApiQuery({ name: 'categoryId', required: false, type: Number })
+  @ApiQuery({ name: 'zoneId', required: false, type: Number })
+  @ApiQuery({ name: 'latitude', required: false, type: Number })
+  @ApiQuery({ name: 'longitude', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({ name: 'offset', required: false, type: Number })
+  @ApiResponse({ status: 200, description: 'Return paginated merchants.' })
   async searchMerchants(
     @Query('q') query: string,
     @Query('categoryId', new ParseIntPipe({ optional: true })) categoryId?: number,
@@ -71,6 +101,11 @@ export class SearchController {
   }
 
   @Get('suggestions')
+  @ApiOperation({ summary: 'Get search autocomplete suggestions' })
+  @ApiQuery({ name: 'q', required: true, type: String })
+  @ApiQuery({ name: 'type', required: false, enum: ['products', 'merchants'] })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiResponse({ status: 200, description: 'Return suggestions.' })
   async getSuggestions(
     @Query('q') query: string,
     @Query('type') type?: 'products' | 'merchants',

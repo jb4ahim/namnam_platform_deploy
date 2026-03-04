@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Delete, Body, Param, ParseIntPipe, Query, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { AuthGuard } from '@app/auth/jwt-auth.guard';
 import { CurrentUserId } from '@app/common/decorators';
 import { FavoritesService } from './favorites.service';
@@ -10,6 +11,11 @@ export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Get paginated list of favorites' })
+  @ApiQuery({ name: 'entityType', required: false, enum: ['merchant', 'product'] })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({ name: 'offset', required: false, type: Number })
+  @ApiResponse({ status: 200, description: 'Return list of favorites.' })
   async getFavorites(
     @CurrentUserId() userId: number,
     @Query('entityType') entityType?: 'merchant' | 'product',

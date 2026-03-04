@@ -3,6 +3,8 @@ import {
   FastifyAdapter,
   NestFastifyApplication
 } from '@nestjs/platform-fastify';
+import fastifyStatic from '@fastify/static';
+import { join } from 'path';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
@@ -21,6 +23,12 @@ async function bootstrap() {
     transform: true
   }));
 
+  await app.register(fastifyStatic, {
+    root: join(__dirname, '..', '..', '..', 'node_modules', 'swagger-ui-dist'),
+    prefix: '/swagger-static/',
+    decorateReply: false,
+  });
+
   const config = new DocumentBuilder()
     .setTitle('Namnam Merchant API')
     .setDescription('The Merchant API documentation')
@@ -28,7 +36,10 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+  SwaggerModule.setup('api/docs', app, document, {
+    customCssUrl: '/swagger-static/swagger-ui.css',
+    customJs: ['/swagger-static/swagger-ui-bundle.js', '/swagger-static/swagger-ui-standalone-preset.js'],
+  });
 
   const port = process.env.PORT || "3001";
 

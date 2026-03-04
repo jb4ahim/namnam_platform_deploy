@@ -1,6 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import multipart from '@fastify/multipart';
+import fastifyStatic from '@fastify/static';
+import { join } from 'path';
 import { ValidationPipe } from '@nestjs/common';
 import { NamnamManagementApiModule } from './namnam_management_api.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
@@ -28,6 +30,12 @@ async function bootstrap() {
     transform: true
   }));
 
+  await app.register(fastifyStatic, {
+    root: join(__dirname, '..', '..', '..', 'node_modules', 'swagger-ui-dist'),
+    prefix: '/swagger-static/',
+    decorateReply: false,
+  });
+
   const config = new DocumentBuilder()
     .setTitle('Namnam Management API')
     .setDescription('The Management API documentation')
@@ -35,7 +43,10 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+  SwaggerModule.setup('api/docs', app, document, {
+    customCssUrl: '/swagger-static/swagger-ui.css',
+    customJs: ['/swagger-static/swagger-ui-bundle.js', '/swagger-static/swagger-ui-standalone-preset.js'],
+  });
 
   const port = process.env.PORT || '3003';
   await app.listen({ port: parseInt(port), host: '0.0.0.0' });

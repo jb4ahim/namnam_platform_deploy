@@ -1,11 +1,14 @@
 import { IsString, IsNotEmpty, IsEmail, IsOptional, Length, Matches } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class SendOtpDto {
+  @ApiProperty({ description: 'Country calling code', example: '+961' })
   @IsString()
   @IsNotEmpty()
   @Matches(/^\+\d{1,4}$/, { message: 'Country code must start with + and contain 1-4 digits' })
   countryCode!: string; // e.g., "+1", "+44", "+961"
 
+  @ApiProperty({ description: 'Phone number without country code', example: '71234567' })
   @IsString()
   @IsNotEmpty()
   @Matches(/^\d{6,15}$/, { message: 'Phone number must contain 6-15 digits only' })

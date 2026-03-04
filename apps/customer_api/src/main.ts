@@ -3,6 +3,7 @@ import {
   FastifyAdapter,
   NestFastifyApplication
 } from '@nestjs/platform-fastify';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { NamnamCustomerApiModule } from './namnam_customer_api.module';
 import { ValidationPipe } from '@nestjs/common';
 
@@ -19,6 +20,16 @@ async function bootstrap() {
     forbidNonWhitelisted: true,
     transform: true
   }));
+
+  const config = new DocumentBuilder()
+    .setTitle('NamNam Customer API')
+    .setDescription('The API documentation for the NamNam Customer Application')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document);
 
   // Use Render's PORT environment variable
   const port = process.env.PORT || "3002";

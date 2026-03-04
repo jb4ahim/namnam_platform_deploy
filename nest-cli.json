@@ -34,7 +34,8 @@
       "entryFile": "main",
       "sourceRoot": "apps/customer_api/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/customer_api/tsconfig.app.json"
+        "tsConfigPath": "apps/customer_api/tsconfig.app.json",
+        "plugins": ["@nestjs/swagger"]
       }
     },
     "database": {

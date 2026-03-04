@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(ls -la /c/Users/Maroun/Documents/GitHub/namnam_platform/apps/*/package.json)"
+      "Bash(ls -la /c/Users/Maroun/Documents/GitHub/namnam_platform/apps/*/package.json)",
+      "Bash(node -e \"const p = require\\(''./package.json''\\); console.log\\(''@nestjs/swagger:'', p.dependencies[''@nestjs/swagger'']\\); console.log\\(''@nestjs/platform-fastify:'', p.dependencies[''@nestjs/platform-fastify'']\\); console.log\\(''fastify:'', p.dependencies[''fastify'']\\)\")"
     ]
   }
 }
