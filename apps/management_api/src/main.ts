@@ -3,6 +3,7 @@ import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify
 import multipart from '@fastify/multipart';
 import { ValidationPipe } from '@nestjs/common';
 import { NamnamManagementApiModule } from './namnam_management_api.module';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const adapter = new FastifyAdapter();
@@ -26,6 +27,15 @@ async function bootstrap() {
     forbidNonWhitelisted: true,
     transform: true
   }));
+
+  const config = new DocumentBuilder()
+    .setTitle('Namnam Management API')
+    .setDescription('The Management API documentation')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document);
 
   const port = process.env.PORT || '3003';
   await app.listen({ port: parseInt(port), host: '0.0.0.0' });
