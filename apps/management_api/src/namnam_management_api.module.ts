@@ -14,6 +14,7 @@ import { PromotionsModule } from './modules/promotions/promotions.module';
 import { AppConfigModule } from './modules/app-config/app-config.module';
 import { CouponsModule } from './modules/coupons/coupons.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { JwtModule } from '@app/auth/jwt.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
           isGlobal: true,
           envFilePath: '.env'
     }),
+    JwtModule.forRoot(),
     LoggerModule,
     AuthModule,
     CategoriesModule,
