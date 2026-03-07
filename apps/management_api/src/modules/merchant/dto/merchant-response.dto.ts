@@ -40,6 +40,9 @@ export class MerchantCategoryDto {
 
   @ApiProperty({ example: 'Tech Store' })
   categoryName: string;
+
+  @ApiPropertyOptional({ example: 'uploads/2025-10-31/icon.png' })
+  categoryIcon?: string;
 }
 
 export class MerchantDetailedInfoDto {

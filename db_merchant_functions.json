@@ -1,0 +1,29 @@
+[
+  {
+    "function_name": "update_fcm_token_merchant"
+  },
+  {
+    "function_name": "update_merchant_product"
+  },
+  {
+    "function_name": "update_merchant_product"
+  },
+  {
+    "function_name": "update_merchant_product"
+  },
+  {
+    "function_name": "update_merchant_request_status"
+  },
+  {
+    "function_name": "update_merchant_request_status"
+  },
+  {
+    "function_name": "update_merchant_section"
+  },
+  {
+    "function_name": "update_order_shipping_merchant"
+  },
+  {
+    "function_name": "update_order_status_merchant"
+  }
+]

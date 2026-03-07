@@ -35,10 +35,11 @@ export class MerchantController {
   @Get("merchant-requests")
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get all merchant approval requests' })
-  @ApiResponse({ status: 200, type: [MerchantRequestDto], description: 'List of pending and resolved merchant requests' })
+  @ApiQuery({ name: 'status', required: false, enum: ['pending', 'approved', 'rejected'], description: 'Filter by request status (default: pending)' })
+  @ApiResponse({ status: 200, type: [MerchantRequestDto], description: 'List of merchant requests filtered by status' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async getMerchantRequests() {
-    return await this.merchantService.getMerchantRequests();
+  async getMerchantRequests(@Query('status') status: string = 'pending') {
+    return await this.merchantService.getMerchantRequests(status);
   }
 
   @Get(":id/info")

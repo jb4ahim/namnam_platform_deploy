@@ -131,7 +131,11 @@ export class MerchantService {
   // Additional GET methods from merchant API
   async getMerchantDetailedInfo(merchantId: number) {
     try {
-      return await this.merchantRepository.getMerchantDetailedInfo(merchantId);
+      const result = await this.merchantRepository.getMerchantDetailedInfo(merchantId);
+      if (result?.category?.categoryIcon) {
+        result.category.categoryIcon = await this.s3Service.getPresignedDownloadUrl(result.category.categoryIcon);
+      }
+      return result;
     } catch (error) {
       console.error('Error getting merchant detailed info:', error);
       throw new BadRequestException('Failed to get merchant detailed info');
@@ -174,8 +178,8 @@ export class MerchantService {
       return await this.merchantRepository.getCatalogProductsBySection(merchantId, sectionId);
   }
 
-  async getMerchantRequests() {
-      return await this.merchantRepository.getMerchantRequests();
+  async getMerchantRequests(status: string = 'pending') {
+      return await this.merchantRepository.getMerchantRequests(status);
   }
 
   async updateMerchantStatus(merchantId: number, status: string, zoneId: number) {

@@ -169,11 +169,11 @@ export class MerchantRepository {
     );
     return result || [];
   }
-  async getMerchantRequests() {
+  async getMerchantRequests(status: string = 'pending') {
     const result = await DatabaseUtils.callFunction(
       this.pg,
       'select_merchant_requests_management',
-      [],
+      [status],
       true
     );
     return result || [];

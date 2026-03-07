@@ -1,0 +1,222 @@
+[
+  {
+    "table_name": "merchant_images",
+    "column_name": "image_id",
+    "data_type": "integer"
+  },
+  {
+    "table_name": "merchant_requests",
+    "column_name": "merchant_request_id",
+    "data_type": "integer"
+  },
+  {
+    "table_name": "merchants",
+    "column_name": "category_id",
+    "data_type": "integer"
+  },
+  {
+    "table_name": "merchant_requests",
+    "column_name": "merchant_id",
+    "data_type": "integer"
+  },
+  {
+    "table_name": "merchant_requests",
+    "column_name": "status",
+    "data_type": "USER-DEFINED"
+  },
+  {
+    "table_name": "merchant_requests",
+    "column_name": "created_at",
+    "data_type": "timestamp without time zone"
+  },
+  {
+    "table_name": "merchant_hours",
+    "column_name": "merchant_hour_id",
+    "data_type": "integer"
+  },
+  {
+    "table_name": "merchant_hours",
+    "column_name": "merchant_id",
+    "data_type": "integer"
+  },
+  {
+    "table_name": "merchants",
+    "column_name": "zone_id",
+    "data_type": "integer"
+  },
+  {
+    "table_name": "merchants",
+    "column_name": "is_active",
+    "data_type": "boolean"
+  },
+  {
+    "table_name": "merchants",
+    "column_name": "view_counter",
+    "data_type": "integer"
+  },
+  {
+    "table_name": "merchant_users",
+    "column_name": "merchant_user_id",
+    "data_type": "integer"
+  },
+  {
+    "table_name": "merchant_users",
+    "column_name": "status",
+    "data_type": "USER-DEFINED"
+  },
+  {
+    "table_name": "merchant_users",
+    "column_name": "merchant_id",
+    "data_type": "integer"
+  },
+  {
+    "table_name": "merchant_hours",
+    "column_name": "day_of_week",
+    "data_type": "USER-DEFINED"
+  },
+  {
+    "table_name": "merchant_hours",
+    "column_name": "open_time",
+    "data_type": "time without time zone"
+  },
+  {
+    "table_name": "merchant_images",
+    "column_name": "merchant_id",
+    "data_type": "integer"
+  },
+  {
+    "table_name": "merchant_hours",
+    "column_name": "close_time",
+    "data_type": "time without time zone"
+  },
+  {
+    "table_name": "merchant_hours",
+    "column_name": "is_closed",
+    "data_type": "boolean"
+  },
+  {
+    "table_name": "merchant_hours",
+    "column_name": "status",
+    "data_type": "USER-DEFINED"
+  },
+  {
+    "table_name": "merchants",
+    "column_name": "merchant_id",
+    "data_type": "integer"
+  },
+  {
+    "table_name": "merchant_contact_persons",
+    "column_name": "merchant_contact_person_id",
+    "data_type": "integer"
+  },
+  {
+    "table_name": "merchant_contact_persons",
+    "column_name": "merchant_id",
+    "data_type": "integer"
+  },
+  {
+    "table_name": "merchants",
+    "column_name": "is_owned_by_app",
+    "data_type": "boolean"
+  },
+  {
+    "table_name": "merchants",
+    "column_name": "latitude",
+    "data_type": "numeric"
+  },
+  {
+    "table_name": "merchants",
+    "column_name": "longitude",
+    "data_type": "numeric"
+  },
+  {
+    "table_name": "merchants",
+    "column_name": "created_at",
+    "data_type": "timestamp without time zone"
+  },
+  {
+    "table_name": "merchant_users",
+    "column_name": "fcm_token",
+    "data_type": "character varying"
+  },
+  {
+    "table_name": "merchant_contact_persons",
+    "column_name": "first_name",
+    "data_type": "character varying"
+  },
+  {
+    "table_name": "merchant_contact_persons",
+    "column_name": "last_name",
+    "data_type": "character varying"
+  },
+  {
+    "table_name": "merchant_contact_persons",
+    "column_name": "role",
+    "data_type": "character varying"
+  },
+  {
+    "table_name": "merchant_contact_persons",
+    "column_name": "email_address",
+    "data_type": "character varying"
+  },
+  {
+    "table_name": "merchant_contact_persons",
+    "column_name": "phone_number",
+    "data_type": "character varying"
+  },
+  {
+    "table_name": "merchants",
+    "column_name": "name",
+    "data_type": "character varying"
+  },
+  {
+    "table_name": "merchants",
+    "column_name": "description",
+    "data_type": "text"
+  },
+  {
+    "table_name": "merchants",
+    "column_name": "cover_key",
+    "data_type": "character varying"
+  },
+  {
+    "table_name": "merchants",
+    "column_name": "logo_key",
+    "data_type": "character varying"
+  },
+  {
+    "table_name": "merchants",
+    "column_name": "building",
+    "data_type": "character varying"
+  },
+  {
+    "table_name": "merchants",
+    "column_name": "street",
+    "data_type": "character varying"
+  },
+  {
+    "table_name": "merchants",
+    "column_name": "notes",
+    "data_type": "character varying"
+  },
+  {
+    "table_name": "merchants",
+    "column_name": "hotline_number",
+    "data_type": "character varying"
+  },
+  {
+    "table_name": "merchants",
+    "column_name": "fcm_token",
+    "data_type": "character varying"
+  },
+  {
+    "table_name": "merchant_users",
+    "column_name": "merchant_role",
+    "data_type": "character varying"
+  },
+  {
+    "table_name": "merchant_users",
+    "column_name": "password_hash",
+    "data_type": "character varying"
+  }
+]
