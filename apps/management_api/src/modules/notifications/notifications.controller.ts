@@ -13,15 +13,19 @@ export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
   @Post('send')
-  @ApiOperation({ summary: 'Send a notification' })
-  @ApiResponse({ status: 201, description: 'Notification sent successfully.' })
+  @ApiOperation({ summary: 'Send a push notification to a single user' })
+  @ApiResponse({ status: 201, description: 'Notification sent successfully' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async send(@Body() dto: SendNotificationDto) {
     return this.notificationsService.send(dto);
   }
 
   @Post('send-bulk')
-  @ApiOperation({ summary: 'Send bulk notifications' })
-  @ApiResponse({ status: 201, description: 'Bulk notifications sent successfully.' })
+  @ApiOperation({ summary: 'Send push notifications to multiple users' })
+  @ApiResponse({ status: 201, description: 'Bulk notifications sent successfully' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async sendBulk(@Body() dto: SendBulkNotificationDto) {
     return this.notificationsService.sendBulk(dto);
   }

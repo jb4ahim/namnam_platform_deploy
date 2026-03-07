@@ -2,14 +2,31 @@ import { Injectable, BadRequestException, NotFoundException } from '@nestjs/comm
 import { ProductsRepository } from './products.repository';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { S3PresignService } from '@app/storage/s3-presign.service';
 
 @Injectable()
 export class ProductsService {
-  constructor(private readonly productsRepository: ProductsRepository) {}
+  constructor(
+    private readonly productsRepository: ProductsRepository,
+    private readonly s3Service: S3PresignService,
+  ) {}
+
+  private async resolveProductImageUrls(product: any) {
+    if (!product?.images?.length) return product;
+    const images = await Promise.all(
+      product.images.map(async (img: any) => ({
+        ...img,
+        imageUrl: img.imageKey ? await this.s3Service.getPresignedDownloadUrl(img.imageKey) : null,
+      }))
+    );
+    return { ...product, images };
+  }
 
   async getProducts(merchantId: number, sectionId?: number) {
     try {
-      return await this.productsRepository.getProducts(merchantId, sectionId);
+      const products = await this.productsRepository.getProducts(merchantId, sectionId);
+      if (!Array.isArray(products)) return products;
+      return await Promise.all(products.map(p => this.resolveProductImageUrls(p)));
     } catch (error) {
       console.error('Error fetching products:', error);
       throw new BadRequestException('Failed to fetch products');
@@ -22,7 +39,7 @@ export class ProductsService {
       if (!product) {
         throw new NotFoundException('Product not found');
       }
-      return product;
+      return await this.resolveProductImageUrls(product);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;

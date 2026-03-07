@@ -18,7 +18,13 @@ export class MerchantService {
     private readonly s3Service: S3PresignService,
   ) {}
   async getMerchantInfo(merchantId: number) {
-    return await this.merchantRepository.getMerchantInfo(merchantId);
+    const info = await this.merchantRepository.getMerchantInfo(merchantId);
+    if (!info) return null;
+    const [logoUrl, coverUrl] = await Promise.all([
+      info.logoKey ? this.s3Service.getPresignedDownloadUrl(info.logoKey) : null,
+      info.coverKey ? this.s3Service.getPresignedDownloadUrl(info.coverKey) : null,
+    ]);
+    return { ...info, logoUrl, coverUrl };
   }
 
   async getWeeklySchedule(merchantId: number) {

@@ -125,9 +125,10 @@ export class AuthService {
       const newMerchantData = await this.merchantService.getMerchant(tokenData.countryCode, tokenData.phoneNumber);
 
       return {
+
         ...userId,
         ...tokens,
-        steps: newMerchantData?.steps ?? [],
+        ...newMerchantData,
         message: 'User registered successfully'
       };
     } else {
@@ -142,6 +143,7 @@ export class AuthService {
           userId, 
           merchantId,
           ...tokens,
+          requestStatus: merchantData.requestStatus,
           steps: merchantData.steps,
           message: 'User Logged in successfully'
       };

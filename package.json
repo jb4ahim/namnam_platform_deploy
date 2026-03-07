@@ -26,7 +26,8 @@
     "start:merchant": "node dist/apps/merchant_api/main.js",
     "start:dev:merchant": "nest start merchant_api --watch",
     "start:management": "node dist/apps/management_api/main.js",
-    "start:dev:management": "nest start management_api --watch"
+    "start:dev:management": "nest start management_api --watch",
+    "start:dev:all": "run-p start:dev:customer start:dev:merchant start:dev:management"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.864.0",
