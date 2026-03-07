@@ -135,6 +135,12 @@ export class MerchantService {
       if (result?.category?.categoryIcon) {
         result.category.categoryIcon = await this.s3Service.getPresignedDownloadUrl(result.category.categoryIcon);
       }
+      if (result?.logoKey) {
+        result.logoKey = await this.s3Service.getPresignedDownloadUrl(result.logoKey);
+      }
+      if (result?.coverKey) {
+        result.coverKey = await this.s3Service.getPresignedDownloadUrl(result.coverKey);
+      }
       return result;
     } catch (error) {
       console.error('Error getting merchant detailed info:', error);
