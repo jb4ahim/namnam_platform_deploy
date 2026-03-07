@@ -179,7 +179,18 @@ export class MerchantService {
   }
 
   async getMerchantRequests(status: string = 'pending') {
-      return await this.merchantRepository.getMerchantRequests(status);
+      const requests = await this.merchantRepository.getMerchantRequests(status);
+      await Promise.all(
+        requests.map(async (request: any) => {
+          if (request?.merchant?.media?.logoKey) {
+            request.merchant.media.logoKey = await this.s3Service.getPresignedDownloadUrl(request.merchant.media.logoKey);
+          }
+          if (request?.merchant?.media?.coverKey) {
+            request.merchant.media.coverKey = await this.s3Service.getPresignedDownloadUrl(request.merchant.media.coverKey);
+          }
+        })
+      );
+      return requests;
   }
 
   async updateMerchantStatus(merchantId: number, status: string, zoneId: number) {

@@ -170,12 +170,9 @@ export class MerchantRepository {
     return result || [];
   }
   async getMerchantRequests(status: string = 'pending') {
-    const result = await DatabaseUtils.callFunction(
-      this.pg,
-      'select_merchant_requests_management',
-      [status],
-      true
-    );
+    const query = `SELECT select_merchant_requests_management($1::merchant_request_status)`;
+    const rows = await this.pg.query(query, [status]);
+    const result = DatabaseUtils.extractSingleResult(rows, 'select_merchant_requests_management');
     return result || [];
   }
   async updateMerchantStatus(merchantId: number, status: string, zoneId: number) {
