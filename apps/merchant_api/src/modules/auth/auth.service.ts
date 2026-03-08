@@ -139,6 +139,8 @@ export class AuthService {
         const payload = { userId: userId, merchantId: merchantId };
 
         const tokens = this.jwtService.generateTokenPair(payload);
+        console.log('Generated tokens for userId:', userId);
+        console.log('Generated tokens for userId:', merchantData);
         return { 
           userId, 
           merchantId,
