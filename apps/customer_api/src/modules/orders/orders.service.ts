@@ -3,13 +3,19 @@ import { OrdersRepository } from './orders.repository';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateDeliveryInstructionsDto } from './dto/update-delivery-instructions.dto';
 import { RefundRequestDto } from './dto/refund-request.dto';
+import { ReferralService } from '../referral/referral.service';
 
 @Injectable()
 export class OrdersService {
-  constructor(private readonly repo: OrdersRepository) {}
+  constructor(
+    private readonly repo: OrdersRepository,
+    private readonly referralService: ReferralService,
+  ) {}
 
   async createOrder(userId: number, dto: CreateOrderDto) {
-    return this.repo.createOrder(userId, dto);
+    const order = await this.repo.createOrder(userId, dto);
+    await this.referralService.handleFirstOrder(userId);
+    return order;
   }
 
   async listOrders(userId: number, status?: string, startDate?: string, endDate?: string) {

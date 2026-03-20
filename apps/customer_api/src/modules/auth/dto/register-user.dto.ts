@@ -42,6 +42,11 @@ export class RegisterUserDto {
   status?: string;
 
   
+  @ApiPropertyOptional({ description: 'Referral code from an existing customer', example: 'X7K2PQ3R' })
+  @IsOptional()
+  @IsString()
+  referralCode?: string;
+
   // Verification token field
   @ApiProperty({ description: 'Verification token received after OTP validation', example: 'eyJhbGciOiJIUzI1Ni...' })
   @IsString()

@@ -84,6 +84,16 @@
       "compilerOptions": {
         "tsConfigPath": "libs/storage/tsconfig.lib.json"
       }
+    },
+    "driver_api": {
+      "type": "application",
+      "root": "apps/driver_api",
+      "entryFile": "main",
+      "sourceRoot": "apps/driver_api/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/driver_api/tsconfig.app.json",
+        "plugins": ["@nestjs/swagger"]
+      }
     }
   }
 }

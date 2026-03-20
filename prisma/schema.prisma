@@ -290,6 +290,8 @@ model customers {
   review_helpful_votes  review_helpful_votes[]
   shopping_carts        shopping_carts[]
   user_addresses        user_addresses[]
+  referral_codes        referral_codes?
+  referral_uses         referral_uses?
 }
 
 model delivery_tracking_history {
@@ -557,11 +559,14 @@ model orders {
   scheduled_for             DateTime?                   @db.Timestamp(6)
   created_at                DateTime?                   @default(now()) @db.Timestamp(6)
   updated_at                DateTime?                   @default(now()) @db.Timestamp(6)
+  driver_id                 Int?
   coupon_redemptions        coupon_redemptions[]
   delivery_tracking_history delivery_tracking_history[]
+  driver_earnings           driver_earnings[]
   order_delivery_snapshots  order_delivery_snapshots[]
   order_items               order_items[]
   customers                 customers                   @relation(fields: [customer_id], references: [customer_id], onDelete: Cascade, onUpdate: NoAction)
+  users_driver              users?                      @relation("orders_driver", fields: [driver_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
   user_addresses            user_addresses?             @relation(fields: [delivery_address_id], references: [address_id], onDelete: NoAction, onUpdate: NoAction)
   merchants                 merchants                   @relation(fields: [restaurant_id], references: [merchant_id], onDelete: Cascade, onUpdate: NoAction)
   payment_transactions      payment_transactions[]
@@ -570,6 +575,7 @@ model orders {
 
   @@index([created_at], map: "idx_orders_created_at")
   @@index([customer_id], map: "idx_orders_customer_id")
+  @@index([driver_id], map: "idx_orders_driver_id")
   @@index([restaurant_id], map: "idx_orders_restaurant_id")
   @@index([status], map: "idx_orders_status")
 }
@@ -936,17 +942,54 @@ model users {
   chat_messages                                         chat_messages[]
   customers                                             customers?
   delivery_tracking_history                             delivery_tracking_history[]
+  driver_earnings                                       driver_earnings[]
   driver_performance                                    driver_performance[]
+  driver_profiles                                       driver_profiles?
   favorites                                             favorites[]
   management_users                                      management_users?
   merchant_users                                        merchant_users?
   notifications                                         notifications[]
+  orders_as_driver                                      orders[]                    @relation("orders_driver")
   recent_searches                                       recent_searches[]
   support_tickets                                       support_tickets[]
   user_devices                                          user_devices[]
   user_otp                                              user_otp[]
 
   @@index([email], map: "idx_users_email")
+}
+
+model driver_profiles {
+  driver_profile_id   Int                        @id @default(autoincrement())
+  driver_id           Int                        @unique
+  vehicle_type        String?                    @db.VarChar(50)
+  license_plate       String?                    @db.VarChar(20)
+  license_key         String?                    @db.VarChar(250)
+  insurance_key       String?                    @db.VarChar(250)
+  profile_photo_key   String?                    @db.VarChar(250)
+  availability_status driver_availability_status @default(offline)
+  last_latitude       Decimal?                   @db.Decimal(10, 8)
+  last_longitude      Decimal?                   @db.Decimal(11, 8)
+  fcm_token           String?                    @db.VarChar(500)
+  created_at          DateTime?                  @default(now()) @db.Timestamp(6)
+  updated_at          DateTime?                  @default(now()) @db.Timestamp(6)
+  users               users                      @relation(fields: [driver_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model driver_earnings {
+  earning_id     Int       @id @default(autoincrement())
+  driver_id      Int
+  order_id       Int       @unique
+  base_fee       Decimal   @db.Decimal(10, 2)
+  distance_bonus Decimal   @default(0) @db.Decimal(10, 2)
+  peak_bonus     Decimal   @default(0) @db.Decimal(10, 2)
+  tip            Decimal   @default(0) @db.Decimal(10, 2)
+  total          Decimal   @db.Decimal(10, 2)
+  paid_out       Boolean   @default(false)
+  created_at     DateTime? @default(now()) @db.Timestamp(6)
+  users          users     @relation(fields: [driver_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+  orders         orders    @relation(fields: [order_id], references: [order_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([driver_id], map: "idx_driver_earnings_driver_id")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -984,6 +1027,27 @@ model zones {
   merchants        merchants[]
   user_addresses   user_addresses[]
   zone_polygons    zone_polygons[]
+}
+
+model referral_codes {
+  referral_code_id Int             @id @default(autoincrement())
+  code             String          @unique @db.VarChar(20)
+  customer_id      Int             @unique
+  created_at       DateTime?       @default(now()) @db.Timestamp(6)
+  customers        customers       @relation(fields: [customer_id], references: [customer_id], onDelete: Cascade)
+  referral_uses    referral_uses[]
+}
+
+model referral_uses {
+  referral_use_id      Int            @id @default(autoincrement())
+  referral_code_id     Int
+  referred_customer_id Int            @unique
+  used_at              DateTime?      @default(now()) @db.Timestamp(6)
+  first_order_placed   Boolean        @default(false)
+  voucher_issued       Boolean        @default(false)
+  voucher_coupon_id    Int?
+  referral_codes       referral_codes @relation(fields: [referral_code_id], references: [referral_code_id], onDelete: Cascade)
+  customers            customers      @relation(fields: [referred_customer_id], references: [customer_id], onDelete: Cascade)
 }
 
 enum action_type_enum {
@@ -1153,4 +1217,10 @@ enum user_type {
   merchant
   management
   driver
+}
+
+enum driver_availability_status {
+  online
+  busy
+  offline
 }

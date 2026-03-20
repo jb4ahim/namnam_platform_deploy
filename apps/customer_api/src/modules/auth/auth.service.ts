@@ -5,6 +5,7 @@ import { RegisterUserDto } from './dto/register-user.dto';
 import { SendOtpDto } from './dto/send-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { JwtService } from '@app/auth/jwt.service';
+import { ReferralService } from '../referral/referral.service';
 // import { TwilioSmsService } from '@app/common';
 // If using a cache (e.g., Redis), inject it or use your own storage solution
 import { v4 as uuidv4 } from 'uuid';
@@ -24,6 +25,7 @@ export class AuthService {
     @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
     private readonly authRepository: AuthRepository,
+    private readonly referralService: ReferralService,
     // private readonly twilioService: TwilioSmsService
     // private readonly cache: CacheService, // Optional cache for OTP
   ) {}
@@ -91,6 +93,19 @@ export class AuthService {
     if (!userId) {
       throw new UnauthorizedException('User creation failed');
     }
+
+    // Generate referral code for new customer
+    await this.referralService.generateCodeForCustomer(userId);
+
+    // Apply referral code if provided
+    if (registerUserDto.referralCode) {
+      try {
+        await this.referralService.applyReferralCode(registerUserDto.referralCode, userId);
+      } catch {
+        // Invalid code — don't block registration
+      }
+    }
+
     // Return JWT token
     const payload = { userId: userId };
     const tokens = this.jwtService.generateTokenPair(payload);

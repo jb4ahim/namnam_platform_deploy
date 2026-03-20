@@ -7,6 +7,7 @@ import { UsersModule } from '../users/users.module';
 // import { TwilioModule } from '@app/common';
 import { DatabaseModule } from '@app/database';
 import { AuthRepository } from './auth.repository';
+import { ReferralModule } from '../referral/referral.module';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { AuthRepository } from './auth.repository';
     }),
     // TwilioModule,
   forwardRef(() => UsersModule),
-    DatabaseModule
+    DatabaseModule,
+    ReferralModule
   ],
   providers: [
     AuthService,

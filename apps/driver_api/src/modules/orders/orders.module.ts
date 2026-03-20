@@ -3,13 +3,10 @@ import { DatabaseModule } from '@app/database';
 import { OrdersController } from './orders.controller';
 import { OrdersService } from './orders.service';
 import { OrdersRepository } from './orders.repository';
-import { JwtModule } from '@nestjs/jwt';
-import { ReferralModule } from '../referral/referral.module';
 
 @Module({
-  imports: [DatabaseModule, JwtModule, ReferralModule],
+  imports: [DatabaseModule],
   controllers: [OrdersController],
   providers: [OrdersService, OrdersRepository],
-  exports: [OrdersService],
 })
 export class OrdersModule {}

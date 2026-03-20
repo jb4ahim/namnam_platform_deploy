@@ -21,13 +21,16 @@
     "build:customer": "prisma generate && nest build customer_api",
     "build:merchant": "prisma generate && nest build merchant_api",
     "build:management": "prisma generate && nest build management_api",
+    "build:driver": "prisma generate && nest build driver_api",
     "start:customer": "node dist/apps/customer_api/main.js",
     "start:dev:customer": "nest start customer_api --watch",
     "start:merchant": "node dist/apps/merchant_api/main.js",
     "start:dev:merchant": "nest start merchant_api --watch",
     "start:management": "node dist/apps/management_api/main.js",
     "start:dev:management": "nest start management_api --watch",
-    "start:dev:all": "run-p start:dev:customer start:dev:merchant start:dev:management"
+    "start:driver": "node dist/apps/driver_api/main.js",
+    "start:dev:driver": "nest start driver_api --watch",
+    "start:dev:all": "run-p start:dev:customer start:dev:merchant start:dev:management start:dev:driver"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.864.0",
