@@ -437,6 +437,8 @@ model merchant_requests {
   merchant_request_id Int                     @id @default(autoincrement())
   merchant_id         Int
   status              merchant_request_status
+  rejection_reason    String?                 @db.VarChar(500)
+  step_id             Int?
   created_at          DateTime?               @default(now()) @db.Timestamp(6)
   merchants           merchants               @relation(fields: [merchant_id], references: [merchant_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_merchant_id")
 }

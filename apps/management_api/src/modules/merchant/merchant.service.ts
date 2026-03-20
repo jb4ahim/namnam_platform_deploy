@@ -206,8 +206,8 @@ export class MerchantService {
       return requests;
   }
 
-  async updateMerchantStatus(merchantId: number, status: string, zoneId: number) {
-      const result = await this.merchantRepository.updateMerchantStatus(merchantId, status, zoneId);
+  async updateMerchantStatus(merchantId: number, status: string, zoneId?: number, rejectionReason?: string, stepId?: number) {
+      const result = await this.merchantRepository.updateMerchantStatus(merchantId, status, zoneId, rejectionReason, stepId);
       const token = await this.merchantRepository.getMerchantTokenByUserId(merchantId);
       if (token) {
         if (token.fcmToken) {

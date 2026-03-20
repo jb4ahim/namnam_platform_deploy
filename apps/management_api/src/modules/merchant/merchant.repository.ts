@@ -353,10 +353,20 @@ export class MerchantRepository {
     }));
   }
 
-  async updateMerchantStatus(merchantId: number, status: string, zoneId: number) {
+  async updateMerchantStatus(
+    merchantId: number,
+    status: string,
+    zoneId?: number,
+    rejectionReason?: string,
+    stepId?: number,
+  ) {
     await this.prisma.merchant_requests.updateMany({
       where: { merchant_id: merchantId },
-      data: { status: status as merchant_request_status },
+      data: {
+        status: status as merchant_request_status,
+        rejection_reason: rejectionReason ?? null,
+        step_id: stepId ?? null,
+      },
     });
 
     if (zoneId) {

@@ -9,6 +9,7 @@ import {
   MerchantLocationDto,
   MerchantRequestDto,
 } from './dto/merchant-response.dto';
+import { UpdateMerchantRequestStatusDto } from './dto/update-merchant-request-status.dto';
 
 @ApiTags('Merchants')
 @ApiBearerAuth()
@@ -144,16 +145,15 @@ export class MerchantController {
 
   @Patch("/:id/status")
   @UseGuards(AuthGuard)
-  @ApiOperation({ summary: 'Update merchant status and assign zone' })
+  @ApiOperation({ summary: 'Update merchant request status (approve or reject)' })
   @ApiParam({ name: 'id', type: Number })
-  @ApiBody({ schema: { type: 'object', properties: { status: { type: 'string', example: 'approved' }, zoneId: { type: 'number', example: 5 } } } })
   @ApiResponse({ status: 200, description: 'Merchant status updated' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async updateMerchantStatus(
     @Param("id", ParseIntPipe) id: number,
-    @Body("status") status: string,
-    @Body("zoneId", ParseIntPipe) zoneId: number
+    @Body() dto: UpdateMerchantRequestStatusDto,
   ) {
-    return await this.merchantService.updateMerchantStatus(id, status, zoneId);
+    return await this.merchantService.updateMerchantStatus(id, dto.status, dto.zoneId, dto.rejectionReason, dto.stepId);
   }
 }
