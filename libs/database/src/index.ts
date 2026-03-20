@@ -4,3 +4,4 @@ export * from './database.utils';
 export * from './database.module';
 export * from './analytics.service';
 export * from './prisma.service';
+export * from '../../../generated/prisma/client';

@@ -4,6 +4,7 @@ import { CreateMerchantDto } from './dto/create-merchant.dto';
 import { UpdateMerchantDto } from './dto/update-merchant.dto';
 import { resolveS3Urls, S3PresignService } from '@app/storage';
 import { GetMerchantDto } from './dto/get-merchants.dto';
+import { MerchantCategoryDto } from './dto/merchant-response.dto';
 import { plainToInstance } from 'class-transformer';
 import { PaginatedResultDto } from '@app/common/dto/paginated-result.dto';
 import { EmailProvider, NotificationService, NotificationTemplate, NotificationType, SendNotificationDto } from '@app/notifications';
@@ -194,6 +195,12 @@ export class MerchantService {
           if (request?.merchant?.media?.coverKey) {
             request.merchant.media.coverKey = await this.s3Service.getPresignedDownloadUrl(request.merchant.media.coverKey);
           }
+          if (request?.merchant?.category) {
+            request.merchant.category = await resolveS3Urls(
+              plainToInstance(MerchantCategoryDto, request.merchant.category),
+              this.s3Service,
+            );
+          }
         })
       );
       return requests;
@@ -202,24 +209,28 @@ export class MerchantService {
   async updateMerchantStatus(merchantId: number, status: string, zoneId: number) {
       const result = await this.merchantRepository.updateMerchantStatus(merchantId, status, zoneId);
       const token = await this.merchantRepository.getMerchantTokenByUserId(merchantId);
-      if(token) {
-      const notificationFirebase: SendNotificationDto = {
-        recipient: token.fcmToken,
-        subject: 'Merchant Status Update',
-        message: `Your merchant account status has been updated to: ${status}`,
-        type: NotificationType.FIREBASE
-      };
-      await this.notificationService.send(notificationFirebase);
-    }
-      const notificationEmail: SendNotificationDto = {
-        recipient: token.email,
-        subject: 'Merchant Status Update',
-        message: `Your merchant account status has been updated to: ${status}`,
-        type: NotificationType.EMAIL,
-        template: NotificationTemplate.WELCOME
-      };
-      
-      await this.notificationService.send(notificationEmail);
+      if (token) {
+        if (token.fcmToken) {
+          const notificationFirebase: SendNotificationDto = {
+            recipient: token.fcmToken,
+            subject: 'Merchant Status Update',
+            message: `Your merchant account status has been updated to: ${status}`,
+            type: NotificationType.FIREBASE,
+          };
+          await this.notificationService.send(notificationFirebase);
+        }
+
+        if (token.email) {
+          const notificationEmail: SendNotificationDto = {
+            recipient: token.email,
+            subject: 'Merchant Status Update',
+            message: `Your merchant account status has been updated to: ${status}`,
+            type: NotificationType.EMAIL,
+            template: NotificationTemplate.WELCOME,
+          };
+          await this.notificationService.send(notificationEmail);
+        }
+      }
 
       if (!result) {
         throw new BadRequestException('Failed to update merchant status');

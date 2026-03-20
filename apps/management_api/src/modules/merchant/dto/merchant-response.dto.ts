@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { S3Url } from '@app/storage';
 
 export class MerchantListItemDto {
   @ApiProperty({ example: 45 })
@@ -43,6 +44,10 @@ export class MerchantCategoryDto {
 
   @ApiPropertyOptional({ example: 'uploads/2025-10-31/icon.png' })
   categoryIcon?: string;
+
+  @S3Url('categoryIcon')
+  @ApiPropertyOptional({ example: 'https://cdn.example.com/icon.png' })
+  categoryIconUrl?: string;
 }
 
 export class MerchantDetailedInfoDto {

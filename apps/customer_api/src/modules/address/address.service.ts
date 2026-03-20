@@ -7,7 +7,7 @@ import { AddressRepository } from './address.repository';
 export class AddressService {
   constructor(private readonly repo: AddressRepository) {}
 
-  async list(customerId: number) {
+  async  list(customerId: number) {
     return this.repo.list(customerId);
   }
 
