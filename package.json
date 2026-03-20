@@ -144,7 +144,11 @@
       "<rootDir>/libs/"
     ],
     "moduleNameMapper": {
-      "^@app/notifications(|/.*)$": "<rootDir>/libs/notifications/src/$1"
+      "^@app/auth(|/.*)$": "<rootDir>/libs/auth/src/$1",
+      "^@app/common(|/.*)$": "<rootDir>/libs/common/src/$1",
+      "^@app/database(|/.*)$": "<rootDir>/libs/database/src/$1",
+      "^@app/notifications(|/.*)$": "<rootDir>/libs/notifications/src/$1",
+      "^@app/storage(|/.*)$": "<rootDir>/libs/storage/src/$1"
     }
   }
 }

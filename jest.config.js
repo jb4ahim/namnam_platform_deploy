@@ -3,6 +3,7 @@ module.exports = {
     '<rootDir>/apps/customer_api',
     '<rootDir>/apps/management_api',
     '<rootDir>/apps/merchant_api',
+    '<rootDir>/apps/driver_api',
     '<rootDir>/libs/common',
     '<rootDir>/libs/database',
     '<rootDir>/libs/auth',
