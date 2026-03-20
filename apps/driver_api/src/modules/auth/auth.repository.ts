@@ -85,4 +85,20 @@ export class AuthRepository {
       },
     });
   }
+
+  async findDriverWithProfile(countryCode: string, phoneNumber: string) {
+    return this.prisma.users.findFirst({
+      where: { country_code: countryCode, phone_number: phoneNumber, user_type: 'driver' },
+      select: {
+        user_id: true,
+        driver_profiles: {
+          select: {
+            password_hash: true,
+            first_login: true,
+            status: true,
+          },
+        },
+      },
+    });
+  }
 }

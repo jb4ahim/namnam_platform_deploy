@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { SendOtpDto } from './dto/send-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { RegisterDriverDto } from './dto/register-driver.dto';
+import { LoginDriverDto } from './dto/login-driver.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -32,6 +33,14 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Invalid or expired verification token.' })
   async register(@Body() dto: RegisterDriverDto) {
     return this.authService.registerDriver(dto);
+  }
+
+  @Post('login')
+  @ApiOperation({ summary: 'Login with phone + password (management-created accounts)' })
+  @ApiResponse({ status: 201, description: 'Returns JWT tokens and firstLogin flag.' })
+  @ApiResponse({ status: 401, description: 'Invalid credentials or account not active.' })
+  async login(@Body() dto: LoginDriverDto) {
+    return this.authService.login(dto);
   }
 
   @Post('refresh-token')

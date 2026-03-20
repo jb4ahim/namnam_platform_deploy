@@ -1,10 +1,12 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
+import * as bcrypt from 'bcrypt';
 import { JwtService } from '@app/auth/jwt.service';
 import { AuthRepository } from './auth.repository';
 import { SendOtpDto } from './dto/send-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { RegisterDriverDto } from './dto/register-driver.dto';
+import { LoginDriverDto } from './dto/login-driver.dto';
 
 interface RegistrationToken {
   countryCode: string;
@@ -73,6 +75,29 @@ export class AuthService {
 
     const tokens = this.jwtService.generateTokenPair({ userId: driverId });
     return { ...tokens };
+  }
+
+  async login(dto: LoginDriverDto) {
+    const driver = await this.authRepository.findDriverWithProfile(dto.countryCode, dto.phoneNumber);
+
+    if (!driver || !driver.driver_profiles?.password_hash) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    if (driver.driver_profiles.status === 'suspended' || driver.driver_profiles.status === 'inactive') {
+      throw new UnauthorizedException('Account is not active');
+    }
+
+    const passwordMatch = await bcrypt.compare(dto.password, driver.driver_profiles.password_hash);
+    if (!passwordMatch) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const tokens = this.jwtService.generateTokenPair({ userId: driver.user_id });
+    return {
+      ...tokens,
+      firstLogin: driver.driver_profiles.first_login,
+    };
   }
 
   async refreshToken(token: string) {

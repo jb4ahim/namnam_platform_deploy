@@ -1,7 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { ProfileRepository } from './profile.repository';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { DriverProfileResponseDto } from './dto/profile-response.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class ProfileService {
@@ -29,5 +31,20 @@ export class ProfileService {
 
   async updateProfile(driverId: number, dto: UpdateProfileDto) {
     await this.repo.updateProfile(driverId, dto);
+  }
+
+  async changePassword(driverId: number, dto: ChangePasswordDto) {
+    const profile = await this.repo.getPasswordHash(driverId);
+    if (!profile?.password_hash) {
+      throw new UnauthorizedException('No password set on this account');
+    }
+
+    const matches = await bcrypt.compare(dto.currentPassword, profile.password_hash);
+    if (!matches) {
+      throw new UnauthorizedException('Current password is incorrect');
+    }
+
+    const newHash = await bcrypt.hash(dto.newPassword, 10);
+    await this.repo.changePassword(driverId, newHash);
   }
 }

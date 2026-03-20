@@ -14,6 +14,7 @@ import { PromotionsModule } from './modules/promotions/promotions.module';
 import { AppConfigModule } from './modules/app-config/app-config.module';
 import { CouponsModule } from './modules/coupons/coupons.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { DriversModule } from './modules/drivers/drivers.module';
 import { JwtModule } from '@app/auth/jwt.module';
 
 @Module({
@@ -33,7 +34,8 @@ import { JwtModule } from '@app/auth/jwt.module';
     PromotionsModule,
     AppConfigModule,
     CouponsModule,
-    NotificationsModule
+    NotificationsModule,
+    DriversModule,
   ],
   providers: [
       {

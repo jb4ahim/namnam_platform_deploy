@@ -78,4 +78,19 @@ export class ProfileRepository {
       update: { [field]: key, updated_at: new Date() },
     });
   }
+
+  async getPasswordHash(driverId: number): Promise<{ password_hash: string | null } | null> {
+    return this.prisma.driver_profiles.findUnique({
+      where: { driver_id: driverId },
+      select: { password_hash: true },
+    });
+  }
+
+  async changePassword(driverId: number, newPasswordHash: string) {
+    await this.prisma.driver_profiles.upsert({
+      where: { driver_id: driverId },
+      create: { driver_id: driverId, password_hash: newPasswordHash, first_login: false },
+      update: { password_hash: newPasswordHash, first_login: false, updated_at: new Date() },
+    });
+  }
 }

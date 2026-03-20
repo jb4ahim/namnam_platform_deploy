@@ -1,9 +1,10 @@
-import { Controller, Get, Patch, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Patch, Post, Body, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@app/auth';
 import { ProfileService } from './profile.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { DriverProfileResponseDto } from './dto/profile-response.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @ApiTags('Profile')
 @ApiBearerAuth()
@@ -27,5 +28,13 @@ export class ProfileController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async updateProfile(@Request() req: any, @Body() dto: UpdateProfileDto) {
     await this.profileService.updateProfile(req.user.userId, dto);
+  }
+
+  @Post('change-password')
+  @ApiOperation({ summary: 'Change password — clears the firstLogin flag' })
+  @ApiResponse({ status: 201, description: 'Password changed successfully.' })
+  @ApiResponse({ status: 401, description: 'Current password incorrect or no password set.' })
+  async changePassword(@Request() req: any, @Body() dto: ChangePasswordDto) {
+    await this.profileService.changePassword(req.user.userId, dto);
   }
 }
