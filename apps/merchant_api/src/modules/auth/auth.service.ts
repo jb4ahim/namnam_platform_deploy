@@ -125,7 +125,6 @@ export class AuthService {
       const newMerchantData = await this.merchantService.getMerchant(tokenData.countryCode, tokenData.phoneNumber);
 
       return {
-
         ...userId,
         ...tokens,
         ...newMerchantData,
@@ -141,8 +140,8 @@ export class AuthService {
         const tokens = this.jwtService.generateTokenPair(payload);
         console.log('Generated tokens for userId:', userId);
         console.log('Generated tokens for userId:', merchantData);
-        return { 
-          userId, 
+        return {
+          userId,
           merchantId,
           ...tokens,
           requestStatus: merchantData.requestStatus,
@@ -159,7 +158,6 @@ export class AuthService {
   async setLocale(merchantId: number, locale: string) {
     // Here you would typically update the user's locale in the database
     await this.authRepository.setLocale(merchantId, locale);
-
   }
 
   async refreshToken(token: string) {

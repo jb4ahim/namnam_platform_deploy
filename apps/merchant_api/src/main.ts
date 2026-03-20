@@ -8,6 +8,7 @@ import { join } from 'path';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import fastifyApiReference from '@scalar/fastify-api-reference';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -39,6 +40,11 @@ async function bootstrap() {
   SwaggerModule.setup('api/docs', app, document, {
     customCssUrl: '/swagger-static/swagger-ui.css',
     customJs: ['/swagger-static/swagger-ui-bundle.js', '/swagger-static/swagger-ui-standalone-preset.js'],
+  });
+
+  await app.register(fastifyApiReference, {
+    routePrefix: '/api/reference',
+    configuration: { spec: { url: '/api/docs-json' } },
   });
 
   const port = process.env.PORT || "3001";

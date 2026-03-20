@@ -1,0 +1,1156 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model analytics_views {
+  analytics_view_id Int         @id @default(autoincrement())
+  entity_type       entity_type
+  entity_id         Int
+  user_id           Int?
+  viewed_at         DateTime?   @default(now()) @db.Timestamp(6)
+  users             users?      @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([entity_type, entity_id], map: "idx_analytics_views_entity_type_id")
+  @@index([user_id], map: "idx_analytics_views_user_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model app_config {
+  id         Int       @id @default(autoincrement())
+  key        String    @unique @db.VarChar(255)
+  value      Json
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @default(now()) @db.Timestamp(6)
+
+  @@index([key], map: "idx_app_config_key")
+}
+
+model audit_logs {
+  audit_log_id Int        @id @default(autoincrement())
+  user_type    user_type?
+  user_id      Int?
+  action       String     @db.VarChar(255)
+  entity       String     @db.VarChar(255)
+  entity_id    Int?
+  ip_address   String?    @db.Inet
+  created_at   DateTime?  @default(now()) @db.Timestamp(6)
+  users        users?     @relation(fields: [user_id], references: [user_id], onUpdate: NoAction)
+
+  @@index([created_at], map: "idx_audit_logs_created_at")
+  @@index([user_id], map: "idx_audit_logs_user_id")
+}
+
+model bearer_tokens {
+  bearer_token_id Int       @id @default(autoincrement())
+  user_id         Int
+  token           String    @unique @db.VarChar(500)
+  refresh_token   String?   @db.VarChar(500)
+  expires_at      DateTime  @db.Timestamp(6)
+  created_at      DateTime? @default(now()) @db.Timestamp(6)
+  users           users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([expires_at], map: "idx_bearer_tokens_expires_at")
+  @@index([token], map: "idx_bearer_tokens_token")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model bundle_items {
+  bundle_id  Int
+  product_id Int
+  quantity   Int      @default(1)
+  bundles    bundles  @relation(fields: [bundle_id], references: [bundle_id], onDelete: Cascade, onUpdate: NoAction)
+  products   products @relation(fields: [product_id], references: [product_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([bundle_id, product_id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model bundles {
+  bundle_id     Int            @id @default(autoincrement())
+  restaurant_id Int
+  name          String         @db.VarChar(255)
+  description   String?
+  bundle_price  Decimal        @db.Decimal(10, 2)
+  image_url     String?        @db.VarChar(500)
+  is_active     Boolean?       @default(true)
+  status        status_type?   @default(active)
+  created_at    DateTime?      @default(now()) @db.Timestamp(6)
+  bundle_items  bundle_items[]
+  merchants     merchants      @relation(fields: [restaurant_id], references: [merchant_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model cart_items {
+  cart_item_id   Int            @id @default(autoincrement())
+  cart_id        Int
+  product_id     Int
+  quantity       Int
+  shopping_carts shopping_carts @relation(fields: [cart_id], references: [cart_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_cart")
+  products       products       @relation(fields: [product_id], references: [product_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_product")
+}
+
+model catalog_sections {
+  section_id       Int                @id @default(autoincrement())
+  merchant_id      Int
+  section_title_ar String?            @db.VarChar
+  section_title_en String?            @db.VarChar
+  created_at       DateTime?          @default(now()) @db.Timestamp(6)
+  updated_at       DateTime?          @default(now()) @db.Timestamp(6)
+  is_disabled      Boolean?           @default(false)
+  is_deleted       Boolean?           @default(false)
+  display_order    Int                @default(0)
+  merchants        merchants          @relation(fields: [merchant_id], references: [merchant_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_catalog_sections_merchant")
+  products         products[]
+  section_products section_products[]
+}
+
+model categories {
+  category_id        Int                  @id @default(autoincrement())
+  name               String               @db.VarChar(255)
+  type               category_type?
+  parent_id          Int?
+  status             status_type?         @default(active)
+  created_at         DateTime?            @default(now()) @db.Timestamp(6)
+  image_key          String?              @db.VarChar
+  categories         categories?          @relation("categoriesTocategories", fields: [parent_id], references: [category_id], onDelete: NoAction, onUpdate: NoAction)
+  other_categories   categories[]         @relation("categoriesTocategories")
+  merchants          merchants[]
+  product_categories product_categories[]
+  promotions         promotions[]
+}
+
+model chat_conversations {
+  chat_conversation_id                     Int             @id @default(autoincrement())
+  user1_type                               user_type
+  user1_id                                 Int
+  user2_type                               user_type
+  user2_id                                 Int
+  created_at                               DateTime?       @default(now()) @db.Timestamp(6)
+  users_chat_conversations_user1_idTousers users           @relation("chat_conversations_user1_idTousers", fields: [user1_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+  users_chat_conversations_user2_idTousers users           @relation("chat_conversations_user2_idTousers", fields: [user2_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+  chat_messages                            chat_messages[]
+}
+
+model chat_messages {
+  chat_message_id    Int                @id @default(autoincrement())
+  conversation_id    Int
+  sender_type        sender_type
+  sender_id          Int
+  message            String
+  created_at         DateTime?          @default(now()) @db.Timestamp(6)
+  chat_conversations chat_conversations @relation(fields: [conversation_id], references: [chat_conversation_id], onDelete: Cascade, onUpdate: NoAction)
+  users              users              @relation(fields: [sender_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model cms_pages {
+  cms_page_id Int          @id @default(autoincrement())
+  title       String       @db.VarChar(255)
+  slug        String       @unique @db.VarChar(255)
+  content     String?
+  language    String?      @default("en") @db.VarChar(10)
+  status      status_type? @default(active)
+  created_at  DateTime?    @default(now()) @db.Timestamp(6)
+}
+
+model components {
+  component_id             Int                  @id @default(autoincrement())
+  name                     String               @db.VarChar(255)
+  description              String?
+  default_price_adjustment Decimal?             @default(0.00) @db.Decimal(10, 2)
+  is_global                Boolean?             @default(false)
+  created_by               Int?
+  status                   status_type?         @default(active)
+  created_at               DateTime?            @default(now()) @db.Timestamp(6)
+  merchant_users           merchant_users?      @relation(fields: [created_by], references: [merchant_user_id], onDelete: NoAction, onUpdate: NoAction)
+  product_components       product_components[]
+}
+
+model coupon_redemptions {
+  redemption_id   Int       @id @default(autoincrement())
+  coupon_id       Int
+  user_id         Int
+  order_id        Int?
+  discount_amount Decimal   @db.Decimal(10, 2)
+  redeemed_at     DateTime? @default(now()) @db.Timestamp(6)
+  coupons         coupons   @relation(fields: [coupon_id], references: [coupon_id], onDelete: Cascade, onUpdate: NoAction)
+  orders          orders?   @relation(fields: [order_id], references: [order_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model coupons {
+  coupon_id               Int                  @id @default(autoincrement())
+  code                    String               @unique @db.VarChar(50)
+  name                    String               @db.VarChar(255)
+  description             String?
+  discount_type           String               @db.VarChar(50)
+  discount_value          Decimal              @db.Decimal(10, 2)
+  max_discount_amount     Decimal?             @db.Decimal(10, 2)
+  min_order_amount        Decimal?             @db.Decimal(10, 2)
+  starts_at               DateTime?            @db.Timestamp(6)
+  ends_at                 DateTime?            @db.Timestamp(6)
+  is_active               Boolean?             @default(true)
+  max_redemptions         Int?
+  current_redemptions     Int?                 @default(0)
+  per_user_limit          Int?
+  applicable_merchant_ids Int[]
+  applicable_product_ids  Int[]
+  rules                   Json?
+  created_at              DateTime?            @default(now()) @db.Timestamp(6)
+  updated_at              DateTime?            @default(now()) @db.Timestamp(6)
+  coupon_redemptions      coupon_redemptions[]
+
+  @@index([code], map: "idx_coupons_code")
+  @@index([starts_at, ends_at], map: "idx_coupons_dates")
+  @@index([is_active], map: "idx_coupons_is_active")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model customer_favorites {
+  favorite_id Int       @id @default(autoincrement())
+  customer_id Int
+  entity_type String    @db.VarChar(50)
+  entity_id   Int
+  created_at  DateTime? @default(now()) @db.Timestamp(6)
+  customers   customers @relation(fields: [customer_id], references: [customer_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([customer_id, entity_type, entity_id])
+  @@index([created_at], map: "idx_customer_favorites_created_at")
+  @@index([customer_id], map: "idx_customer_favorites_customer_id")
+  @@index([entity_type, entity_id], map: "idx_customer_favorites_entity")
+}
+
+model customer_preferences {
+  preference_id         Int       @id @default(autoincrement())
+  customer_id           Int       @unique
+  language              String?   @default("en") @db.VarChar(10)
+  currency              String?   @default("EGP") @db.VarChar(3)
+  notifications_enabled Boolean?  @default(true)
+  email_notifications   Boolean?  @default(true)
+  push_notifications    Boolean?  @default(true)
+  sms_notifications     Boolean?  @default(false)
+  marketing_emails      Boolean?  @default(false)
+  theme                 String?   @default("light") @db.VarChar(20)
+  timezone              String?   @default("Africa/Cairo") @db.VarChar(50)
+  created_at            DateTime? @default(now()) @db.Timestamp(6)
+  updated_at            DateTime? @default(now()) @db.Timestamp(6)
+  customers             customers @relation(fields: [customer_id], references: [customer_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([customer_id], map: "idx_customer_preferences_user_id")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model customer_reviews {
+  review_id            Int                    @id @default(autoincrement())
+  customer_id          Int
+  entity_type          String                 @db.VarChar(50)
+  entity_id            Int
+  rating               Decimal                @db.Decimal(2, 1)
+  comment              String?
+  is_verified_purchase Boolean?               @default(false)
+  created_at           DateTime?              @default(now()) @db.Timestamp(6)
+  updated_at           DateTime?              @default(now()) @db.Timestamp(6)
+  customers            customers              @relation(fields: [customer_id], references: [customer_id], onDelete: NoAction, onUpdate: NoAction)
+  review_helpful_votes review_helpful_votes[]
+
+  @@unique([customer_id, entity_type, entity_id])
+  @@index([created_at], map: "idx_customer_reviews_created_at")
+  @@index([customer_id], map: "idx_customer_reviews_customer_id")
+  @@index([entity_type, entity_id], map: "idx_customer_reviews_entity")
+  @@index([rating], map: "idx_customer_reviews_rating")
+}
+
+model customers {
+  customer_id           Int                    @id
+  gender                gender_type?
+  birthday              DateTime?              @db.Date
+  default_currency      currency_type?         @default(USD)
+  status                status_type?           @default(active)
+  language              String?                @default("en") @db.VarChar(10)
+  currency              String?                @default("EGP") @db.VarChar(3)
+  notifications_enabled Boolean?               @default(true)
+  email_notifications   Boolean?               @default(true)
+  push_notifications    Boolean?               @default(true)
+  sms_notifications     Boolean?               @default(false)
+  marketing_emails      Boolean?               @default(false)
+  theme                 String?                @default("light") @db.VarChar(20)
+  timezone              String?                @default("Africa/Cairo") @db.VarChar(50)
+  created_at            DateTime?              @default(now()) @db.Timestamp(6)
+  updated_at            DateTime?              @default(now()) @db.Timestamp(6)
+  profile_image_key     String?                @default("") @db.VarChar(250)
+  customer_favorites    customer_favorites[]
+  customer_preferences  customer_preferences?
+  customer_reviews      customer_reviews[]
+  users                 users                  @relation(fields: [customer_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+  orders                orders[]
+  review_helpful_votes  review_helpful_votes[]
+  shopping_carts        shopping_carts[]
+  user_addresses        user_addresses[]
+}
+
+model delivery_tracking_history {
+  delivery_tracking_history_id Int               @id @default(autoincrement())
+  order_id                     Int
+  driver_id                    Int?
+  status                       order_status_type
+  latitude                     Decimal?          @db.Decimal(10, 8)
+  longitude                    Decimal?          @db.Decimal(11, 8)
+  updated_at                   DateTime?         @default(now()) @db.Timestamp(6)
+  users                        users?            @relation(fields: [driver_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+  orders                       orders            @relation(fields: [order_id], references: [order_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model delivery_zones {
+  delivery_zone_id    Int          @id @default(autoincrement())
+  name                String       @db.VarChar(255)
+  polygon_coordinates String?
+  delivery_fee        Decimal?     @default(0.00) @db.Decimal(10, 2)
+  status              status_type? @default(active)
+  created_at          DateTime?    @default(now()) @db.Timestamp(6)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model driver_performance {
+  driver_performance_id Int       @id @default(autoincrement())
+  driver_id             Int
+  orders_completed      Int?      @default(0)
+  average_rating        Decimal?  @db.Decimal(3, 2)
+  last_updated          DateTime? @default(now()) @db.Timestamp(6)
+  users                 users     @relation(fields: [driver_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model entities {
+  entity_id          Int             @id @default(autoincrement())
+  entity_name        String          @db.VarChar(255)
+  entity_description String?
+  is_active          Boolean?        @default(true)
+  created_at         DateTime?       @default(now()) @db.Timestamp(6)
+  updated_at         DateTime?       @default(now()) @db.Timestamp(6)
+  entity_status      entity_status[]
+  reasons            reasons[]
+}
+
+model entity_status {
+  status_id        Int          @id @default(autoincrement())
+  entity_id        Int
+  entity_record_id String       @db.VarChar(255)
+  status_type_id   Int
+  reason_id        Int?
+  status_date      DateTime?    @default(now()) @db.Timestamp(6)
+  created_by       String?      @db.VarChar(255)
+  deleted_at       DateTime?    @db.Timestamp(6)
+  deleted_by       String?      @db.VarChar(255)
+  entities         entities     @relation(fields: [entity_id], references: [entity_id], onDelete: Cascade, onUpdate: NoAction)
+  reasons          reasons?     @relation(fields: [reason_id], references: [reason_id], onDelete: NoAction, onUpdate: NoAction)
+  status_types     status_types @relation(fields: [status_type_id], references: [status_type_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model favorites {
+  user_id    Int
+  product_id Int
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  products   products  @relation(fields: [product_id], references: [product_id], onDelete: Cascade, onUpdate: NoAction)
+  users      users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([user_id, product_id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model group_choice_options {
+  choice_id             BigInt                @id @default(autoincrement())
+  group_id              BigInt
+  choice_name           String                @db.VarChar(255)
+  choice_name_ar        String                @db.VarChar(255)
+  price                 Decimal               @default(0) @db.Decimal(10, 2)
+  is_active             Boolean?              @default(true)
+  display_order         Int?                  @default(0)
+  created_at            DateTime?             @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime?             @default(now()) @db.Timestamptz(6)
+  product_choice_groups product_choice_groups @relation(fields: [group_id], references: [group_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([group_id], map: "idx_group_choice_options_group_id")
+}
+
+model images {
+  image_id        Int               @id @default(autoincrement())
+  file_key        String            @db.VarChar(255)
+  uploaded_at     DateTime?         @default(now()) @db.Timestamp(6)
+  merchant_images merchant_images[]
+}
+
+model management_users {
+  management_user_id Int          @id
+  status             status_type? @default(active)
+  password_hash      String       @db.VarChar(255)
+  users              users        @relation(fields: [management_user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model meal_categories {
+  meal_category_id Int          @id @default(autoincrement())
+  name             String       @db.VarChar(255)
+  description      String?
+  status           status_type? @default(active)
+  created_at       DateTime?    @default(now()) @db.Timestamp(6)
+}
+
+model merchant_contact_persons {
+  merchant_contact_person_id Int        @id(map: "restaurant_contact_persons_pkey") @default(autoincrement())
+  merchant_id                Int?       @unique(map: "unique_restaurant_id")
+  first_name                 String?    @db.VarChar(100)
+  last_name                  String?    @db.VarChar(100)
+  role                       String?    @db.VarChar(100)
+  email_address              String?    @db.VarChar(100)
+  phone_number               String?    @db.VarChar(100)
+  merchants                  merchants? @relation(fields: [merchant_id], references: [merchant_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_restaurant")
+}
+
+model merchant_hours {
+  merchant_hour_id Int              @id(map: "restaurant_hours_pkey") @default(autoincrement())
+  merchant_id      Int
+  day_of_week      day_of_week_type
+  open_time        DateTime?        @db.Time(6)
+  close_time       DateTime?        @db.Time(6)
+  is_closed        Boolean?         @default(false)
+  status           status_type?     @default(active)
+  merchants        merchants        @relation(fields: [merchant_id], references: [merchant_id], onDelete: Cascade, onUpdate: NoAction, map: "restaurant_hours_restaurant_id_fkey")
+
+  @@unique([merchant_id, day_of_week], map: "restaurant_hours_restaurant_id_day_of_week_key")
+}
+
+model merchant_images {
+  merchant_id Int
+  image_id    Int
+  images      images    @relation(fields: [image_id], references: [image_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_image")
+  merchants   merchants @relation(fields: [merchant_id], references: [merchant_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_restaurant")
+
+  @@id([merchant_id, image_id], map: "restaurant_images_pkey")
+}
+
+model merchant_requests {
+  merchant_request_id Int                     @id @default(autoincrement())
+  merchant_id         Int
+  status              merchant_request_status
+  created_at          DateTime?               @default(now()) @db.Timestamp(6)
+  merchants           merchants               @relation(fields: [merchant_id], references: [merchant_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_merchant_id")
+}
+
+model merchant_users {
+  merchant_user_id Int          @id(map: "merchants_pkey")
+  status           status_type? @default(active)
+  merchant_id      Int
+  merchant_role    String       @db.VarChar
+  password_hash    String       @db.VarChar(255)
+  fcm_token        String?      @db.VarChar(255)
+  components       components[]
+  merchants        merchants    @relation(fields: [merchant_id], references: [merchant_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_merchants_restaurant")
+  users            users        @relation(fields: [merchant_user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "merchants_merchant_id_fkey")
+}
+
+model merchants {
+  merchant_id              Int                       @id(map: "restaurants_pkey") @default(autoincrement())
+  name                     String?                   @db.VarChar(255)
+  description              String?
+  is_owned_by_app          Boolean?                  @default(false)
+  latitude                 Decimal?                  @db.Decimal(10, 8)
+  longitude                Decimal?                  @db.Decimal(11, 8)
+  created_at               DateTime?                 @default(now()) @db.Timestamp(6)
+  cover_key                String?                   @db.VarChar(255)
+  logo_key                 String?                   @db.VarChar(255)
+  category_id              Int?
+  building                 String?                   @db.VarChar
+  street                   String?                   @db.VarChar
+  notes                    String?                   @db.VarChar
+  hotline_number           String?                   @db.VarChar
+  fcm_token                String?                   @db.VarChar(255)
+  zone_id                  Int?
+  is_active                Boolean?                  @default(true)
+  view_counter             Int?
+  bundles                  bundles[]
+  catalog_sections         catalog_sections[]
+  merchant_contact_persons merchant_contact_persons?
+  merchant_hours           merchant_hours[]
+  merchant_images          merchant_images[]
+  merchant_requests        merchant_requests[]
+  merchant_users           merchant_users[]
+  categories               categories?               @relation(fields: [category_id], references: [category_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_category")
+  zones                    zones?                    @relation(fields: [zone_id], references: [zone_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_merchant_zone_id")
+  orders                   orders[]
+  products                 products[]
+  shopping_carts           shopping_carts[]
+
+  @@index([latitude, longitude], map: "idx_restaurants_location")
+}
+
+model notifications {
+  notification_id Int       @id @default(autoincrement())
+  user_id         Int
+  title           String    @db.VarChar(255)
+  message         String
+  data            Json?
+  is_read         Boolean?  @default(false)
+  is_sent         Boolean?  @default(false)
+  sent_at         DateTime? @db.Timestamp(6)
+  created_at      DateTime? @default(now()) @db.Timestamp(6)
+  users           users     @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([created_at], map: "idx_notifications_created_at")
+  @@index([is_read], map: "idx_notifications_is_read")
+  @@index([user_id], map: "idx_notifications_user_id")
+}
+
+model order_components {
+  order_component_id   Int                    @id @default(autoincrement())
+  order_item_id        Int
+  product_component_id Int
+  action               component_action_type? @default(add)
+  order_items          order_items            @relation(fields: [order_item_id], references: [order_item_id], onDelete: Cascade, onUpdate: NoAction)
+  product_components   product_components     @relation(fields: [product_component_id], references: [product_component_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model order_delivery_snapshots {
+  snapshot_id            Int       @id @default(autoincrement())
+  order_id               Int
+  delivery_address_line1 String?
+  delivery_address_line2 String?
+  delivery_city          String?   @db.VarChar(100)
+  delivery_state         String?   @db.VarChar(100)
+  delivery_postal_code   String?   @db.VarChar(20)
+  delivery_country       String?   @db.VarChar(100)
+  delivery_latitude      Decimal?  @db.Decimal(10, 8)
+  delivery_longitude     Decimal?  @db.Decimal(11, 8)
+  delivery_label         String?   @db.VarChar(50)
+  delivery_instructions  String?
+  created_at             DateTime? @default(now()) @db.Timestamp(6)
+  orders                 orders    @relation(fields: [order_id], references: [order_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model order_items {
+  order_item_id    Int                @id @default(autoincrement())
+  order_id         Int
+  product_id       Int
+  quantity         Int
+  unit_price       Decimal            @db.Decimal(10, 2)
+  notes            String?
+  order_components order_components[]
+  orders           orders             @relation(fields: [order_id], references: [order_id], onDelete: Cascade, onUpdate: NoAction)
+  products         products           @relation(fields: [product_id], references: [product_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([order_id], map: "idx_order_items_order_id")
+  @@index([product_id], map: "idx_order_items_product_id")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model orders {
+  order_id                  Int                         @id @default(autoincrement())
+  customer_id               Int
+  restaurant_id             Int
+  delivery_address_id       Int?
+  status                    order_status_type?          @default(pending)
+  total_amount              Decimal                     @db.Decimal(10, 2)
+  payment_method            payment_method_type?
+  scheduled_for             DateTime?                   @db.Timestamp(6)
+  created_at                DateTime?                   @default(now()) @db.Timestamp(6)
+  updated_at                DateTime?                   @default(now()) @db.Timestamp(6)
+  coupon_redemptions        coupon_redemptions[]
+  delivery_tracking_history delivery_tracking_history[]
+  order_delivery_snapshots  order_delivery_snapshots[]
+  order_items               order_items[]
+  customers                 customers                   @relation(fields: [customer_id], references: [customer_id], onDelete: Cascade, onUpdate: NoAction)
+  user_addresses            user_addresses?             @relation(fields: [delivery_address_id], references: [address_id], onDelete: NoAction, onUpdate: NoAction)
+  merchants                 merchants                   @relation(fields: [restaurant_id], references: [merchant_id], onDelete: Cascade, onUpdate: NoAction)
+  payment_transactions      payment_transactions[]
+  payments                  payments[]
+  scheduled_orders          scheduled_orders[]
+
+  @@index([created_at], map: "idx_orders_created_at")
+  @@index([customer_id], map: "idx_orders_customer_id")
+  @@index([restaurant_id], map: "idx_orders_restaurant_id")
+  @@index([status], map: "idx_orders_status")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model payment_transactions {
+  payment_transaction_id Int                  @id @default(autoincrement())
+  order_id               Int
+  payment_method         payment_method_type
+  amount                 Decimal              @db.Decimal(10, 2)
+  status                 payment_status_type? @default(pending)
+  transaction_id         String?              @db.VarChar(255)
+  created_at             DateTime?            @default(now()) @db.Timestamp(6)
+  orders                 orders               @relation(fields: [order_id], references: [order_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model payments {
+  payment_id     Int                  @id @default(autoincrement())
+  order_id       Int
+  payment_method payment_method_type
+  amount         Decimal              @db.Decimal(10, 2)
+  status         payment_status_type? @default(pending)
+  transaction_id String?              @db.VarChar(255)
+  created_at     DateTime?            @default(now()) @db.Timestamp(6)
+  orders         orders               @relation(fields: [order_id], references: [order_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model product_categories {
+  category_id Int
+  product_id  Int
+  categories  categories @relation(fields: [category_id], references: [category_id], onDelete: NoAction, onUpdate: NoAction)
+  products    products   @relation(fields: [product_id], references: [product_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([category_id, product_id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model product_choice_groups {
+  group_id             BigInt                 @id @default(autoincrement())
+  product_id           Int
+  group_name           String                 @db.VarChar(255)
+  group_name_ar        String                 @db.VarChar(255)
+  maximum_choices      Int                    @default(1)
+  is_required          Boolean?               @default(false)
+  display_order        Int?                   @default(0)
+  created_at           DateTime?              @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime?              @default(now()) @db.Timestamptz(6)
+  group_choice_options group_choice_options[]
+  products             products               @relation(fields: [product_id], references: [product_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([product_id], map: "idx_product_choice_groups_product_id")
+}
+
+model product_components {
+  product_component_id Int                @id @default(autoincrement())
+  product_id           Int
+  component_id         Int
+  is_required          Boolean?           @default(false)
+  is_default           Boolean?           @default(false)
+  order_components     order_components[]
+  components           components         @relation(fields: [component_id], references: [component_id], onDelete: Cascade, onUpdate: NoAction)
+  products             products           @relation(fields: [product_id], references: [product_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([product_id, component_id])
+}
+
+model product_images {
+  image_id   BigInt   @id @default(autoincrement())
+  product_id Int
+  image_key  String
+  position   Int
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  products   products @relation(fields: [product_id], references: [product_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_product_images_product")
+
+  @@unique([product_id, image_key], map: "uq_product_image_key")
+  @@unique([product_id, position], map: "uq_product_image_position")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model product_inventory {
+  product_id        Int       @id
+  quantity_in_stock Int?      @default(0)
+  restock_threshold Int?      @default(5)
+  last_updated      DateTime? @default(now()) @db.Timestamp(6)
+  products          products  @relation(fields: [product_id], references: [product_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model product_tags {
+  product_id Int
+  tag_id     BigInt
+  added_at   DateTime @default(now()) @db.Timestamptz(6)
+  products   products @relation(fields: [product_id], references: [product_id], onDelete: Cascade, onUpdate: NoAction)
+  tags       tags     @relation(fields: [tag_id], references: [tag_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([product_id, tag_id])
+  @@index([product_id], map: "idx_product_tags_product_id")
+  @@index([tag_id], map: "idx_product_tags_tag_id")
+}
+
+model product_variations {
+  variation_id       BigInt              @id @default(autoincrement())
+  product_id         Int
+  variation_title    String              @db.VarChar(255)
+  variation_title_ar String              @db.VarChar(255)
+  created_at         DateTime?           @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime?           @default(now()) @db.Timestamptz(6)
+  products           products            @relation(fields: [product_id], references: [product_id], onDelete: Cascade, onUpdate: NoAction)
+  variation_options  variation_options[]
+
+  @@index([product_id], map: "idx_product_variations_product_id")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model products {
+  product_id            Int                     @id @default(autoincrement())
+  merchant_id           Int
+  name                  String                  @db.VarChar(255)
+  description           String?
+  price                 Decimal                 @db.Decimal(10, 2)
+  image_url             String?                 @db.VarChar(500)
+  calories              Int?
+  is_available          Boolean?                @default(true)
+  is_on_sale            Boolean?                @default(false)
+  sale_price            Decimal?                @db.Decimal(10, 2)
+  status                status_type?            @default(active)
+  created_at            DateTime?               @default(now()) @db.Timestamp(6)
+  name_ar               String?                 @db.VarChar
+  description_ar        String?                 @db.VarChar
+  section_id            Int?
+  updated_at            DateTime?               @default(now()) @db.Timestamp(6)
+  is_disabled           Boolean?                @default(false)
+  is_deleted            Boolean?                @default(false)
+  discount_percentage   Decimal?                @db.Decimal
+  display_order         Int                     @default(0)
+  bundle_items          bundle_items[]
+  cart_items            cart_items[]
+  favorites             favorites[]
+  order_items           order_items[]
+  product_categories    product_categories[]
+  product_choice_groups product_choice_groups[]
+  product_components    product_components[]
+  product_images        product_images[]
+  product_inventory     product_inventory?
+  product_tags          product_tags[]
+  product_variations    product_variations[]
+  catalog_sections      catalog_sections?       @relation(fields: [section_id], references: [section_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_products_section")
+  merchants             merchants               @relation(fields: [merchant_id], references: [merchant_id], onDelete: Cascade, onUpdate: NoAction, map: "products_restaurant_id_fkey")
+  promotion_items       promotion_items[]
+  section_products      section_products[]
+
+  @@index([is_available], map: "idx_products_is_available")
+  @@index([merchant_id], map: "idx_products_restaurant_id")
+}
+
+model promotion_items {
+  promotion_id Int
+  product_id   Int
+  products     products   @relation(fields: [product_id], references: [product_id], onDelete: NoAction, onUpdate: NoAction)
+  promotions   promotions @relation(fields: [promotion_id], references: [promotion_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([promotion_id, product_id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model promotions {
+  promotion_id        Int               @id @default(autoincrement())
+  title_arabic        String
+  title_english       String
+  description_arabic  String?
+  description_english String?
+  image_key           String
+  action_type         action_type_enum
+  category_id         Int?
+  external_url        String?
+  deeplink            String?
+  display_order       Int?              @default(0)
+  is_disabled         Boolean?          @default(false)
+  created_at          DateTime?         @default(now()) @db.Timestamp(6)
+  updated_at          DateTime?         @default(now()) @db.Timestamp(6)
+  promotion_items     promotion_items[]
+  categories          categories?       @relation(fields: [category_id], references: [category_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model reasons {
+  reason_id          Int             @id @default(autoincrement())
+  entity_id          Int
+  reason_type        reason_type
+  reason_description String
+  created_at         DateTime?       @default(now()) @db.Timestamp(6)
+  updated_at         DateTime?       @default(now()) @db.Timestamp(6)
+  entity_status      entity_status[]
+  entities           entities        @relation(fields: [entity_id], references: [entity_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model recent_searches {
+  recent_search_id Int       @id @default(autoincrement())
+  user_id          Int
+  search_text      String    @db.VarChar(255)
+  created_at       DateTime? @default(now()) @db.Timestamp(6)
+  users            users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model review_helpful_votes {
+  vote_id          Int              @id @default(autoincrement())
+  review_id        Int
+  customer_id      Int
+  is_helpful       Boolean
+  created_at       DateTime?        @default(now()) @db.Timestamp(6)
+  customers        customers        @relation(fields: [customer_id], references: [customer_id], onDelete: NoAction, onUpdate: NoAction)
+  customer_reviews customer_reviews @relation(fields: [review_id], references: [review_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([review_id, customer_id])
+  @@index([customer_id], map: "idx_review_helpful_votes_customer_id")
+  @@index([review_id], map: "idx_review_helpful_votes_review_id")
+}
+
+model scheduled_orders {
+  scheduled_order_id Int          @id @default(autoincrement())
+  order_id           Int
+  scheduled_time     DateTime     @db.Timestamp(6)
+  status             status_type? @default(active)
+  created_at         DateTime?    @default(now()) @db.Timestamp(6)
+  orders             orders       @relation(fields: [order_id], references: [order_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model section_products {
+  section_id       Int
+  product_id       Int
+  products         products         @relation(fields: [product_id], references: [product_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_product")
+  catalog_sections catalog_sections @relation(fields: [section_id], references: [section_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_section")
+
+  @@id([section_id, product_id], map: "pk_section_products")
+}
+
+model shopping_carts {
+  cart_id             Int          @id @default(autoincrement())
+  customer_id         Int
+  created_at          DateTime?    @default(now()) @db.Timestamp(6)
+  merchant_id         Int?
+  applied_coupon_code String?      @db.VarChar(50)
+  cart_items          cart_items[]
+  customers           customers    @relation(fields: [customer_id], references: [customer_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user")
+  merchants           merchants?   @relation(fields: [merchant_id], references: [merchant_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([applied_coupon_code], map: "idx_shopping_carts_applied_coupon")
+  @@index([merchant_id], map: "idx_shopping_carts_merchant")
+}
+
+model social_media_links {
+  social_media_link_id Int          @id @default(autoincrement())
+  platform             String       @db.VarChar(50)
+  url                  String       @db.VarChar(500)
+  status               status_type? @default(active)
+  created_at           DateTime?    @default(now()) @db.Timestamp(6)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model spatial_ref_sys {
+  srid      Int     @id
+  auth_name String? @db.VarChar(256)
+  auth_srid Int?
+  srtext    String? @db.VarChar(2048)
+  proj4text String? @db.VarChar(2048)
+}
+
+model status_types {
+  status_type_id     Int             @id @default(autoincrement())
+  status_type_code   String          @unique @db.VarChar(50)
+  status_type_name   String          @db.VarChar(255)
+  status_description String?
+  is_active          Boolean?        @default(true)
+  created_at         DateTime?       @default(now()) @db.Timestamp(6)
+  updated_at         DateTime?       @default(now()) @db.Timestamp(6)
+  entity_status      entity_status[]
+}
+
+model support_tickets {
+  support_ticket_id Int            @id @default(autoincrement())
+  user_type         user_type
+  user_id           Int
+  subject           String         @db.VarChar(255)
+  description       String
+  status            status_type?   @default(pending)
+  priority          priority_type? @default(medium)
+  created_at        DateTime?      @default(now()) @db.Timestamp(6)
+  users             users          @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model tags {
+  tag_id       BigInt         @id @default(autoincrement())
+  name         String         @unique @db.Citext
+  slug         String         @unique @db.Citext
+  description  String?
+  created_at   DateTime       @default(now()) @db.Timestamptz(6)
+  product_tags product_tags[]
+}
+
+model user_addresses {
+  address_id    Int          @id @default(autoincrement())
+  customer_id   Int
+  label         String?      @default("Home") @db.VarChar(50)
+  address_line1 String
+  address_line2 String?
+  city          String       @db.VarChar(100)
+  state         String?      @db.VarChar(100)
+  postal_code   String?      @db.VarChar(20)
+  latitude      Decimal?     @db.Decimal(10, 8)
+  longitude     Decimal?     @db.Decimal(11, 8)
+  is_default    Boolean?     @default(false)
+  status        status_type? @default(active)
+  created_at    DateTime?    @default(now()) @db.Timestamp(6)
+  updated_at    DateTime?    @default(now()) @db.Timestamp(6)
+  country       String?      @db.VarChar
+  apartment     String?      @db.VarChar
+  building      String?      @db.VarChar
+  zone_id       Int?
+  orders        orders[]
+  customers     customers    @relation(fields: [customer_id], references: [customer_id], onDelete: Cascade, onUpdate: NoAction)
+  zones         zones?       @relation(fields: [zone_id], references: [zone_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([latitude, longitude], map: "idx_user_addresses_location")
+}
+
+model user_devices {
+  user_device_id Int         @id @default(autoincrement())
+  user_id        Int
+  device_token   String      @db.VarChar(500)
+  device_type    device_type
+  is_active      Boolean?    @default(true)
+  last_active    DateTime?   @default(now()) @db.Timestamp(6)
+  created_at     DateTime?   @default(now()) @db.Timestamp(6)
+  users          users       @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model user_otp {
+  user_otp_id Int        @id @default(autoincrement())
+  user_id     Int?
+  destination String     @db.VarChar
+  method      otp_method
+  otp_code    String     @db.VarChar(12)
+  is_used     Boolean?   @default(false)
+  expires_at  DateTime   @db.Timestamp(6)
+  created_at  DateTime?  @default(now()) @db.Timestamp(6)
+  users       users?     @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model users {
+  user_id                                               Int                         @id @default(autoincrement())
+  name                                                  String?                     @db.VarChar(255)
+  email                                                 String?                     @unique @db.VarChar(255)
+  phone_number                                          String?                     @db.VarChar(20)
+  default_currency                                      currency_type?              @default(USD)
+  created_at                                            DateTime?                   @default(now()) @db.Timestamp(6)
+  country_code                                          String?                     @db.VarChar(5)
+  user_type                                             user_type                   @default(customer)
+  analytics_views                                       analytics_views[]
+  audit_logs                                            audit_logs[]
+  bearer_tokens                                         bearer_tokens[]
+  chat_conversations_chat_conversations_user1_idTousers chat_conversations[]        @relation("chat_conversations_user1_idTousers")
+  chat_conversations_chat_conversations_user2_idTousers chat_conversations[]        @relation("chat_conversations_user2_idTousers")
+  chat_messages                                         chat_messages[]
+  customers                                             customers?
+  delivery_tracking_history                             delivery_tracking_history[]
+  driver_performance                                    driver_performance[]
+  favorites                                             favorites[]
+  management_users                                      management_users?
+  merchant_users                                        merchant_users?
+  notifications                                         notifications[]
+  recent_searches                                       recent_searches[]
+  support_tickets                                       support_tickets[]
+  user_devices                                          user_devices[]
+  user_otp                                              user_otp[]
+
+  @@index([email], map: "idx_users_email")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model variation_options {
+  option_id          BigInt             @id @default(autoincrement())
+  variation_id       BigInt
+  option_name        String             @db.VarChar(255)
+  option_name_ar     String             @db.VarChar(255)
+  price_adjustment   Decimal            @default(0) @db.Decimal(10, 2)
+  is_active          Boolean?           @default(true)
+  display_order      Int?               @default(0)
+  created_at         DateTime?          @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime?          @default(now()) @db.Timestamptz(6)
+  product_variations product_variations @relation(fields: [variation_id], references: [variation_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([variation_id], map: "idx_variation_options_variation_id")
+}
+
+model zone_polygons {
+  polygon_id Int                     @id @default(autoincrement())
+  zone_id    Int?
+  polygon    Unsupported("geometry")
+  created_at DateTime?               @default(now()) @db.Timestamp(6)
+  updated_at DateTime?               @default(now()) @db.Timestamp(6)
+  zones      zones?                  @relation(fields: [zone_id], references: [zone_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model zones {
+  zone_id          Int              @id @default(autoincrement())
+  zone_name        String           @db.VarChar(100)
+  zone_description String?
+  created_at       DateTime?        @default(now()) @db.Timestamp(6)
+  updated_at       DateTime?        @default(now()) @db.Timestamp(6)
+  is_deleted       Boolean?         @default(false)
+  merchants        merchants[]
+  user_addresses   user_addresses[]
+  zone_polygons    zone_polygons[]
+}
+
+enum action_type_enum {
+  NAVIGATE_TO_CATEGORY
+  NAVIGATE_TO_PRODUCT
+  OPEN_EXTERNAL_URL
+  OPEN_DEEPLINK
+  NO_ACTION
+}
+
+enum category_type {
+  food
+  drink
+  dessert
+  appetizer
+  main_course
+}
+
+enum component_action_type {
+  add
+  remove
+  extra
+  no_change
+}
+
+enum currency_type {
+  USD
+  EUR
+  GBP
+  CAD
+  AUD
+  JPY
+}
+
+enum day_of_week_type {
+  monday
+  tuesday
+  wednesday
+  thursday
+  friday
+  saturday
+  sunday
+}
+
+enum device_type {
+  ios
+  android
+  web
+  desktop
+}
+
+enum discount_type {
+  percentage
+  fixed_amount
+}
+
+enum entity_type {
+  user
+  restaurant
+  product
+  order
+  promotion
+}
+
+enum gender_type {
+  male
+  female
+  other
+  prefer_not_to_say
+}
+
+enum merchant_request_status {
+  not_sent_yet
+  pending
+  approved
+  rejected
+}
+
+enum order_status_type {
+  pending
+  confirmed
+  preparing
+  ready_for_pickup
+  out_for_delivery
+  delivered
+  cancelled
+  refunded
+}
+
+enum otp_method {
+  phone
+  email
+}
+
+enum otp_method_type {
+  sms
+  email
+  voice
+}
+
+enum payment_method_type {
+  credit_card
+  debit_card
+  paypal
+  apple_pay
+  google_pay
+  cash
+  bank_transfer
+}
+
+enum payment_status_type {
+  pending
+  processing
+  completed
+  failed
+  cancelled
+  refunded
+}
+
+enum priority_type {
+  low
+  medium
+  high
+  urgent
+}
+
+enum promotion_applies_to_type {
+  all_items
+  specific_items
+  category
+}
+
+enum reason_type {
+  hold
+  disable
+  suspend
+  activate
+}
+
+enum restaurant_type {
+  fast_food
+  casual_dining
+  fine_dining
+  cafe
+  bakery
+  food_truck
+}
+
+enum sender_type {
+  customer
+  merchant
+  management
+  driver
+  system
+}
+
+enum status_type {
+  active
+  inactive
+  pending
+  suspended
+  deleted
+}
+
+enum user_type {
+  customer
+  merchant
+  management
+  driver
+}

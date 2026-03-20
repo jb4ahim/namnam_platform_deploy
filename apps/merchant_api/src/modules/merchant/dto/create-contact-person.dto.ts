@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsEmail, IsPhoneNumber } from 'class-validator';
+import { IsString, IsEmail, IsPhoneNumber } from 'class-validator';
 
 export class CreateContactPersonDto {
   @IsString()
@@ -11,6 +11,7 @@ export class CreateContactPersonDto {
   role!: string;
 
   @IsString()
+  @IsPhoneNumber()
   phoneNumber!: string;
 
   @IsEmail()

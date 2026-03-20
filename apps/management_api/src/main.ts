@@ -6,6 +6,7 @@ import { join } from 'path';
 import { ValidationPipe } from '@nestjs/common';
 import { NamnamManagementApiModule } from './namnam_management_api.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import fastifyApiReference from '@scalar/fastify-api-reference';
 
 async function bootstrap() {
   const adapter = new FastifyAdapter();
@@ -46,6 +47,11 @@ async function bootstrap() {
   SwaggerModule.setup('api/docs', app, document, {
     customCssUrl: '/swagger-static/swagger-ui.css',
     customJs: ['/swagger-static/swagger-ui-bundle.js', '/swagger-static/swagger-ui-standalone-preset.js'],
+  });
+
+  await app.register(fastifyApiReference, {
+    routePrefix: '/api/reference',
+    configuration: { spec: { url: '/api/docs-json' } },
   });
 
   const port = process.env.PORT || '3003';
