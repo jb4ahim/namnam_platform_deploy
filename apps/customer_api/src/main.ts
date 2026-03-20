@@ -34,7 +34,7 @@ async function bootstrap() {
 
   await app.register(fastifyApiReference, {
     routePrefix: '/api/reference',
-    configuration: { spec: { url: '/api/docs-json' } },
+    configuration: { url: '/api/docs-json' },
   });
 
   // Use Render's PORT environment variable
