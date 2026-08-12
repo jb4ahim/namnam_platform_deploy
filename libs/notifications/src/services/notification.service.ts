@@ -21,7 +21,7 @@ export class NotificationService {
     // private notificationLogRepo: Repository<NotificationLog>,
   ) {
     console.log('NotificationService: Initializing service...');
-    this.providers = new Map([
+    this.providers = new Map<NotificationType, INotificationProvider>([
       [NotificationType.EMAIL, this.emailProvider],
       [NotificationType.FIREBASE, this.firebaseProvider],
     ]);
@@ -71,11 +71,12 @@ export class NotificationService {
       // TODO: Update log when database is configured
       return result;
     } catch (error) {
-      console.error('NotificationService: Error sending notification:', error.message);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error('NotificationService: Error sending notification:', errorMessage);
       // TODO: Log error when database is configured
       return {
         success: false,
-        error: error.message,
+        error: errorMessage,
       };
     }
   }
