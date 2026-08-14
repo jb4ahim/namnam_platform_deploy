@@ -13,7 +13,7 @@ import { AppConfigModule } from './modules/app-config/app-config.module';
 import { PromotionsModule } from './modules/promotions/promotions.module';
 import { MerchantsModule } from './modules/merchants/merchants.module';
 import { ProductsModule } from './modules/products/products.module';
-import { CategoriesModule } from 'apps/management_api/src/modules/categories/categories.module';
+import { CategoriesModule } from './modules/categories/categories.module';
 import { CartModule } from './modules/cart/cart.module';
 import { OrdersModule } from './modules/orders/orders.module';
 import { FavoritesModule } from './modules/favorites/favorites.module'; // Import the FavoritesModule
