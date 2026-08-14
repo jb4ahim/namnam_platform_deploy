@@ -7,6 +7,26 @@ import { PromotionsRepository } from './promotions.repository';
 export class PromotionsService {
   constructor(private readonly promotionsRepository: PromotionsRepository) {}
 
+  private normalizeImageUrl(imageKey?: string): string | undefined {
+    if (!imageKey) {
+      return imageKey;
+    }
+
+    // Keep existing full URLs unchanged.
+    if (/^https?:\/\//i.test(imageKey)) {
+      return imageKey;
+    }
+
+    const bucket = process.env.AWS_S3_BUCKET;
+    const region = process.env.AWS_REGION;
+    if (!bucket || !region) {
+      return imageKey;
+    }
+
+    const normalizedKey = imageKey.replace(/^\/+/, '');
+    return `https://${bucket}.s3.${region}.amazonaws.com/${normalizedKey}`;
+  }
+
   async getPromotions() {
     return await this.promotionsRepository.getPromotions();
   }
@@ -20,11 +40,19 @@ export class PromotionsService {
   }
 
   async createPromotion(createPromotionDto: CreatePromotionDto) {
-     await this.promotionsRepository.createPromotion(createPromotionDto);
+    const payload: CreatePromotionDto = {
+      ...createPromotionDto,
+      imageKey: this.normalizeImageUrl(createPromotionDto.imageKey) ?? createPromotionDto.imageKey,
+    };
+    await this.promotionsRepository.createPromotion(payload);
   }
 
   async updatePromotion(promotionId: number, updatePromotionDto: UpdatePromotionDto) {
-     await this.promotionsRepository.updatePromotion(promotionId, updatePromotionDto);
+    const payload: UpdatePromotionDto = {
+      ...updatePromotionDto,
+      imageKey: this.normalizeImageUrl(updatePromotionDto.imageKey),
+    };
+    await this.promotionsRepository.updatePromotion(promotionId, payload);
 
   }
 

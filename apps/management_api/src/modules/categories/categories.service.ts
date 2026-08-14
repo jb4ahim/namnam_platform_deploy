@@ -12,6 +12,25 @@ export class CategoriesService {
     private readonly s3Service: S3PresignService
   ) {}
 
+  private normalizeImageUrl(imageKey?: string): string | undefined {
+    if (!imageKey) {
+      return imageKey;
+    }
+
+    if (/^https?:\/\//i.test(imageKey)) {
+      return imageKey;
+    }
+
+    const bucket = process.env.AWS_S3_BUCKET;
+    const region = process.env.AWS_REGION;
+    if (!bucket || !region) {
+      return imageKey;
+    }
+
+    const normalizedKey = imageKey.replace(/^\/+/, '');
+    return `https://${bucket}.s3.${region}.amazonaws.com/${normalizedKey}`;
+  }
+
   async getAll(parentId?: number): Promise<GetCategoryDto[]> {
     const categories = await this.categoriesRepository.getAllCategories(parentId);
     return Promise.all(
@@ -22,11 +41,19 @@ export class CategoriesService {
   }
 
   async create(dto: CreateCategoryDto) : Promise<void> {
-    return this.categoriesRepository.createCategory(dto);
+    const payload: CreateCategoryDto = {
+      ...dto,
+      imageKey: this.normalizeImageUrl(dto.imageKey),
+    };
+    return this.categoriesRepository.createCategory(payload);
   }
 
   async update(id: string, dto: UpdateCategoryDto) {
-    return this.categoriesRepository.updateCategory(id, dto);
+    const payload: UpdateCategoryDto = {
+      ...dto,
+      imageKey: this.normalizeImageUrl(dto.imageKey),
+    };
+    return this.categoriesRepository.updateCategory(id, payload);
   }
 }
 
