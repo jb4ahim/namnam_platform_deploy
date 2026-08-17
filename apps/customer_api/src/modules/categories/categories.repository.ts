@@ -11,7 +11,9 @@ export class CategoriesRepository {
         }
 
         if (Array.isArray(result)) {
-            return result.filter(item => item !== null && item !== undefined);
+            return result
+                .flat(Infinity)
+                .filter(item => item !== null && item !== undefined);
         }
 
         return [result];
