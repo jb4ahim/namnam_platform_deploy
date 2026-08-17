@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseUtils, PostgresService } from '@app/database';
-import { Console } from 'console';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { GetCategoryDto } from './dto/get-category.dto';
@@ -10,15 +9,39 @@ import { GetCategoryDto } from './dto/get-category.dto';
 export class CategoriesRepository {
   constructor(private readonly pg: PostgresService) {}
 
-  async getAllCategories(parentId?: number): Promise<GetCategoryDto[]> {
-    console.log(parentId);
+  private normalizeCategoriesResult(result: unknown): GetCategoryDto[] {
+    if (!result) {
+      return [];
+    }
+
+    if (Array.isArray(result)) {
+      return result.filter((item): item is GetCategoryDto => item !== null && item !== undefined);
+    }
+
+    return [result as GetCategoryDto];
+  }
+
+  private async queryCategories(functionName: string, params: any[]): Promise<GetCategoryDto[]> {
     const result = await DatabaseUtils.callFunction<GetCategoryDto[] | GetCategoryDto>(
       this.pg,
-      'select_categories',
-      [parentId ?? null],
-      false
+      functionName,
+      params,
+      true
     );
-    return (result as GetCategoryDto[]) ?? [];
+    return this.normalizeCategoriesResult(result);
+  }
+
+  async getAllCategories(parentId?: number): Promise<GetCategoryDto[]> {
+    const hasParentId = parentId !== undefined && parentId !== null;
+
+    // Some DBs expose select_categories(parent_id), others select_categories().
+    const withNullableArg = await this.queryCategories('select_categories', [hasParentId ? parentId : null]);
+    if (withNullableArg.length > 0 || hasParentId) {
+      return withNullableArg;
+    }
+
+    const withoutArgs = await this.queryCategories('select_categories', []);
+    return withoutArgs;
   }
 
   async createCategory(params: CreateCategoryDto): Promise<void> {

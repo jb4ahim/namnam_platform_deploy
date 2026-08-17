@@ -12,7 +12,8 @@ export class AppConfigService {
   async getHomeConfig(zoneId?: number) {
     const [homeConfig, categories] = await Promise.all([
       this.appConfigRepository.getHomeConfig(zoneId),
-      this.categoriesService.getCategories(),
+      // Home API requires top-level/all categories via parentId = 0.
+      this.categoriesService.getCategories(0),
     ]);
 
     if (!homeConfig) {

@@ -5,40 +5,48 @@ import { DatabaseUtils, PostgresService } from '@app/database';
 export class CategoriesRepository {
     constructor(private readonly pg: PostgresService) {}
 
-    private async queryCategoriesByFunction(functionName: string, parentId?: number) {
-        const hasParentId = parentId !== undefined && parentId !== null;
-        const query = hasParentId
-            ? `SELECT * FROM ${functionName}($1)`
-            : `SELECT * FROM ${functionName}()`;
-        const rows = await this.pg.query(query, hasParentId ? [parentId] : []);
-
-        if (!rows || rows.length === 0) {
+    private normalizeCategoryResult(result: unknown): unknown[] {
+        if (!result) {
             return [];
         }
 
-        // Some DB functions can return a single column named after the function itself.
-        const firstRow = rows[0];
-        if (
-            firstRow &&
-            typeof firstRow === 'object' &&
-            Object.keys(firstRow).length === 1 &&
-            Object.prototype.hasOwnProperty.call(firstRow, functionName)
-        ) {
-            return rows
-                .map(row => row[functionName as keyof typeof row])
-                .filter(item => item !== null && item !== undefined);
+        if (Array.isArray(result)) {
+            return result.filter(item => item !== null && item !== undefined);
         }
 
-        return rows.filter(item => item !== null && item !== undefined);
+        return [result];
+    }
+
+    private async queryCategoriesByFunction(functionName: string, params: any[]) {
+        const result = await DatabaseUtils.callFunction(
+            this.pg,
+            functionName,
+            params,
+            true
+        );
+        return this.normalizeCategoryResult(result);
     }
 
     async getCategories(parentId?: number) {
         const functionCandidates = ['select_categories_customer', 'select_categories'];
+        const hasParentId = parentId !== undefined && parentId !== null;
 
         for (const functionName of functionCandidates) {
             try {
-                const result = await this.queryCategoriesByFunction(functionName, parentId);
-                return result || [];
+                // Try nullable-arg signature first to support functions that require one argument.
+                const argResult = await this.queryCategoriesByFunction(
+                    functionName,
+                    [hasParentId ? parentId : null]
+                );
+                if (argResult.length > 0 || hasParentId) {
+                    return argResult;
+                }
+
+                // If parent is omitted and nullable-arg returned nothing, try no-arg signature.
+                const noArgResult = await this.queryCategoriesByFunction(functionName, []);
+                if (noArgResult.length > 0) {
+                    return noArgResult;
+                }
             } catch (error) {
                 const dbErrorCode = (error as { code?: string })?.code;
                 // 42883 => function does not exist for current signature, try next function candidate.
