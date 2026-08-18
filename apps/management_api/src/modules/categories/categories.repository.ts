@@ -59,6 +59,14 @@ export class CategoriesRepository {
       [id, params.name ?? null, params.parentId ?? null, params.status ?? null, params.imageKey ?? null]
     );
   }
+
+  async deleteCategory(id: number): Promise<void> {
+    await DatabaseUtils.callProcedure(
+      this.pg,
+      'delete_category',
+      [id],
+    );
+  }
 }
 
 

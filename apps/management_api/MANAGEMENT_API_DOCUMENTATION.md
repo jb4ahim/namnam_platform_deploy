@@ -685,6 +685,30 @@ Content-Type: application/json
 
 ---
 
+#### 4. Delete Category
+```http
+DELETE /api/categories/:id
+Authorization: Bearer <token>
+```
+
+**Path Parameters**:
+- `id` (number, required): Category ID to delete
+
+**Behavior**:
+- Returns 404 if the category does not exist
+- Child categories are unlinked (their `parentId` is set to `null`)
+- Product-category links for this category are removed
+- Merchant and promotion `categoryId` references are cleared
+
+**Response**:
+```json
+{
+  "success": true
+}
+```
+
+---
+
 ### Zones Module (`/api/zones`)
 
 #### 1. List Zones
@@ -2181,6 +2205,7 @@ CMD ["node", "dist/main"]
 - `select_categories` - List categories
 - `create_category` - Create category
 - `update_category` - Update category
+- `delete_category` - Delete category
 
 **Zones**:
 - `select_zones` - List zones

@@ -152,6 +152,10 @@
     "return_type": null
   },
   {
+    "function_name": "delete_category",
+    "return_type": null
+  },
+  {
     "function_name": "delete_coupon_management",
     "return_type": null
   },

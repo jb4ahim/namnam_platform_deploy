@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CategoriesRepository } from './categories.repository';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -54,6 +54,19 @@ export class CategoriesService {
       imageKey: this.normalizeImageUrl(dto.imageKey),
     };
     return this.categoriesRepository.updateCategory(id, payload);
+  }
+
+  async delete(id: number) {
+    try {
+      await this.categoriesRepository.deleteCategory(id);
+      return { success: true };
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : '';
+      if (message.includes('not found')) {
+        throw new NotFoundException(`Category with ID ${id} not found`);
+      }
+      throw error;
+    }
   }
 }
 
