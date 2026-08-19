@@ -52,11 +52,11 @@ export class CategoriesRepository {
     );
   }
 
-  async updateCategory(id: string, params: UpdateCategoryDto): Promise<void> {
+  async updateCategory(params: UpdateCategoryDto): Promise<void> {
      await DatabaseUtils.callProcedure<UpdateCategoryDto>(
       this.pg,
       'update_category',
-      [id, params.name ?? null, params.parentId ?? null, params.status ?? null, params.imageKey ?? null]
+      [params.id, params.name ?? null, params.parentId ?? null, params.status ?? null, params.imageKey ?? null]
     );
   }
 

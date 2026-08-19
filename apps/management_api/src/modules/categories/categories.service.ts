@@ -48,12 +48,12 @@ export class CategoriesService {
     return this.categoriesRepository.createCategory(payload);
   }
 
-  async update(id: string, dto: UpdateCategoryDto) {
+  async update(dto: UpdateCategoryDto) {
     const payload: UpdateCategoryDto = {
       ...dto,
       imageKey: this.normalizeImageUrl(dto.imageKey),
     };
-    return this.categoriesRepository.updateCategory(id, payload);
+    return this.categoriesRepository.updateCategory(payload);
   }
 
   async delete(id: number) {

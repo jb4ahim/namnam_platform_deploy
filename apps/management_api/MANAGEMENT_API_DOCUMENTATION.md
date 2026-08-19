@@ -666,10 +666,11 @@ Content-Type: application/json
 
 #### 3. Update Category
 ```http
-PATCH /api/categories/:id
+PATCH /api/categories/updateCategories
 Content-Type: application/json
 
 {
+  "id": 15,
   "name": "Japanese Cuisine",
   "status": "active",
   "imageKey": "categories/japanese-updated.jpg"

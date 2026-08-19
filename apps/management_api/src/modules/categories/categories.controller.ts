@@ -31,15 +31,15 @@ export class CategoriesController {
     return this.categoriesService.create(dto);
   }
 
-  @Patch(':id')
+  @Patch('updateCategories')
   @ApiOperation({ summary: 'Update an existing category' })
-  @ApiParam({ name: 'id', type: String, description: 'Category ID' })
   @ApiBody({ type: UpdateCategoryDto })
   @ApiResponse({ status: 200, type: GetCategoryDto, description: 'Category updated' })
+  @ApiResponse({ status: 400, description: 'Validation failed' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Category not found' })
-  async update(@Param('id') id: string, @Body() dto: UpdateCategoryDto) {
-    return this.categoriesService.update(id, dto);
+  async update(@Body() dto: UpdateCategoryDto) {
+    return this.categoriesService.update(dto);
   }
 
   @Delete(':id')
