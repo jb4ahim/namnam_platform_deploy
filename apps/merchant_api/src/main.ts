@@ -20,13 +20,6 @@ async function bootstrap() {
     origin: true,
     credentials: true,
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
-    allowedHeaders: [
-      'Content-Type',
-      'Authorization',
-      'Accept',
-      'Origin',
-      'X-Requested-With',
-    ],
   });
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe({
