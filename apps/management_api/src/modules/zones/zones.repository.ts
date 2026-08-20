@@ -53,17 +53,12 @@ export class ZonesRepository {
     );
   }
 
-  async updateZone(id: number, dto: UpdateZoneDto): Promise<Zone> {
-    const result = await DatabaseUtils.callFunction<Zone>(
+  async updateZone(dto: UpdateZoneDto): Promise<void> {
+    await DatabaseUtils.callProcedure(
       this.pg,
       'update_zone',
-      [id, dto.zoneName ?? null, dto.zoneDescription ?? null],
-      false
+      [dto.id, dto.zoneName ?? null, dto.zoneDescription ?? null],
     );
-    if (!result) {
-      throw new Error('Failed to update zone');
-    }
-    return result as Zone;
   }
 
   async deleteZone(id: number): Promise<void> {

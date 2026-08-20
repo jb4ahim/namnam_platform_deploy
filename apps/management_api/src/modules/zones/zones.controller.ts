@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
 import { ZonesService } from './zones.service';
 import { CreateZoneDto } from './dto/create-zone.dto';
 import { UpdateZoneDto } from './dto/update-zone.dto';
@@ -42,14 +42,15 @@ export class ZonesController {
     return this.zonesService.create(dto);
   }
 
-  @Patch(':id')
+  @Patch('updateZones')
   @ApiOperation({ summary: 'Update a zone' })
-  @ApiParam({ name: 'id', type: Number })
+  @ApiBody({ type: UpdateZoneDto })
   @ApiResponse({ status: 200, type: ZoneDto, description: 'Zone updated' })
   @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async update(@Param('id') id: string, @Body() dto: UpdateZoneDto) {
-    return this.zonesService.update(+id, dto);
+  @ApiResponse({ status: 404, description: 'Zone not found' })
+  async update(@Body() dto: UpdateZoneDto) {
+    return this.zonesService.update(dto);
   }
 
   @Delete(':id')

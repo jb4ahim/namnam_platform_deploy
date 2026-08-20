@@ -771,10 +771,11 @@ Content-Type: application/json
 
 #### 4. Update Zone
 ```http
-PATCH /api/zones/:id
+PATCH /api/zones/updateZones
 Content-Type: application/json
 
 {
+  "id": 1,
   "zoneName": "Uptown District",
   "zoneDescription": "Uptown residential and commercial area"
 }

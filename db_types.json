@@ -132,6 +132,10 @@
     "return_type": null
   },
   {
+    "function_name": "update_zone",
+    "return_type": null
+  },
+  {
     "function_name": "create_zone_polygons",
     "return_type": null
   },

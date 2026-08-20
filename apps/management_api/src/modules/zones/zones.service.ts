@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ZonesRepository } from './zones.repository';
 import { CreateZoneDto } from './dto/create-zone.dto';
 import { UpdateZoneDto } from './dto/update-zone.dto';
@@ -21,8 +21,17 @@ export class ZonesService {
     return this.zonesRepository.createZone(dto);
   }
 
-  async update(id: number, dto: UpdateZoneDto) {
-    return this.zonesRepository.updateZone(id, dto);
+  async update(dto: UpdateZoneDto) {
+    try {
+      await this.zonesRepository.updateZone(dto);
+      return { success: true };
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : '';
+      if (message.includes('not found')) {
+        throw new NotFoundException(`Zone with ID ${dto.id} not found`);
+      }
+      throw error;
+    }
   }
 
   async delete(id: number) {
